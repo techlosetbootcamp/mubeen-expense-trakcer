@@ -1,0 +1,8 @@
+to build the android folder:
+`npx expo prebuild`
+
+to get the SHA1 key:  ==> cd android: password --> android:
+`keytool -list -v -keystore app/debug.keystore`
+
+for the connection: 
+pnpm expo run:android --variant debug

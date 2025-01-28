@@ -9,7 +9,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
 
 interface NavbarProps {
   profilePicture?: string;
@@ -17,6 +18,7 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ profilePicture, name }) => {
+  const user = useSelector((state: RootState) => state.auth.user);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState("Select Month");
   const navigation: any = useNavigation();

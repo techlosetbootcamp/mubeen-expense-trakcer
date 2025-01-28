@@ -25,7 +25,8 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="com.anonymous.app1"/>
+        <data android:scheme="app1"/>
+        <data android:scheme="com.techloset.expenseapp"/>
       </intent-filter>
     </activity>
   </application>

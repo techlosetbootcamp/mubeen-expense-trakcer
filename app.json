@@ -21,8 +21,10 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.app1"
+      "package": "com.techloset.expenseapp"
     },
+    "plugins": ["@react-native-firebase/app", "@react-native-firebase/auth"],
+
     "web": {
       "favicon": "./assets/favicon.png"
     }

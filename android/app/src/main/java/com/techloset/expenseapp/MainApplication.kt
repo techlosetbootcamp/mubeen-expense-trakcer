@@ -1,4 +1,4 @@
-package com.anonymous.app1
+package com.techloset.expenseapp
 
 import android.app.Application
 import android.content.res.Configuration

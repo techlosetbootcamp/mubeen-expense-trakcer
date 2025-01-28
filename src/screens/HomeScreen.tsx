@@ -11,7 +11,7 @@ import LineGraph from "../components/LineGraph";
 
 const HomeScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const userProfile = useSelector((state: RootState) => state.user);
+  const userProfile = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     const fetchUserData = () => {
