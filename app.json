@@ -21,7 +21,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.techloset.expenseapp"
+      "package": "com.techloset.expenseapp",
+      "permissions": ["CAMERA"]
     },
     "plugins": ["@react-native-firebase/app", "@react-native-firebase/auth"],
 

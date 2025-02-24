@@ -18,128 +18,48 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import styles from './TransactionsDetail.style';
 import { Picker } from '@react-native-picker/picker'; // Import Picker for dropdowns
-
-
+import useTransactionsDetail from './useTransactionsDetail';
 
 export default function DetailTransaction() {
-    const [openModal, setOpenModal] = useState(false);
-    const [openEditModal, setOpenEditModal] = useState(false);
-    const navigation: any = useNavigation();
-    const route = useRoute<any>();
-    const { transactionId, type } = route.params;
-    const [transaction, setTransaction] = useState<any>({});
-    const [editedTransaction, setEditedTransaction] = useState<any>({});
-    const isExpense = type === 'Expense';
 
-    useEffect(() => {
-        if (!transactionId || !type) {
-            console.log('Transaction ID or Type missing');
-            return;
-        }
+    const {
+        openModal,
+        setOpenModal,
+        openEditModal,
+        setOpenEditModal,
+        showFullCategory,
+        setShowFullCategory,
+        navigation,
+        route,
+        transactionId,
+        type,
+        transaction,
+        setTransaction,
+        editedTransaction,
+        setEditedTransaction,
+        isExpense,
+        useEffect,
+        confirmDeleteTransaction,
+        handleEditTransaction,
+        saveEditedTransaction,
+        formattedDate,
+        categories,
+        setCategories,
+        incomeCategories,
+        expenseCategories,
+        handleTypeChange
+    } = useTransactionsDetail()
 
-        const transactionRef = ref(database, `${type.toLowerCase()}s/${auth.currentUser?.uid}/${transactionId}`);
+    const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);  // new State
 
-        const unsubscribe = onValue(transactionRef, (snapshot) => {
-            if (snapshot.exists()) {
-                setTransaction({ ...snapshot.val(), id: transactionId });
-                setEditedTransaction({ ...snapshot.val(), id: transactionId });
-            } else {
-                console.log('No data available for transaction ID:', transactionId);
-            }
-        });
-
-        return () => unsubscribe();
-    }, [transactionId, type]);
-
-    // Function to delete a transaction after confirmation
-    const confirmDeleteTransaction = async () => {
-        try {
-            const transactionRef = ref(database, `${type.toLowerCase()}s/${auth.currentUser?.uid}/${transactionId}`);
-            await remove(transactionRef);
-            setOpenModal(false);
-            Alert.alert('Deleted', 'Transaction deleted successfully');
-            navigation.goBack();
-        } catch (error) {
-            console.error('Error deleting transaction:', error);
-            Alert.alert('Error', 'Failed to delete transaction');
-        }
+    const openDeleteModal = () => {  // new function
+        setOpenModal(false)
+        setIsDeleteModalVisible(true);
     };
 
-    // Function to handle edit transaction
-    const handleEditTransaction = () => {
-        setOpenEditModal(true);
+    const closeDeleteModal = () => {  // new function
+        setIsDeleteModalVisible(false);
     };
-
-    // Function to save the edited transaction
-    const saveEditedTransaction = async () => {
-        try {
-            const transactionRef = ref(database, `${type.toLowerCase()}s/${auth.currentUser?.uid}/${transactionId}`);
-            await set(transactionRef, editedTransaction);
-            setOpenEditModal(false);
-            Alert.alert('Success', 'Transaction updated successfully');
-        } catch (error) {
-            console.error('Error updating transaction:', error);
-            Alert.alert('Error', 'Failed to update transaction');
-        }
-    };
-
-    const formattedDate = transaction.timestamp
-        ? moment(transaction.timestamp).format('dddd D MMMM YYYY hh:mm A')
-        : 'No Date Available';
-
-
-
-    const [categories, setCategories] = useState<string[]>([]);
-
-    // Define income and expense categories
-    const incomeCategories = [
-        "Salary",
-        "Business",
-        "Freelancing",
-        "Overtime Pay",
-        "Bonuses and Incentives",
-        "Stock Dividends",
-        "Rental Income (from property)",
-        "Cryptocurrency Gains",
-        "Child Support/Alimony",
-        "Scholarships/Grants",
-        "Royalties",
-        "Lottery or Gambling Winnings",
-        "Gifts or Donations Received",
-        "Income from Side Hustles",
-    ];
-
-    const expenseCategories = [
-        "Food & Dining",
-        "Shopping",
-        "Transportation",
-        "Entertainment",
-        "Healthcare",
-        "Rent & Bills",
-        "Travel",
-        "Education",
-        "Investments",
-        "Other",
-    ];
-
-    // Update categories when type changes
-    useEffect(() => {
-        if (editedTransaction.type === 'Income') {
-            setCategories(incomeCategories);
-        } else if (editedTransaction.type === 'Expense') {
-            setCategories(expenseCategories);
-        }
-    }, [editedTransaction.type]);
-
-    // Function to handle type change
-    const handleTypeChange = (itemValue: string) => {
-        setEditedTransaction({ ...editedTransaction, type: itemValue });
-    };
-
-
-
-
-
 
     return (
         <View style={styles.container}>
@@ -153,7 +73,7 @@ export default function DetailTransaction() {
                         <AntDesign name="arrowleft" size={24} color="white" />
                     </TouchableOpacity>
                     <Text style={styles.topcontainerText}>Detail Transaction</Text>
-                    <TouchableOpacity onPress={() => setOpenModal(true)}>
+                    <TouchableOpacity onPress={openDeleteModal}>  {/* change here */}
                         <Ionicons name="trash-outline" size={24} color="white" />
                     </TouchableOpacity>
                 </View>
@@ -174,7 +94,13 @@ export default function DetailTransaction() {
                     </View>
                     <View>
                         <Text style={styles.box1Text}>Category</Text>
-                        <Text style={styles.box1Text2}>{transaction.category}</Text>
+                        <TouchableOpacity onPress={() => setShowFullCategory(!showFullCategory)}>
+                            <Text style={styles.box1Text2}>
+                                {transaction.category && transaction.category.length > 15
+                                    ? `${transaction.category.slice(0, 15)}...`
+                                    : transaction.category}
+                            </Text>
+                        </TouchableOpacity>
                     </View>
                     <View>
                         <Text style={styles.box1Text}>Wallet</Text>
@@ -195,7 +121,7 @@ export default function DetailTransaction() {
                                 source={{ uri: transaction.attachment }}
                             />
                         ) : (
-                            <Text>No image available</Text>
+                            <Text>No image available</Text> 
                         )}
                     </View>
                 </View>
@@ -209,32 +135,57 @@ export default function DetailTransaction() {
             {/* Delete Confirmation Modal */}
             <Modal
                 transparent={true}
-                animationType="slide"
-                visible={openModal}
-                onRequestClose={() => setOpenModal(false)}
+                animationType="fade"
+                visible={isDeleteModalVisible}  // change state here
+                onRequestClose={closeDeleteModal}  // change function here
             >
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Confirm Deletion</Text>
-                        <Text style={styles.modalText}>Are you sure you want to delete this transaction?</Text>
-                        <View style={styles.modalButtons}>
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <Text style={styles.modalTitle}>Remove This Transaction?</Text>
+                        <Text style={styles.modalMessage}>
+                            Are you sure do you wanna remove this transaction?
+                        </Text>
+                        <View style={styles.modalActions}>
                             <TouchableOpacity
-                                style={[styles.modalButton, { backgroundColor: 'red' }]}
-                                onPress={confirmDeleteTransaction}
+                                style={[styles.cancelButton]}
+                                onPress={closeDeleteModal}  // change function here
                             >
-                                <Text style={styles.modalButtonText}>Delete</Text>
+                                <Text style={styles.modalCancelButtonText}>No</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={[styles.modalButton, { backgroundColor: 'gray' }]}
-                                onPress={() => setOpenModal(false)}
+                                style={[styles.confirmButton]}
+                                onPress={confirmDeleteTransaction}  // remain same functionality
                             >
-                                <Text style={styles.modalButtonText}>Cancel</Text>
+                                <Text style={styles.modalYesButtonText}>Yes</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
                 </View>
             </Modal>
+            {/* Full Category Modal */}
+            <Modal
+                transparent={true}
+                animationType="fade"
+                visible={showFullCategory}
+                onRequestClose={() => setShowFullCategory(false)}
+            >
+                <View style={styles.fullCategoryModalContainer}>
+                    <View style={styles.fullCategoryModalContent}>
+                        {/* Cross Icon at Top Right */}
+                        <TouchableOpacity
+                            style={styles.fullCategoryCloseIcon}
+                            onPress={() => setShowFullCategory(false)}
+                        >
+                            <Ionicons name="close" size={24} color="#000" />
+                        </TouchableOpacity>
 
+                        {/* Full Category Text */}
+                        <Text style={styles.fullCategoryText}>{transaction.category}</Text>
+                    </View>
+                </View>
+            </Modal>
+
+            {/* Edit Transaction Modal */}
             <Modal
                 transparent={true}
                 animationType="slide"
@@ -321,4 +272,3 @@ export default function DetailTransaction() {
         </View>
     );
 }
-
