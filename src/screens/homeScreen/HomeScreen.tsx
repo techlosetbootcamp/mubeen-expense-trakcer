@@ -17,11 +17,11 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Navbar
+       <Navbar
           profilePicture={userProfile.profilePicture}
           name={userProfile.name}
         />
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
         <AccountBalanceCard />
         <LineGraph />
         <RecentTransactions

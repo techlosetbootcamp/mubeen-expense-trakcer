@@ -60,7 +60,7 @@ const TabBar = () => {
           tabBarIcon: ({ focused }) => (
             <View style={{ alignItems: "center", justifyContent: "center", marginTop: 2 }}>
               <Octicons name="arrow-switch" size={36} color={focused ? "#7f3dff" : "#c6c6c6"} />
-              <Text style={{ color: focused ? "#7f3dff" : "#c6c6c6", minWidth: 73, textAlign: "center" }}>
+              <Text style={{ color: focused ? "#7f3dff" : "#c6c6c6", minWidth: 76, textAlign: "center" }}>
                 Transaction
               </Text>
             </View>

@@ -79,7 +79,7 @@ const AuthenticationScreen: React.FC = () => {
             size={30}
             color="black"
           />
-          <Text style={[styles.Policy, { marginLeft: 8 }]}>
+          <Text style={[styles.Policy, { marginLeft: 8, marginRight: 8}]}>
             By signing up, you agree to the
             <Text style={{color:'#7f3dff'}}>
               Terms of Service and Privacy Policy

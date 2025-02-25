@@ -91,9 +91,9 @@ const AddExpense = () => {
                     placeholder="Description"
                 />
                 {/* Attachment Preview Above Button */}
-                {attachment && attachment.uri && (
+                {attachment && typeof attachment === 'string' && (
                     <Image
-                        source={{ uri: attachment.uri }}
+                        source={{ uri: attachment }}
                         style={{ width: 52, height: 52, marginBottom: 8 }}
                     />
                 )}

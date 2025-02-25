@@ -4,14 +4,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingVertical: 50,
+    paddingVertical: 30,
     paddingHorizontal: 20,
-    marginBottom: 50
+    marginBottom: 50,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    zIndex: 2, // Ensure the header has a high stacking order
+    zIndex: 2, 
   },
   dropdownContainer: {
     position: "relative", // Needed for dropdown menu positioning

@@ -3,8 +3,9 @@ import {
   Text,
   TouchableOpacity,
   View,
-  FlatList,
+  SectionList,
   ScrollView,
+  StyleSheet
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -13,7 +14,6 @@ import styles from "./Transactions.style";
 import useTransaction from "./useTransaction";
 
 const Transactions = () => {
-
   const {
     isFilterModalVisible,
     setIsFilterModalVisible,
@@ -43,23 +43,82 @@ const Transactions = () => {
     resetAllFilters,
     hasDisplayableTransactions,
     transactionsToDisplay,
-  } = useTransaction()
+  } = useTransaction();
+
+  const renderTransactionItem = ({ item }) => {
+    const { iconBackgroundColor, iconColor, iconName } = getCategoryStyles(
+      item.category
+      
+    );
+    const isIncome = item.type === "income";
+
+    return (
+      <View key={item.id} style={styles.CardContainer}>
+        <TouchableOpacity
+          style={styles.CategoryContainer}
+          onPress={() =>
+            navigation.navigate("DetailTransaction", {
+              transactionId: item.id,
+              type: item.type,
+            })
+          }
+        >
+          <View
+            style={[styles.iconContainer, { backgroundColor: iconBackgroundColor }]}
+          >
+            <Ionicons
+              name={iconName as keyof typeof Ionicons.glyphMap}
+              size={60}
+              color={iconColor}
+              style={styles.icon}
+            />
+          </View>
+          <View style={{ flexDirection: "column", gap: 8 }}>
+            <Text style={styles.IncomeText}>
+              {item.category.length > 15
+                ? `${item.category.slice(0, 15)}...`
+                : item.category}
+            </Text>
+            <Text style={styles.BuyText}>
+              {item.description.length > 17
+                ? `${item.description.slice(0, 17)}...`
+                : item.description}
+            </Text>
+          </View>
+        </TouchableOpacity>
+        <View style={styles.TransactionInfo}>
+          <Text style={[styles.PriceText, { color: isIncome ? "green" : "red" }]}>
+            {isIncome ? "+ " : "- "} ${item.amount}
+          </Text>
+          <Text style={styles.TiemText}>{item.timestamp.split("T")[1].slice(0, 5)}</Text>
+        </View>
+      </View>
+    );
+  };
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        {/* Header */}
+    <View style={[styles.container, { flex: 1 }]}>
+      {/* Sticky Header */}
+      <View style={internalStyles.stickyHeader}>
         <View style={styles.header}>
           <View style={styles.dropdownContainer}>
-            <TouchableOpacity style={styles.monthSelection} onPress={toggleDropdown}>
-              <MaterialIcons name="keyboard-arrow-down" size={36} color="#7f3dff" />
+            <TouchableOpacity
+              style={styles.monthSelection}
+              onPress={toggleDropdown}
+            >
+              <MaterialIcons
+                name="keyboard-arrow-down"
+                size={36}
+                color="#7f3dff"
+              />
               <Text>{selectedMonth}</Text>
             </TouchableOpacity>
 
             {isDropdownVisible && (
               <View style={styles.dropdownMenu}>
-                <FlatList
-                  data={[
+                <ScrollView>
+                  {/* Wrap FlatList content with ScrollView */}
+                  {[
                     "January",
                     "February",
                     "March",
@@ -72,14 +131,16 @@ const Transactions = () => {
                     "October",
                     "November",
                     "December",
-                  ]}
-                  keyExtractor={(item) => item}
-                  renderItem={({ item }) => (
-                    <TouchableOpacity style={styles.dropdownItem} onPress={() => handleSelect(item)}>
-                      <Text style={styles.dropdownItemText}>{item}</Text>
+                  ].map((month) => (
+                    <TouchableOpacity
+                      key={month}
+                      style={styles.dropdownItem}
+                      onPress={() => handleSelect(month)}
+                    >
+                      <Text style={styles.dropdownItemText}>{month}</Text>
                     </TouchableOpacity>
-                  )}
-                />
+                  ))}
+                </ScrollView>
               </View>
             )}
           </View>
@@ -97,61 +158,39 @@ const Transactions = () => {
         )}
 
         {/* Financial Report */}
-        <TouchableOpacity style={styles.financialReport} onPress={() => navigation.navigate("FinancialReport")}>
+        <TouchableOpacity
+          style={styles.financialReport}
+          onPress={() => navigation.navigate("FinancialReport")}
+        >
           <Text style={styles.financialText}>See Your Financial Report</Text>
           <MaterialIcons name="keyboard-arrow-right" size={36} color="#7f3dff" />
         </TouchableOpacity>
-
-        {/* Transactions List */}
-        {hasDisplayableTransactions ? (
-          Object.entries(transactionsToDisplay).map(([sectionTitle, transactionsList]) => (
-            <View key={sectionTitle}>
-              <Text style={styles.sectionTitle}>{sectionTitle}</Text>
-              {transactionsList.map((transaction) => {
-                const { iconBackgroundColor, iconColor, iconName } = getCategoryStyles(transaction.category);
-                const isIncome = transaction.type === "income";
-
-                return (
-                  <View key={transaction.id} style={styles.CardContainer}>
-                    <TouchableOpacity
-                      style={styles.CategoryContainer}
-                      onPress={() =>
-                        navigation.navigate('DetailTransaction', {
-                          transactionId: transaction.id,
-                          type: transaction.type,
-                        })
-                      }
-                    >
-                      <View style={[styles.iconContainer, { backgroundColor: iconBackgroundColor }]}>
-                        <Ionicons name={iconName as keyof typeof Ionicons.glyphMap} size={60} color={iconColor} style={styles.icon} />
-                      </View>
-                      <View style={{ flexDirection: "column", gap: 8 }}>
-                        <Text style={styles.IncomeText}>
-                          {transaction.category.length > 15 ? `${transaction.category.slice(0, 15)}...` : transaction.category}
-                        </Text>
-                        <Text style={styles.BuyText}>
-                          {transaction.description.length > 17 ? `${transaction.description.slice(0, 17)}...` : transaction.description}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                    <View style={styles.TransactionInfo}>
-                      <Text style={[styles.PriceText, { color: isIncome ? "green" : "red" }]}>
-                        {isIncome ? "+ " : "- "} ${transaction.amount}
-                      </Text>
-                      <Text style={styles.TiemText}>{transaction.timestamp.split("T")[1].slice(0, 5)}</Text>
-                    </View>
-                  </View>
-                );
-              })}
-            </View>
-          ))
-        ) : (
-          <View style={styles.emptyContainer}>
-            <Ionicons name="document-text-outline" size={80} color="gray" />
-            <Text style={styles.emptyText}>No transactions available</Text>
-          </View>
-        )}
       </View>
+
+      {/* Transactions List */}
+      {hasDisplayableTransactions ? (
+        <SectionList
+          style={{marginVertical: 10, marginLeft:0}}
+          sections={Object.entries(transactionsToDisplay).map(
+            ([sectionTitle, transactionsList]) => ({
+              title: sectionTitle,
+              data: transactionsList,
+            })
+          )}
+          keyExtractor={(item) => item.id}
+          renderItem={renderTransactionItem}
+          renderSectionHeader={({ section: { title } }) => (
+            <Text style={styles.sectionTitle}>{title}</Text>
+          )}
+        />
+      ) : (
+        <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <View style={styles.emptyContainer}>
+          <Ionicons name="document-text-outline" size={80} color="gray" />
+          <Text style={styles.emptyText}>No transactions available</Text>
+        </View>
+      </ScrollView>
+      )}
 
       <Modal
         animationType="slide"
@@ -196,10 +235,7 @@ const Transactions = () => {
                   Expense
                 </Text>
               </TouchableOpacity>
-            </View>
-
-
-            {/* Sort by heading */}
+            </View>...{/* Sort by heading */}
             <Text style={styles.headingText}>Sort By</Text>
             {/* Sort by buttons */}
             <View style={styles.SortButtonsContainer}>
@@ -261,8 +297,18 @@ const Transactions = () => {
           </View>
         </View>
       </Modal>
-    </ScrollView>
+    </View>
   );
 };
+
+const internalStyles = StyleSheet.create({
+  stickyHeader: {
+    backgroundColor: "#fff",
+    zIndex: 10, // Ensure it stays on top
+    paddingTop: 50,
+    paddingHorizontal: 20,
+    // Add other styles you want for the header container
+  },
+});
 
 export default Transactions;
