@@ -1,75 +1,13 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
-
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "flex-end",
-    alignItems: "center",
-  },
-  modalContainer: {
-    backgroundColor: "#FFF",
-    paddingHorizontal: 20,
-    paddingVertical: 40,
-    width: "100%",
-    borderTopEndRadius: 15,
-    borderTopStartRadius: 15,
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 10,
-  },
-  modalMessage: {
-    fontSize: 16,
-    color: "#666",
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  modalActions: {
-    flexDirection: "row",
-    justifyContent: "center",
-    width: "100%",
-  },
-  cancelButton: {
-    backgroundColor: "#eee5ff",
-    paddingVertical: 20,
-    paddingHorizontal: 60,
-    borderRadius: 20,
-    alignItems: "center",
-    marginRight: 10,
-    color: "#7f3dff",
-  },
-  confirmButton: {
-    backgroundColor: "#8A2BE2",
-    paddingVertical: 20,
-    paddingHorizontal: 60,
-    borderRadius: 20,
-    alignItems: "center",
-    marginLeft: 10,
-  },
-  modalCancelButtonText: {
-    color: "#7f3dff",
-    fontWeight: "bold",
-  },
-  modalYesButtonText: {
-    color: "white",
-    fontWeight: "bold",
-  },
-
-
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
   },
   topcontainer: {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'space-between',
-    backgroundColor: '#FD3C4A',
     padding: 40,
     borderBottomLeftRadius: 20,
     borderBottomEndRadius: 20,
@@ -81,7 +19,6 @@ const styles = StyleSheet.create({
   },
   topbar: {
     flex: 1,
-
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
@@ -205,13 +142,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     padding: 5,
   },
-
-  // modalContainer: {
-  //   flex: 1,
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   backgroundColor: 'rgba(0,0,0,0.5)',
-  // },
   modalContent: {
     width: 300,
     padding: 20,
@@ -219,11 +149,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
   },
-  // modalTitle: {
-  //   fontSize: 18,
-  //   fontWeight: 'bold',
-  //   marginBottom: 10,
-  // },
   modalText: {
     fontSize: 16,
     marginBottom: 20,
@@ -313,27 +238,100 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-},
-fullCategoryModalContent: {
+  },
+  fullCategoryModalContent: {
     width: '80%',
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 20,
     alignItems: 'center',
     position: 'relative', // Required for absolute positioning of the close icon
-},
-fullCategoryText: {
+  },
+  fullCategoryText: {
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
     marginTop: 20, // Add margin to avoid overlap with the close icon
-},
-fullCategoryCloseIcon: {
+  },
+  fullCategoryCloseIcon: {
     position: 'absolute', // Position the icon absolutely
     top: 10, // Adjust top position
     right: 10, // Adjust right position
-},
+  },
 
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
+  modalContainer: {
+    backgroundColor: "#FFF",
+    paddingHorizontal: 20,
+    paddingVertical: 40,
+    width: "100%",
+    borderTopEndRadius: 15,
+    borderTopStartRadius: 15,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 10,
+  },
+  modalMessage: {
+    fontSize: 16,
+    color: "#666",
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  modalActions: {
+    flexDirection: "row",
+    justifyContent: "center",
+    width: "100%",
+  },
+  cancelButton: {
+    backgroundColor: "#eee5ff",
+    paddingVertical: 20,
+    paddingHorizontal: 60,
+    borderRadius: 20,
+    alignItems: "center",
+    marginRight: 10,
+    color: "#7f3dff",
+  },
+  confirmButton: {
+    backgroundColor: "#8A2BE2",
+    paddingVertical: 20,
+    paddingHorizontal: 60,
+    borderRadius: 20,
+    alignItems: "center",
+    marginLeft: 10,
+  },
+  modalCancelButtonText: {
+    color: "#7f3dff",
+    fontWeight: "bold",
+  },
+  modalYesButtonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  fullScreenContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fullScreenImage: {
+    width: '90%',
+    height: '90%',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    padding: 10,
+  },
 });
 
 

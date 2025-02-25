@@ -1,9 +1,11 @@
 import React from "react";
-import { View, Text, TextInput, TouchableOpacity, Modal } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Modal, Image } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import styles from "./AddExpense.style";
 import { useAddExpense } from "./useAddExpense";
+import Entypo from "@expo/vector-icons/Entypo";
+
 
 const AddExpense = () => {
    
@@ -18,7 +20,14 @@ const AddExpense = () => {
         setDropdownVisible,
         categories,
         handleContinuePress,
-        navigation
+        navigation,
+        attachmentModalVisible,
+        setAttachmentModalVisible,
+        attachment,
+        setAttachment,
+        whiteSectionHeight,
+        setWhiteSectionHeight,
+        handleAttachmentOption
     } = useAddExpense();
 
     return (
@@ -81,6 +90,57 @@ const AddExpense = () => {
                     onChangeText={setDescription}
                     placeholder="Description"
                 />
+                {/* Attachment Preview Above Button */}
+                {attachment && attachment.uri && (
+                    <Image
+                        source={{ uri: attachment.uri }}
+                        style={{ width: 52, height: 52, marginBottom: 8 }}
+                    />
+                )}
+
+                <TouchableOpacity
+                    style={styles.attachmentButton}
+                    onPress={() => setAttachmentModalVisible(true)}
+                >
+                    <Entypo name="attachment" size={24} color="gray" />
+                    <Text style={styles.attachmentText}>Add attachment</Text>
+                </TouchableOpacity>
+
+
+                <Modal
+                    transparent
+                    visible={attachmentModalVisible}
+                    animationType="slide"
+                    onRequestClose={() => setAttachmentModalVisible(false)}
+                >
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContainer}>
+                            <TouchableOpacity
+                                style={styles.modalOption}
+                                onPress={() => handleAttachmentOption("Camera")}
+                            >
+                                <Entypo name="camera" size={24} color="#6A1B9A" />
+                                <Text style={styles.modalOptionText}>Camera</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.modalOption}
+                                onPress={() => handleAttachmentOption("Image")}
+                            >
+                                <Entypo name="image" size={24} color="#6A1B9A" />
+                                <Text style={styles.modalOptionText}>Image</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.modalOption}
+                                onPress={() => handleAttachmentOption("Document")}
+                            >
+                                <Entypo name="document" size={24} color="#6A1B9A" />
+                                <Text style={styles.modalOptionText}>Document</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+
+
                 <TouchableOpacity style={styles.continueButton} onPress={handleContinuePress}>
                     <Text style={styles.continueText}>Continue</Text>
                 </TouchableOpacity>

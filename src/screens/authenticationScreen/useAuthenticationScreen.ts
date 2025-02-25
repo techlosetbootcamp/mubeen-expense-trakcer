@@ -20,6 +20,7 @@ const useAuthenticationScreen = () => {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const dispatch = useAppDispatch();
   const navigation: any = useNavigation();
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleAuthentication = async () => {
     if (!email || !password || (!isLogin && !username)) {
@@ -76,10 +77,6 @@ const useAuthenticationScreen = () => {
           })
         );
       }
-      Alert.alert(
-        "Success",
-        isLogin ? "Logged in successfully!" : "Account created successfully!"
-      );
     } catch (error: any) {
       Alert.alert("Error", error.message);
     } finally {
@@ -100,6 +97,8 @@ const useAuthenticationScreen = () => {
     navigation,
     handleAuthentication,
     isAuthenticating,
+    showPassword,
+    setShowPassword
   }
 }
 

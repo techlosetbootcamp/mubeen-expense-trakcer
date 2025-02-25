@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./AuthenticationScreen.style";
@@ -6,7 +6,6 @@ import useAuthenticationScreen from "./useAuthenticationScreen";
 import Loader from '../../components/loader/Loader';
 
 const AuthenticationScreen: React.FC = () => {
- 
   const {
     isLogin,
     setIsLogin,
@@ -20,7 +19,11 @@ const AuthenticationScreen: React.FC = () => {
     navigation,
     handleAuthentication,
     isAuthenticating,
-  } = useAuthenticationScreen()
+    showPassword,
+    setShowPassword
+  } = useAuthenticationScreen();
+
+  const [isChecked, setIsChecked] = useState(false);
 
   if (isAuthenticating) {
     return <Loader />;
@@ -50,32 +53,51 @@ const AuthenticationScreen: React.FC = () => {
         value={email}
         onChangeText={setEmail}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
+      <View style={[styles.input, { position: 'relative' }]}>
+        <TextInput
+          style={{ width: '100%', height: '100%', paddingHorizontal: 0 }}
+          placeholder="Password"
+          secureTextEntry={!showPassword}
+          value={password}
+          onChangeText={setPassword}
+        />
+        <TouchableOpacity
+          style={{ position: 'absolute', right: 10, top: 12, zIndex: 1 }}
+          onPress={() => setShowPassword(!showPassword)}
+        >
+          <Ionicons name={showPassword ? "eye-off" : "eye"} size={24} color="#000" />
+        </TouchableOpacity>
+      </View>
+
+      {!isLogin && (
+        <TouchableOpacity
+          style={{ flexDirection: "row", alignItems: "center", marginVertical: 10 }}
+          onPress={() => setIsChecked(!isChecked)}
+        >
+          <Ionicons
+            name={isChecked ? "checkbox" : "checkbox-outline"}
+            size={30}
+            color="black"
+          />
+          <Text style={[styles.Policy, { marginLeft: 8 }]}>
+            By signing up, you agree to the
+            <Text style={{color:'#7f3dff'}}>
+              Terms of Service and Privacy Policy
+            </Text>
+          </Text>
+        </TouchableOpacity>
+      )}
 
       <TouchableOpacity style={styles.button} onPress={handleAuthentication}>
         <Text style={styles.buttonText}>{isLogin ? "Login" : "Sign Up"}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate("ForgotPassword")}>
-        <Text style={styles.forgotPassword}>
-          {isLogin ? "Forgot Password?" : ""}
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => setIsLogin(!isLogin)}>
-        <Text style={styles.switchText}>
-          {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Login"}
-        </Text>
+        <Text style={styles.forgotPassword}>{isLogin ? "Forgot Password?" : ""}</Text>
       </TouchableOpacity>
 
       <Text style={styles.orText}>or</Text>
-      {/* Google Authentication Button */}
+
       <TouchableOpacity style={styles.googleButton}>
         <Image
           source={{
@@ -90,6 +112,11 @@ const AuthenticationScreen: React.FC = () => {
         </View>
       </TouchableOpacity>
 
+      <TouchableOpacity onPress={() => setIsLogin(!isLogin)}>
+        <Text style={styles.switchText}>
+          {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Login"}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };

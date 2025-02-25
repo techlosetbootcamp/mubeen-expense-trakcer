@@ -5,13 +5,15 @@ import {
     TextInput,
     TouchableOpacity,
     Modal,
-    Image, // Import Image
+    Image,
+    ScrollView, // Import Image
 } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import styles from "./AddIncome.style";
 import useAddIncome from "./useAddIncome";
+
 
 const AddIncome = () => {
     const {
@@ -60,23 +62,24 @@ const AddIncome = () => {
                 />
             </View>
             <View style={[styles.whiteSection, { flex: whiteSectionHeight }]}>
-                <TouchableOpacity
-                    style={styles.input}
-                    onPress={() => setDropdownVisible(true)}
-                >
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                        }}
+                    <TouchableOpacity
+                        style={styles.input}
+                        onPress={() => setDropdownVisible(true)}
                     >
-                        <Text style={{ color: category ? "black" : "gray" }}>
-                            {category || "Select Category"}
-                        </Text>
-                        <MaterialIcons name="keyboard-arrow-down" size={24} color="gray" />
-                    </View>
-                </TouchableOpacity>
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                            }}
+                        >
+                            <Text style={{ color: category ? "black" : "gray" }}>
+                                {category || "Select Category"}
+                            </Text>
+                            <MaterialIcons name="keyboard-arrow-down" size={24} color="gray" />
+                        </View>
+                    </TouchableOpacity>
+                
 
                 {/* Dropdown Modal */}
                 <Modal
@@ -87,18 +90,20 @@ const AddIncome = () => {
                 >
                     <View style={styles.modalOverlay}>
                         <View style={styles.dropdownContainer}>
-                            {categories.map((item, index) => (
-                                <TouchableOpacity
-                                    key={index}
-                                    style={styles.dropdownItem}
-                                    onPress={() => {
-                                        setCategory(item);
-                                        setDropdownVisible(false);
-                                    }}
-                                >
-                                    <Text style={styles.dropdownItemText}>{item}</Text>
-                                </TouchableOpacity>
-                            ))}
+                            <ScrollView style={{ flex: 1 }}>
+                                {categories.map((item, index) => (
+                                    <TouchableOpacity
+                                        key={index}
+                                        style={styles.dropdownItem}
+                                        onPress={() => {
+                                            setCategory(item);
+                                            setDropdownVisible(false);
+                                        }}
+                                    >
+                                        <Text style={styles.dropdownItemText}>{item}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </ScrollView>
                         </View>
                     </View>
                 </Modal>

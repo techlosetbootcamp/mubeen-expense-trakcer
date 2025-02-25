@@ -46,14 +46,14 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     paddingHorizontal: 20,
-    paddingVertical: 5,
+    paddingVertical: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 5,
-    paddingTop: 40,
-    paddingBottom: 20,
+    paddingTop: 50,
+    minHeight: '33%',
   },
   input: {
     width: "95%",
@@ -170,8 +170,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 5,
     elevation: 5,
-    overflow: "scroll",
-    maxHeight: 850,
+    maxHeight: "80%", // Adjust this value to fit your screen
+    minHeight: "80%",
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 60,
   },
   dropdownItem: {
     padding: 15,
@@ -220,6 +224,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     paddingTop: 20,
   },
+  
 });
 
 

@@ -7,13 +7,13 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     padding: 20,
     backgroundColor: "#fff",
-    paddingTop: 40
+    paddingTop: 40,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 40
+    marginBottom: 40,
   },
   headerText: {
     fontSize: 24,
@@ -47,16 +47,16 @@ const styles = StyleSheet.create({
     color: "#7f3dff",
     textDecorationLine: "underline",
     marginTop: 10,
-    alignSelf: "flex-end", 
-    paddingLeft: 110
+    alignSelf: "center",
+    paddingLeft: 60
   },
   orText: {
     textAlign: "center",
     width: "100%",
-    marginVertical: 20,
+    marginVertical: 10,
     fontSize: 18,
     fontWeight: "200",
-    color: 'gray'
+    color: 'gray',
   },
   googleButton: {
     borderColor: '#ccc',
@@ -66,37 +66,45 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 15,
     paddingHorizontal: 30,
-    borderRadius: 25,
-    alignSelf: "center", // Centers the button
-    width: "80%" // Adjust width to make it look better
+    borderRadius: 20,
+    alignSelf: "center",
+    width: "90%",
   },
   googleButtonText: {
     fontSize: 20,
-    paddingLeft: 20
+    paddingLeft: 20,
   },
-  forgotPassword:{
+  forgotPassword: {
     fontSize: 18,
     color: '#7f3dff',
     flexDirection: 'row',
     alignSelf: 'flex-end',
     paddingLeft: 160,
     paddingBottom: 4,
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
-  passwordContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderBottomWidth: 1,
-    borderColor: "#ccc",
+  Policy: {
+    fontSize: 15,
+    color: 'blcak',
+    flexDirection: 'row',
+    alignSelf: 'flex-end',
     paddingHorizontal: 10,
+    paddingBottom: 4,
+    flexWrap: 'wrap',
   },
-  eyeIcon: {
-    position: "absolute",
-    right: 10,
-    padding: 5,
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  checkbox: {
+    alignSelf: 'center',
+  },
+  checkboxText: {
+    marginLeft: 8,
+    fontSize: 14,
+    color: '#000',
   },
 });
 
-
-
-export default styles
+export default styles;

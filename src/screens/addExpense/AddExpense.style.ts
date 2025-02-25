@@ -5,8 +5,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fd3c4a",
-    maxHeight: "100%",
-  },
+    maxHeight: "100%",  },
   arrowText: {
     flex: 1,
     flexDirection: "row",
@@ -46,14 +45,14 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     paddingHorizontal: 20,
-    paddingVertical: 5,
+    paddingVertical: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 5,
-    paddingTop: 40,
-    paddingBottom: 20,
+    paddingTop: 50,
+    minHeight: '33%',
   },
   input: {
     width: "95%",

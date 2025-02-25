@@ -9,11 +9,8 @@ import {
     TextInput,
     ScrollView
 } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import moment from 'moment';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { ref, onValue, set, remove } from 'firebase/database';
-import { database, auth } from '../../config/firebaseConfig';
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import styles from './TransactionsDetail.style';
@@ -47,7 +44,9 @@ export default function DetailTransaction() {
         setCategories,
         incomeCategories,
         expenseCategories,
-        handleTypeChange
+        handleTypeChange,
+        fullScreenImage,
+        setFullScreenImage
     } = useTransactionsDetail()
 
     const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);  // new State
@@ -66,14 +65,15 @@ export default function DetailTransaction() {
             <View
                 style={[
                     styles.topcontainer,
-                    { backgroundColor: isExpense ? '#FD3C4A' : '#00A86B' },
-                ]}>
+                    { backgroundColor: type === 'expense' ? '#FD3C4A' : '#00A86B' },
+                ]}
+            >
                 <View style={styles.topbar}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <AntDesign name="arrowleft" size={24} color="white" />
                     </TouchableOpacity>
                     <Text style={styles.topcontainerText}>Detail Transaction</Text>
-                    <TouchableOpacity onPress={openDeleteModal}>  {/* change here */}
+                    <TouchableOpacity onPress={openDeleteModal}>
                         <Ionicons name="trash-outline" size={24} color="white" />
                     </TouchableOpacity>
                 </View>
@@ -86,11 +86,12 @@ export default function DetailTransaction() {
                 </View>
             </View>
 
+
             <View style={styles.belowContainer}>
                 <View style={styles.belowBox1}>
                     <View>
                         <Text style={styles.box1Text}>Type</Text>
-                        <Text style={styles.box1Text2}>{isExpense ? 'Expense' : 'Income'}</Text>
+                        <Text style={styles.box1Text2}>{type}</Text>
                     </View>
                     <View>
                         <Text style={styles.box1Text}>Category</Text>
@@ -115,13 +116,15 @@ export default function DetailTransaction() {
                     <Text style={styles.imageText}>Attachment</Text>
                     <View style={styles.pic}>
                         {transaction.attachment ? (
-                            <Image
-                                style={styles.actualpic}
-                                resizeMode="cover"
-                                source={{ uri: transaction.attachment }}
-                            />
+                            <TouchableOpacity onPress={() => setFullScreenImage(transaction.attachment)}>
+                                <Image
+                                    style={styles.actualpic}
+                                    resizeMode="cover"
+                                    source={{ uri: transaction.attachment }}
+                                />
+                            </TouchableOpacity>
                         ) : (
-                            <Text>No image available</Text> 
+                            <Text>No image available</Text>
                         )}
                     </View>
                 </View>
@@ -131,6 +134,26 @@ export default function DetailTransaction() {
                     <Text style={styles.btnText}>Edit Transaction</Text>
                 </TouchableOpacity>
             </View>
+
+            <Modal
+                visible={fullScreenImage !== null}
+                transparent={true}
+                onRequestClose={() => setFullScreenImage(null)}
+            >
+                <View style={styles.fullScreenContainer}>
+                    <Image
+                        style={styles.fullScreenImage}
+                        resizeMode="contain"
+                        source={fullScreenImage ? { uri: fullScreenImage } : undefined}
+                    />
+                    <TouchableOpacity
+                        style={styles.closeButton}
+                        onPress={() => setFullScreenImage(null)}
+                    >
+                        <Ionicons name="close-circle" size={30} color="white" />
+                    </TouchableOpacity>
+                </View>
+            </Modal>
 
             {/* Delete Confirmation Modal */}
             <Modal

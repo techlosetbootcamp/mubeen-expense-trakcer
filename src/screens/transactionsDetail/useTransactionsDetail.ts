@@ -15,6 +15,7 @@ const useTransactionsDetail = () => {
     const [transaction, setTransaction] = useState<any>({});
     const [editedTransaction, setEditedTransaction] = useState<any>({});
     const isExpense = type === 'Expense';
+    const [fullScreenImage, setFullScreenImage] = useState(null);
 
     useEffect(() => {
         if (!transactionId || !type) {
@@ -142,7 +143,9 @@ const useTransactionsDetail = () => {
     setCategories,
     incomeCategories,
     expenseCategories,
-    handleTypeChange
+    handleTypeChange,
+    fullScreenImage,
+    setFullScreenImage
   }
 }
 
