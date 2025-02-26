@@ -1,3 +1,4 @@
+// components/TransactionsDetail.tsx
 import {
     View,
     Text,
@@ -16,6 +17,15 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import styles from './TransactionsDetail.style';
 import { Picker } from '@react-native-picker/picker'; // Import Picker for dropdowns
 import useTransactionsDetail from './useTransactionsDetail';
+
+const currencySymbols = {
+    USD: "$",
+    EUR: "€",
+    GBP: "£",
+    INR: "₹",
+    PKR: "₨",
+    JPY: "¥",
+};
 
 export default function DetailTransaction() {
 
@@ -46,7 +56,9 @@ export default function DetailTransaction() {
         expenseCategories,
         handleTypeChange,
         fullScreenImage,
-        setFullScreenImage
+        setFullScreenImage,
+        convertedAmount,
+        selectedCurrency,
     } = useTransactionsDetail()
 
     const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);  // new State
@@ -59,6 +71,8 @@ export default function DetailTransaction() {
     const closeDeleteModal = () => {  // new function
         setIsDeleteModalVisible(false);
     };
+
+    const currencySymbol = currencySymbols[selectedCurrency] || selectedCurrency;
 
     return (
         <View style={styles.container}>
@@ -78,15 +92,13 @@ export default function DetailTransaction() {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.redcontainer}>
-                    <Text style={styles.amount}>{transaction.amount}</Text>
+                    <Text style={styles.amount}>{currencySymbol}{convertedAmount}</Text>
                     <Text style={styles.text}>{transaction.description}</Text>
                     <View style={styles.datebox}>
                         <Text style={styles.dateboxText}>{formattedDate}</Text>
                     </View>
                 </View>
             </View>
-
-
             <View style={styles.belowContainer}>
                 <View style={styles.belowBox1}>
                     <View>
@@ -230,7 +242,6 @@ export default function DetailTransaction() {
                                     keyboardType="numeric"
                                 />
                             </View>
-
                             {/* Description Input */}
                             <View style={styles.inputContainer}>
                                 <Text style={styles.inputLabel}>Description</Text>

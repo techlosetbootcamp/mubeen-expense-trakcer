@@ -1,3 +1,4 @@
+// Setting.tsx
 import React from "react";
 import {
     Text,
@@ -8,16 +9,17 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./Setting.style";
 import useSetting from "./useSetting";
-
-
+import { Picker } from "@react-native-picker/picker";
 
 const Setting = () => {
-
     const {
         isDarkMode,
         setIsDarkMode,
-        navigation
-    } = useSetting()
+        navigation,
+        selectedCurrency,
+        setCurrency,
+        currencies
+    } = useSetting();
 
     return (
         <View style={styles.container}>
@@ -27,12 +29,21 @@ const Setting = () => {
                 </TouchableOpacity>
                 <Text style={styles.header}>Settings</Text>
             </View>
+            
             {/* Currency Selection */}
-            <TouchableOpacity style={styles.option}>
+            <View style={styles.option}>
                 <Ionicons name="cash-outline" size={24} color="#333" />
                 <Text style={styles.optionText}>Currency</Text>
-                <Ionicons name="chevron-forward-outline" size={20} color="#777" />
-            </TouchableOpacity>
+                <Picker
+                    selectedValue={selectedCurrency}
+                    onValueChange={(itemValue) => setCurrency(itemValue)}
+                    style={{ width: 150 }}
+                >
+                    {currencies.map((currency) => (
+                        <Picker.Item key={currency} label={currency} value={currency} />
+                    ))}
+                </Picker>
+            </View>
 
             {/* Dark Mode Toggle */}
             <View style={styles.option}>

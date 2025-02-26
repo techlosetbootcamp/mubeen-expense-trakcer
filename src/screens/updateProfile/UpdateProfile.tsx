@@ -5,35 +5,22 @@ import styles from "./UpdateProfile.style";
 import useUpdateProfile from "./useUpdateProfile";
 
 const UpdateProfile = () => {
-  
   const {
     navigation,
-    route,
     username,
     profilePicture,
     handleUpdateProfile,
-    user,
     setUsername,
     email,
     setEmail,
-    setProfilePicture,
-    originalUsername,
-    setOriginalUsername,
-    originalEmail,
-    setOriginalEmail,
-    originalProfilePicture,
-    setOriginalProfilePicture,
     isUpdating,
-    setIsUpdating,
-    useEffect,
     handleImagePick,
-    handleEmailUpdate, 
-} = useUpdateProfile()
+  } = useUpdateProfile();
 
   // Render Avatar (initials if no picture)
   const renderAvatar = () => {
     if (profilePicture) {
-      return <Image source={{ uri: profilePicture }} style={styles.profileImage} />;
+      return <Image source={{ uri: `data:image/png;base64,${profilePicture}` }} style={styles.profileImage} />;
     }
     const firstLetter = username?.charAt(0).toUpperCase() || "?";
     return (
@@ -89,15 +76,15 @@ const UpdateProfile = () => {
       </View>
 
       {/* Update Profile Button */}
-      <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center"}}>
-      <View style={styles.modalButton}>
-        <TouchableOpacity
-          onPress={handleUpdateProfile}
-          disabled={!isUpdating}
-        >
-          <Text style={styles.modalButtonText}>Update Profile</Text>
-        </TouchableOpacity>
-      </View>
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
+        <View style={styles.modalButton}>
+          <TouchableOpacity
+            onPress={handleUpdateProfile}
+            disabled={!isUpdating}
+          >
+            <Text style={styles.modalButtonText}>Update Profile</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );

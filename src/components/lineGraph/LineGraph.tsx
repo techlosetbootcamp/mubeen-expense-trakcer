@@ -3,11 +3,23 @@ import { View, Dimensions, Text, TouchableOpacity } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import styles from "./LineGraph.style";
 import useLineGraph from "./useLineGraph";
+import { useAppSelector } from "../../store/store";
 
 const { width } = Dimensions.get("window");
 
+const currencySymbols = {
+  USD: "$",
+  EUR: "€",
+  GBP: "£",
+  INR: "₹",
+  PKR: "₨",
+  JPY: "¥",
+};
+
 const LineGraph: React.FC = () => {
   const { selectedFilter, setSelectedFilter, getFilteredData } = useLineGraph();
+  const selectedCurrency = useAppSelector((state: any) => state.user.selectedCurrency);
+  const currencySymbol = currencySymbols[selectedCurrency] || selectedCurrency;
 
   return (
     <>
@@ -36,6 +48,7 @@ const LineGraph: React.FC = () => {
               stroke: "#7F3DFF",
               fill: "#ffffff",
             },
+            formatYLabel: (y) => `${currencySymbol}${y}`,
           }}
           bezier
           style={{

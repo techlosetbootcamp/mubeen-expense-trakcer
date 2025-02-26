@@ -40,45 +40,6 @@ const useAddIncome = () => {
         "Income from Side Hustles",
     ];
 
-    // const handleAttachmentOption = async (option: string) => {
-    //     let result: any = null; // Changed type to any
-    //     console.log('permission', ImagePicker.PermissionStatus)
-
-    //     try {
-    //         if (option === "Camera") {
-    //             const { status } = await MediaLibrary.requestPermissionsAsync();  // Request Permission
-    //             result = await ImagePicker.launchCameraAsync({
-    //                 mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    //                 allowsEditing: true,
-    //                 aspect: [1, 1],
-    //                 quality: 1,
-    //                 base64: true, // include Base64
-    //             });
-    //         } else if (option === "Image") {
-    //             const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync(); // Request Permission
-    //             result = await ImagePicker.launchImageLibraryAsync({
-    //                 mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    //                 base64: true, // include Base64
-    //             });
-    //         } else if (option === "Document") {
-    //             result = await DocumentPicker.getDocumentAsync({
-    //                 type: "*/*",
-    //                 copyToCacheDirectory: true,
-    //             });
-    //         }
-
-    //         if (result && !result.canceled) {
-    //             setAttachment(result.assets ? result.assets[0] : result); // Adjust based on the structure of the result object
-    //             setWhiteSectionHeight(3.0);
-    //         }
-    //     } catch (err) {
-    //         console.error("Error picking or processing the attachment:", err);
-    //         alert("An error occurred while processing the attachment.");
-    //     } finally {
-    //         setAttachmentModalVisible(false);
-    //     }
-    // };
-
 
     const handleAttachmentOption = async (option: string) => {
         let result: any = null; // Changed type to any
@@ -164,48 +125,6 @@ const useAddIncome = () => {
             });
     };
 
-
-
-    // const handleContinuePress = () => {
-    //     if (!amount || !category || !description) {
-    //         alert("Please fill all fields");
-    //         return;
-    //     }
-
-    //     const user = auth.currentUser;
-    //     if (!user) {
-    //         alert("User not logged in");
-    //         return;
-    //     }
-
-    //     const newIncomeRef = ref(database, `incomes/${user.uid}`);
-    //     const newIncome = {
-    //         amount,
-    //         category,
-    //         description,
-    //         attachment: attachment ? attachment.uri : null,
-    //         timestamp: new Date().toISOString(),
-    //     };
-
-    //     push(newIncomeRef, newIncome)
-    //         .then(() => {
-    //             dispatch(setIncome([...userIncome, newIncome])); // Update Redux store
-    //             setPopupVisible(true);
-    //             setTimeout(() => {
-    //                 setPopupVisible(false);
-    //                 setAmount("0");
-    //                 setCategory("");
-    //                 setDescription("");
-    //                 setAttachment(null);
-    //                 setWhiteSectionHeight(1.5);
-    //                 navigation.navigate("Main");
-    //             }, 2000);
-    //         })
-    //         .catch((error) => {
-    //             console.error("Error adding income to Firebase:", error);
-    //             alert("Failed to add income.");
-    //         });
-    // };
 
     return {
         amount,

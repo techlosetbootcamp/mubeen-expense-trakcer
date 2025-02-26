@@ -1,9 +1,40 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useAppSelector } from "../../store/store";
+import axios from "axios";
+
+const exchangeRateApiUrl = "https://v6.exchangerate-api.com/v6/46d49f7b580e6aefec6a3578/latest/USD";
+const apikey = "YOUR_API_KEY"; // Replace with your actual API key
 
 const useLineGraph = () => {
   const [selectedFilter, setSelectedFilter] = useState("Today"); // Default to Today
   const expenses = useAppSelector((state) => state.expense.expenses || []);
+  const selectedCurrency = useAppSelector((state: any) => state.user.selectedCurrency);
+
+  const [exchangeRates, setExchangeRates] = React.useState({});
+  const [convertedExpenses, setConvertedExpenses] = React.useState(expenses);
+
+  React.useEffect(() => {
+    const fetchExchangeRates = async () => {
+      try {
+        const response = await axios.get(exchangeRateApiUrl);
+        const rates = response.data.conversion_rates;
+        setExchangeRates(rates);
+
+        if (selectedCurrency && rates[selectedCurrency]) {
+          const rate = rates[selectedCurrency];
+          const convertedExpensesList = expenses.map((expense) => ({
+            ...expense,
+            amount: (parseFloat(expense.amount) * rate).toString(),
+          }));
+          setConvertedExpenses(convertedExpensesList);
+        }
+      } catch (error) {
+        console.error("Error fetching exchange rates:", error);
+      }
+    };
+
+    fetchExchangeRates();
+  }, [selectedCurrency, expenses]);
 
   // Function to convert UTC timestamp to local date
   const convertToLocalDate = (utcTimestamp: string) => {
@@ -23,7 +54,7 @@ const useLineGraph = () => {
     const now = new Date();
     let groupedData: { [key: string]: number } = {};
 
-    expenses.forEach((expense) => {
+    convertedExpenses.forEach((expense) => {
       const localDate = convertToLocalDate(expense.timestamp);
 
       const isToday =

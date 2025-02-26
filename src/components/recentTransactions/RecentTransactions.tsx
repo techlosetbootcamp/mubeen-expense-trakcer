@@ -3,6 +3,16 @@ import React from "react";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import styles from "./RecentTransactions.style";
 import { useRecentTransactions } from "./useRecentTransactions";
+import { useAppSelector } from "../../store/store";
+
+const currencySymbols = {
+  USD: "$",
+  EUR: "€",
+  GBP: "£",
+  INR: "₹",
+  PKR: "₨",
+  JPY: "¥",
+};
 
 type RecentTransactionsProps = {
   recentText: string;
@@ -20,8 +30,12 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
     setShowAll,
     transactions,
     truncateDescription,
-    navigation
+    navigation,
+    formatAmount
   } = useRecentTransactions()
+
+  const selectedCurrency = useAppSelector((state: any) => state.user.selectedCurrency);
+  const currencySymbol = currencySymbols[selectedCurrency] || selectedCurrency;
 
   const baseStyles = {
     "Food & Dining": { iconBackgroundColor: "#fdd5d7", iconColor: "#fd3c4a", iconName: "restaurant" },
@@ -93,12 +107,10 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
                     <Text style={styles.BuyText}>{truncateDescription(transaction.description, 17)}</Text>
                   </View>
                 </TouchableOpacity>
-                <View style={styles.TransactionInfo}>
-                  <Text style={transaction.type === "income" ? styles.IncomePriceText : styles.PriceText}>
-                    {transaction.type === "income" ? "+ " : "- "} ${transaction.amount}
-                  </Text>
-                  <Text style={styles.TiemText}>{transaction.time}</Text>
-                </View>
+                <Text style={transaction.type === "income" ? styles.IncomePriceText : styles.PriceText}>
+                  {transaction.type === "income" ? "+ " : "- "} {currencySymbol}{formatAmount(transaction.amount)}
+                </Text>
+
               </View>
             );
           })}

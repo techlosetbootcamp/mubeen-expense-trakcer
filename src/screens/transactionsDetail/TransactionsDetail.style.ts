@@ -112,7 +112,6 @@ const styles = StyleSheet.create({
     height: 116,
     marginBottom: 10,
     borderRadius: 8,
-    // overflow: 'hidden',
   },
   imageText: {
     fontSize: 16,

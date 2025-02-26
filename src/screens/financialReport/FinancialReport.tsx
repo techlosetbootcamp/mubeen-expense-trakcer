@@ -14,31 +14,22 @@ import styles from "./FinancialReport.style";
 import useFinancialReport from "./useFinancialReport";
 
 const FinancialReport = () => {
-
   const {
     navigation,
-    user,
     selectedMonth,
     setSelectedMonth,
-    transactions,
-    setTransactions,
     isDropdownVisible,
     setIsDropdownVisible,
     selectedType,
     setSelectedType,
-    useEffect,
     handleSelect,
     toggleDropdown,
-    getCategoryColors,
-    getFilteredTransactions,
     getChartData,
     screenWidth,
-  } = useFinancialReport()
-
+  } = useFinancialReport();
 
   return (
-
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <AntDesign name="arrowleft" size={24} color="black" />
@@ -57,18 +48,8 @@ const FinancialReport = () => {
             <View style={styles.dropdownMenu}>
               <FlatList
                 data={[
-                  "January",
-                  "February",
-                  "March",
-                  "April",
-                  "May",
-                  "June",
-                  "July",
-                  "August",
-                  "September",
-                  "October",
-                  "November",
-                  "December",
+                  "January", "February", "March", "April", "May", "June",
+                  "July", "August", "September", "October", "November", "December",
                 ]}
                 keyExtractor={(item) => item}
                 renderItem={({ item }) => (
@@ -122,7 +103,7 @@ const FinancialReport = () => {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.progressContainer}>
+      <ScrollView style={styles.progressContainer} showsVerticalScrollIndicator={false}>
         {getChartData().map((item, index) => (
           <View key={index} style={styles.progressItem}>
             <Text style={styles.categoryText}>{item.barGraphname}</Text>
@@ -137,9 +118,8 @@ const FinancialReport = () => {
             <Text style={styles.amountText}></Text>
           </View>
         ))}
-      </View>
-    </ScrollView>
-
+      </ScrollView>
+    </View>
   );
 };
 

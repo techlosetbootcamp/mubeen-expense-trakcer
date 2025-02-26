@@ -1,8 +1,13 @@
+// hooks/useTransactionsDetail.ts
 import { View, Text, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { onValue, ref, remove, set } from 'firebase/database';
 import { auth, database } from '../../config/firebaseConfig';
+import { useAppSelector } from '../../store/store';
+import axios from 'axios';
+
+const exchangeRateApiUrl = "https://v6.exchangerate-api.com/v6/46d49f7b580e6aefec6a3578/latest/USD";
 
 const useTransactionsDetail = () => {
 
@@ -16,6 +21,23 @@ const useTransactionsDetail = () => {
     const [editedTransaction, setEditedTransaction] = useState<any>({});
     const isExpense = type === 'Expense';
     const [fullScreenImage, setFullScreenImage] = useState(null);
+    const selectedCurrency = useAppSelector((state: any) => state.user.selectedCurrency);
+    const [exchangeRates, setExchangeRates] = useState({});
+    const [convertedAmount, setConvertedAmount] = useState<string>('');
+
+    useEffect(() => {
+        const fetchExchangeRates = async () => {
+            try {
+                const response = await axios.get(exchangeRateApiUrl);
+                const rates = response.data.conversion_rates;
+                setExchangeRates(rates);
+            } catch (error) {
+                console.error("Error fetching exchange rates:", error);
+            }
+        };
+
+        fetchExchangeRates();
+    }, []);
 
     useEffect(() => {
         if (!transactionId || !type) {
@@ -27,15 +49,25 @@ const useTransactionsDetail = () => {
 
         const unsubscribe = onValue(transactionRef, (snapshot) => {
             if (snapshot.exists()) {
-                setTransaction({ ...snapshot.val(), id: transactionId });
-                setEditedTransaction({ ...snapshot.val(), id: transactionId });
+                const transactionData = snapshot.val();
+                setTransaction({ ...transactionData, id: transactionId });
+                setEditedTransaction({ ...transactionData, id: transactionId });
+
+                // Convert amount to selected currency
+                if (selectedCurrency && exchangeRates[selectedCurrency]) {
+                    const rate = exchangeRates[selectedCurrency];
+                    const convertedAmountValue = (parseFloat(transactionData.amount) * rate).toFixed(2);
+                    setConvertedAmount(convertedAmountValue);
+                } else {
+                    setConvertedAmount(transactionData.amount);
+                }
             } else {
                 console.log('No data available for transaction ID:', transactionId);
             }
         });
 
         return () => unsubscribe();
-    }, [transactionId, type]);
+    }, [transactionId, type, selectedCurrency, exchangeRates]);
 
     // Function to delete a transaction after confirmation
     const confirmDeleteTransaction = async () => {
@@ -118,35 +150,37 @@ const useTransactionsDetail = () => {
         setEditedTransaction({ ...editedTransaction, type: itemValue });
     };
 
-  return {
-    openModal,
-    setOpenModal,
-    openEditModal,
-    setOpenEditModal,
-    showFullCategory,
-    setShowFullCategory,
-    navigation,
-    route,
-    transactionId,
-    type,
-    transaction,
-    setTransaction,
-    editedTransaction,
-    setEditedTransaction,
-    isExpense,
-    useEffect,
-    confirmDeleteTransaction,
-    handleEditTransaction,
-    saveEditedTransaction,
-    formattedDate,
-    categories,
-    setCategories,
-    incomeCategories,
-    expenseCategories,
-    handleTypeChange,
-    fullScreenImage,
-    setFullScreenImage
-  }
+    return {
+        openModal,
+        setOpenModal,
+        openEditModal,
+        setOpenEditModal,
+        showFullCategory,
+        setShowFullCategory,
+        navigation,
+        route,
+        transactionId,
+        type,
+        transaction,
+        setTransaction,
+        editedTransaction,
+        setEditedTransaction,
+        isExpense,
+        useEffect,
+        confirmDeleteTransaction,
+        handleEditTransaction,
+        saveEditedTransaction,
+        formattedDate,
+        categories,
+        setCategories,
+        incomeCategories,
+        expenseCategories,
+        handleTypeChange,
+        fullScreenImage,
+        setFullScreenImage,
+        convertedAmount,
+        selectedCurrency,
+    }
 }
 
 export default useTransactionsDetail
