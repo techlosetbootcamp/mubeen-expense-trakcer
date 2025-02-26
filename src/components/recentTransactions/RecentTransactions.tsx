@@ -10,7 +10,7 @@ const currencySymbols = {
   EUR: "€",
   GBP: "£",
   INR: "₹",
-  PKR: "₨",
+  PKR: "PKR ",
   JPY: "¥",
 };
 

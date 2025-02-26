@@ -5,13 +5,23 @@ import {
   View,
   SectionList,
   ScrollView,
-  StyleSheet
+  StyleSheet,
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Modal } from "react-native";
 import styles from "./Transactions.style";
 import useTransaction from "./useTransaction";
+import { useAppSelector } from "../../store/store";
+
+const currencySymbols = {
+  USD: "$",
+  EUR: "€",
+  GBP: "£",
+  INR: "₹",
+  PKR: "₨",
+  JPY: "¥",
+};
 
 const Transactions = () => {
   const {
@@ -31,7 +41,6 @@ const Transactions = () => {
     setTransactions,
     user,
     navigation,
-    useEffect,
     toggleDropdown,
     handleSelect,
     resetMonthFilter,
@@ -43,12 +52,14 @@ const Transactions = () => {
     resetAllFilters,
     hasDisplayableTransactions,
     transactionsToDisplay,
+    formatAmount,
   } = useTransaction();
+  const selectedCurrency = useAppSelector((state) => state.user.selectedCurrency as keyof typeof currencySymbols);
+  const currencySymbol = currencySymbols[selectedCurrency] || selectedCurrency;
 
-  const renderTransactionItem = ({ item }) => {
+  const renderTransactionItem = ({ item }: { item: Transaction }) => {
     const { iconBackgroundColor, iconColor, iconName } = getCategoryStyles(
       item.category
-      
     );
     const isIncome = item.type === "income";
 
@@ -88,7 +99,7 @@ const Transactions = () => {
         </TouchableOpacity>
         <View style={styles.TransactionInfo}>
           <Text style={[styles.PriceText, { color: isIncome ? "green" : "red" }]}>
-            {isIncome ? "+ " : "- "} ${item.amount}
+            {isIncome ? "+ " : "- "} {currencySymbol}{formatAmount(item.amount)}
           </Text>
           <Text style={styles.TiemText}>{item.timestamp.split("T")[1].slice(0, 5)}</Text>
         </View>
@@ -117,7 +128,6 @@ const Transactions = () => {
             {isDropdownVisible && (
               <View style={styles.dropdownMenu}>
                 <ScrollView>
-                  {/* Wrap FlatList content with ScrollView */}
                   {[
                     "January",
                     "February",
@@ -170,7 +180,7 @@ const Transactions = () => {
       {/* Transactions List */}
       {hasDisplayableTransactions ? (
         <SectionList
-          style={{marginVertical: 10, marginLeft:0}}
+          style={{ marginVertical: 10, marginLeft: 0 }}
           sections={Object.entries(transactionsToDisplay).map(
             ([sectionTitle, transactionsList]) => ({
               title: sectionTitle,
@@ -185,13 +195,14 @@ const Transactions = () => {
         />
       ) : (
         <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <View style={styles.emptyContainer}>
-          <Ionicons name="document-text-outline" size={80} color="gray" />
-          <Text style={styles.emptyText}>No transactions available</Text>
-        </View>
-      </ScrollView>
+          <View style={styles.emptyContainer}>
+            <Ionicons name="document-text-outline" size={80} color="gray" />
+            <Text style={styles.emptyText}>No transactions available</Text>
+          </View>
+        </ScrollView>
       )}
 
+      {/* Filter Modal */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -200,7 +211,7 @@ const Transactions = () => {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
-            {/* heading and reset button */}
+            {/* Modal content */}
             <View style={styles.resetContainer}>
               <Text style={styles.modalTitle}>Filter Transaction</Text>
               <TouchableOpacity onPress={handleResetFilters}>
@@ -235,8 +246,11 @@ const Transactions = () => {
                   Expense
                 </Text>
               </TouchableOpacity>
-            </View>...{/* Sort by heading */}
+            </View>
+
+            {/* Sort by heading */}
             <Text style={styles.headingText}>Sort By</Text>
+
             {/* Sort by buttons */}
             <View style={styles.SortButtonsContainer}>
               <TouchableOpacity
@@ -279,6 +293,7 @@ const Transactions = () => {
 
             {/* Category text */}
             <Text style={styles.headingText}>Category</Text>
+
             {/* Category Input */}
             <TouchableOpacity style={styles.categoryContainer}>
               <View>
@@ -290,7 +305,7 @@ const Transactions = () => {
               </View>
             </TouchableOpacity>
 
-            {/* close button */}
+            {/* Apply button */}
             <TouchableOpacity style={styles.modalButton} onPress={applyFilters}>
               <Text style={styles.modalButtonText}>Apply</Text>
             </TouchableOpacity>
@@ -304,10 +319,9 @@ const Transactions = () => {
 const internalStyles = StyleSheet.create({
   stickyHeader: {
     backgroundColor: "#fff",
-    zIndex: 10, // Ensure it stays on top
+    zIndex: 10,
     paddingTop: 50,
     paddingHorizontal: 20,
-    // Add other styles you want for the header container
   },
 });
 

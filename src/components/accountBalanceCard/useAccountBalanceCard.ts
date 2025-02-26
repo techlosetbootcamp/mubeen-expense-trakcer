@@ -45,7 +45,7 @@ const useAccountBalanceCard = () => {
     EUR: "€",
     GBP: "£",
     INR: "₹",
-    PKR: "₨",
+    PKR: "PKR ",
     JPY: "¥",
   };
 

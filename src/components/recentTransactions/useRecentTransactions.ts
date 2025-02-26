@@ -18,12 +18,9 @@ export const useRecentTransactions = () => {
   const [convertedTransactions, setConvertedTransactions] = React.useState(transactions);
 
   const formatAmount = (amount: number) => {
-    const amountString = String(amount);
-    if (amountString.length > 10) {
-      return `${amountString.slice(0, 10)}...`;
-    }
-    return amountString;
-  };
+    const numericAmount = Number(amount); // Convert to number
+    return numericAmount.toFixed(2);
+  }
 
   React.useEffect(() => {
     if (!user) return;

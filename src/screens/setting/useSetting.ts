@@ -1,4 +1,3 @@
-// useSetting.ts
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';

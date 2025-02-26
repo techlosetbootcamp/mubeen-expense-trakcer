@@ -23,7 +23,7 @@ const AccountBalanceCard = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Account Balance</Text>
-      <Text style={styles.amount}>{currencySymbol}{accountBalance}</Text>
+      <Text style={styles.amount}>{currencySymbol}{Number(accountBalance).toFixed(2)}</Text>
 
       <View style={styles.IncomeAndTextCont}>
         <TouchableOpacity style={styles.IncomButton} onPress={handleIncomeModalToggle}>
@@ -57,7 +57,7 @@ const AccountBalanceCard = () => {
                 <MaterialIcons name="close" size={24} color="#000" />
               </TouchableOpacity>
             </View>
-            <Text style={styles.modalAmount}>{currencySymbol}{totalIncome}</Text>
+            <Text style={styles.modalAmount}>{currencySymbol}{totalIncome.toFixed(2)}</Text>
           </View>
         </View>
       </Modal>
@@ -77,7 +77,7 @@ const AccountBalanceCard = () => {
                 <MaterialIcons name="close" size={24} color="#000" />
               </TouchableOpacity>
             </View>
-            <Text style={styles.modalAmount}>{currencySymbol}{totalExpenses}</Text>
+            <Text style={styles.modalAmount}>{currencySymbol}{totalExpenses.toFixed(2)}</Text>
           </View>
         </View>
       </Modal>

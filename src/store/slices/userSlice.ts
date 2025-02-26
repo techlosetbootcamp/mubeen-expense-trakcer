@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { Income } from "./incomeSlice";
 
 interface User {
@@ -23,6 +24,15 @@ const initialUserState: UserState = {
     selectedCurrency: "USD" // Default currency
 };
 
+// Async thunk to load currency from AsyncStorage
+export const loadCurrency = createAsyncThunk(
+    'user/loadCurrency',
+    async () => {
+        const currency = await AsyncStorage.getItem('selectedCurrency');
+        return currency || "USD"; // Return default if no currency is stored
+    }
+);
+
 const userSlice = createSlice({
     name: "user",
     initialState: initialUserState,
@@ -46,7 +56,13 @@ const userSlice = createSlice({
         },
         setCurrency(state, action: PayloadAction<string>) {
             state.selectedCurrency = action.payload;
-        }
+            AsyncStorage.setItem('selectedCurrency', action.payload); // Persist currency to AsyncStorage
+        },
+    },
+    extraReducers: (builder) => {
+        builder.addCase(loadCurrency.fulfilled, (state, action) => {
+            state.selectedCurrency = action.payload;
+        });
     }
 });
 

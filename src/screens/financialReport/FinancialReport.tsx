@@ -12,6 +12,16 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import styles from "./FinancialReport.style";
 import useFinancialReport from "./useFinancialReport";
+import { useAppSelector } from "../../store/store";
+
+const currencySymbols = {
+  USD: "$",
+  EUR: "€",
+  GBP: "£",
+  INR: "₹",
+  PKR: "PKR ",
+  JPY: "¥",
+};
 
 const FinancialReport = () => {
   const {
@@ -26,7 +36,10 @@ const FinancialReport = () => {
     toggleDropdown,
     getChartData,
     screenWidth,
+    formatAmount, // Add this function from useFinancialReport
   } = useFinancialReport();
+  const selectedCurrency = useAppSelector((state) => state.user.selectedCurrency as keyof typeof currencySymbols);
+  const currencySymbol = currencySymbols[selectedCurrency] || selectedCurrency;
 
   return (
     <View style={styles.container}>
@@ -115,7 +128,7 @@ const FinancialReport = () => {
                 ]}
               />
             </View>
-            <Text style={styles.amountText}></Text>
+            <Text style={styles.amountText}>{currencySymbol}{formatAmount(item.population)}</Text>
           </View>
         ))}
       </ScrollView>

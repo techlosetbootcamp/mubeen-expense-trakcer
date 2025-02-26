@@ -3,6 +3,11 @@ import { useAppSelector } from '../../store/store';
 import { useNavigation } from '@react-navigation/native';
 import { onValue, ref } from 'firebase/database';
 import { database } from '../../config/firebaseConfig';
+import axios from 'axios';
+
+
+
+const exchangeRateApiUrl = "https://v6.exchangerate-api.com/v6/46d49f7b580e6aefec6a3578/latest/USD";
 
 const useTransaction = () => {
 
@@ -10,47 +15,73 @@ const useTransaction = () => {
     const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
     const [selectedSort, setSelectedSort] = useState<string | null>(null);
     const [filteredTransactionsData, setFilteredTransactionsData] = useState<any[]>([]);
-
     const [isDropdownVisible, setIsDropdownVisible] = useState(false);
     const [selectedMonth, setSelectedMonth] = useState("Month");
     const [transactions, setTransactions] = useState<any[]>([]);
     const user = useAppSelector((state) => state.user.user);
+    const [exchangeRates, setExchangeRates] = useState({});
+    const selectedCurrency = useAppSelector((state) => state.user.selectedCurrency);
     const navigation: any = useNavigation();
 
     useEffect(() => {
         if (!user) return;
-
+    
         const expensesRef = ref(database, `expenses/${user.uid}`);
         const incomesRef = ref(database, `incomes/${user.uid}`);
-
+    
         const handleTransactions = (snapshot: any, type: "expense" | "income") => {
-            if (snapshot.exists()) {
-                const data = snapshot.val();
-                const transactionsList = Object.keys(data).map((key) => ({
-                    id: key,
-                    ...data[key],
-                    type, // Identifies income vs expense
-                }));
-                return transactionsList;
-            }
-            return [];
+          if (snapshot.exists()) {
+            const data = snapshot.val();
+            const transactionsList = Object.keys(data).map((key) => ({
+              id: key,
+              ...data[key],
+              type,
+            }));
+            return transactionsList;
+          }
+          return [];
         };
-
+    
         const unsubscribeExpenses = onValue(expensesRef, (snapshot) => {
-            const expenseData = handleTransactions(snapshot, "expense");
-            setTransactions((prev) => [...expenseData, ...prev].sort((a, b) => b.timestamp.localeCompare(a.timestamp)));
+          const expenseData = handleTransactions(snapshot, "expense");
+          setTransactions((prev) => [...expenseData, ...prev].sort((a, b) => b.timestamp.localeCompare(a.timestamp)));
         });
-
+    
         const unsubscribeIncomes = onValue(incomesRef, (snapshot) => {
-            const incomeData = handleTransactions(snapshot, "income");
-            setTransactions((prev) => [...incomeData, ...prev].sort((a, b) => b.timestamp.localeCompare(a.timestamp)));
+          const incomeData = handleTransactions(snapshot, "income");
+          setTransactions((prev) => [...incomeData, ...prev].sort((a, b) => b.timestamp.localeCompare(a.timestamp)));
         });
-
+    
         return () => {
-            unsubscribeExpenses();
-            unsubscribeIncomes();
+          unsubscribeExpenses();
+          unsubscribeIncomes();
         };
-    }, [user]);
+      }, [user]);
+
+
+
+      useEffect(() => {
+        const fetchExchangeRates = async () => {
+          try {
+            const response = await axios.get(exchangeRateApiUrl);
+            const rates = response.data.conversion_rates;
+            setExchangeRates(rates);
+          } catch (error) {
+            console.error("Error fetching exchange rates:", error);
+          }
+        };
+    
+        fetchExchangeRates();
+      }, []);
+      const formatAmount = (amount: number) => {
+        if (selectedCurrency && selectedCurrency in exchangeRates) {
+          const convertedAmount = amount * exchangeRates[selectedCurrency as keyof typeof exchangeRates];
+          return convertedAmount.toFixed(2); // Format to 2 decimal places
+        }
+        return amount
+      }
+      
+
 
     const toggleDropdown = () => {
         setIsDropdownVisible(!isDropdownVisible);
@@ -218,6 +249,7 @@ const useTransaction = () => {
         resetAllFilters,
         hasDisplayableTransactions,
         transactionsToDisplay,
+        formatAmount
     }
 }
 
