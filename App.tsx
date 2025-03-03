@@ -3,13 +3,15 @@ import { NavigationContainer } from "@react-navigation/native";
 import { Provider, useDispatch } from "react-redux";
 import store from "./src/store/store";
 import StackNavigation from "./src/navigation/StackNavigation";
-import { loadCurrency } from "./src/store/slices/userSlice";
+import { loadCurrency } from "./src/store/slices/userSlice"; // Add loadUserFromFirebase
+import { loadUserFromFirebase } from "./src/store/slices/userSlice";
 
 const AppWrapper = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(loadCurrency() as any); // Load currency from AsyncStorage
+    dispatch(loadUserFromFirebase() as any); // Load user data from Firebase
   }, [dispatch]);
 
   return (

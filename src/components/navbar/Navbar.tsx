@@ -9,13 +9,9 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import useNavbar from "./useNavbar";
 import styles from "./Navbar.style";
+import { useAppSelector } from "../../store/store"; // Import useAppSelector
 
-interface NavbarProps {
-  profilePicture?: string;
-  name?: string;
-}
-
-const Navbar: React.FC<NavbarProps> = ({ profilePicture, name }) => {
+const Navbar: React.FC = () => {
   const {
     navigation,
     isDropdownVisible,
@@ -25,9 +21,13 @@ const Navbar: React.FC<NavbarProps> = ({ profilePicture, name }) => {
     handleSelect,
   } = useNavbar();
 
+  // Fetch profile picture and name from Redux
+  const profilePicture = useAppSelector((state) => state.user.profilePicture);
+  const name = useAppSelector((state) => state.user.name);
+
   const renderAvatar = () => {
     if (profilePicture) {
-      return <Image source={{ uri: profilePicture }} style={styles.profileImage} />;
+      return <Image source={{ uri: `data:image/png;base64,${profilePicture}` }} style={styles.profileImage} />;
     }
     return (
       <View style={styles.placeholder}>

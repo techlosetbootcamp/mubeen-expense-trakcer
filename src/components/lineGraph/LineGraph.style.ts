@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    // Remove backgroundColor and elevation to let the line stand alone
+    backgroundColor: "white"
   },
   title: {
     fontSize: 20,

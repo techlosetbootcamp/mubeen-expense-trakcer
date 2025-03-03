@@ -4,22 +4,23 @@ import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import styles from "./Profile.style";
 import useProfile from "./useProfile";
+import { useAppSelector } from "../../store/store"; // Import useAppSelector
 
 const Profile: React.FC = () => {
-
   const {
     navigation,
     username,
     setUsername,
-    profilePicture,
-    setProfilePicture,
     isLogoutModalVisible,
     setLogoutModalVisible,
     useEffect,
     openLogoutModal,
     closeLogoutModal,
     handleLogout
-  } = useProfile()
+  } = useProfile();
+
+  // Fetch profile picture from Redux
+  const profilePicture = useAppSelector((state) => state.user.profilePicture);
 
   return (
     <View style={styles.container}>
@@ -27,7 +28,7 @@ const Profile: React.FC = () => {
       <View style={styles.profileSection}>
         <TouchableOpacity style={styles.avatarContainer}>
           {profilePicture ? (
-            <Image source={{ uri: profilePicture }} style={styles.profileImage} />
+            <Image source={{ uri: `data:image/png;base64,${profilePicture}` }} style={styles.profileImage} />
           ) : (
             <View style={styles.placeholder}>
               <Text style={styles.placeholderText}>{username.charAt(0).toUpperCase()}</Text>

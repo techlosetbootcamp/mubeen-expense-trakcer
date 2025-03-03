@@ -5,10 +5,13 @@ import { get, ref, set } from 'firebase/database';
 import { auth, database } from '../../config/firebaseConfig';
 import * as ImagePicker from 'expo-image-picker';
 import { EmailAuthProvider, reauthenticateWithCredential, updateEmail } from 'firebase/auth';
+import { useDispatch } from 'react-redux';
+import { setUserProfile } from '../../store/slices/userSlice';
 
 const useUpdateProfile = () => {
     const navigation: any = useNavigation();
     const route = useRoute();
+    const dispatch = useDispatch();
     const { username: initialUsername, profilePicture: initialProfilePicture } = route.params as {
         username: string;
         profilePicture: string;
@@ -16,7 +19,6 @@ const useUpdateProfile = () => {
 
     const user = auth.currentUser;
 
-    // State hooks
     const [username, setUsername] = useState(initialUsername);
     const [email, setEmail] = useState(user?.email || '');
     const [profilePicture, setProfilePicture] = useState(initialProfilePicture);
@@ -25,7 +27,6 @@ const useUpdateProfile = () => {
     const [originalProfilePicture, setOriginalProfilePicture] = useState(initialProfilePicture);
     const [isUpdating, setIsUpdating] = useState(false);
 
-    // Fetch user data on mount
     useEffect(() => {
         if (user) {
             const userRef = ref(database, `users/${user.uid}`);
@@ -36,12 +37,15 @@ const useUpdateProfile = () => {
                     setOriginalUsername(userData.displayName || '');
                     setProfilePicture(userData.profilePicture || '');
                     setOriginalProfilePicture(userData.profilePicture || '');
+                    dispatch(setUserProfile({
+                        profilePicture: userData.profilePicture || '',
+                        name: userData.displayName || ''
+                    }));
                 }
             });
         }
-    }, [user]);
+    }, [user, dispatch]);
 
-    // Handle Image Upload with Base64
     const handleImagePick = async (fromCamera: boolean) => {
         let result: any = null;
 
@@ -56,7 +60,7 @@ const useUpdateProfile = () => {
                     allowsEditing: true,
                     aspect: [1, 1],
                     quality: 1,
-                    base64: true, // Include Base64
+                    base64: true,
                 });
             } else {
                 const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -68,12 +72,20 @@ const useUpdateProfile = () => {
                     allowsEditing: true,
                     aspect: [1, 1],
                     quality: 1,
-                    base64: true, // Include Base64
+                    base64: true,
                 });
             }
 
             if (!result.canceled) {
-                setProfilePicture(result.assets[0].base64); // Store Base64 data
+                const base64Image = result.assets[0].base64;
+                setProfilePicture(base64Image);
+                if (user) {
+                    await set(ref(database, `users/${user.uid}/profilePicture`), base64Image);
+                    dispatch(setUserProfile({
+                        profilePicture: base64Image,
+                        name: username
+                    }));
+                }
             }
         } catch (error) {
             console.error('Error selecting image:', error);
@@ -81,7 +93,6 @@ const useUpdateProfile = () => {
         }
     };
 
-    // Handle Email Update (Requires Re-authentication)
     const handleEmailUpdate = async () => {
         if (!user) return;
         try {
@@ -99,6 +110,7 @@ const useUpdateProfile = () => {
                             const credential = EmailAuthProvider.credential(user.email!, password);
                             await reauthenticateWithCredential(user, credential);
                             await updateEmail(user, email);
+                            await set(ref(database, `users/${user.uid}/email`), email);
                             Alert.alert('Success', 'Email updated successfully!');
                         } catch (error) {
                             Alert.alert('Error', 'Re-authentication failed. Please check your password.');
@@ -111,7 +123,6 @@ const useUpdateProfile = () => {
         }
     };
 
-    // Handle Profile Update
     const handleUpdateProfile = async () => {
         if (!user) return;
         try {
@@ -126,6 +137,11 @@ const useUpdateProfile = () => {
             if (profilePicture !== originalProfilePicture) {
                 await set(ref(database, `users/${user.uid}/profilePicture`), profilePicture);
             }
+
+            dispatch(setUserProfile({
+                profilePicture: profilePicture || '',
+                name: username
+            }));
 
             Alert.alert('Success', 'Profile updated successfully!');
             navigation.goBack();

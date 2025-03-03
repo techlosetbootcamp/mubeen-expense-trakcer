@@ -17,10 +17,10 @@ const UpdateProfile = () => {
     handleImagePick,
   } = useUpdateProfile();
 
-  // Render Avatar (initials if no picture)
   const renderAvatar = () => {
     if (profilePicture) {
-      return <Image source={{ uri: `data:image/png;base64,${profilePicture}` }} style={styles.profileImage} />;
+      // Assume JPEG since most photos are JPEG; adjust if needed
+      return <Image source={{ uri: `data:image/jpeg;base64,${profilePicture}` }} style={styles.profileImage} />;
     }
     const firstLetter = username?.charAt(0).toUpperCase() || "?";
     return (
@@ -32,7 +32,6 @@ const UpdateProfile = () => {
 
   return (
     <View style={styles.container}>
-      {/* Back Arrow and Heading */}
       <View style={styles.arrowText}>
         <AntDesign
           name="arrowleft"
@@ -45,7 +44,6 @@ const UpdateProfile = () => {
         </Text>
       </View>
 
-      {/* Profile Picture */}
       <View style={styles.profilePictureContainer}>
         <TouchableOpacity onPress={() => handleImagePick(false)}>
           {renderAvatar()}
@@ -55,7 +53,6 @@ const UpdateProfile = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Input Fields */}
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Email</Text>
         <TextInput
@@ -75,7 +72,6 @@ const UpdateProfile = () => {
         />
       </View>
 
-      {/* Update Profile Button */}
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
         <View style={styles.modalButton}>
           <TouchableOpacity

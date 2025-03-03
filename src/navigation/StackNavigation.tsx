@@ -1,7 +1,7 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import { RootState, useAppDispatch, useAppSelector } from "../store/store";
 import { onAuthStateChanged } from "firebase/auth";
-import { loadUser, setUser } from "../store/slices/userSlice";
+import {  setUser, loadUserFromFirebase } from "../store/slices/userSlice"; // Add loadUserFromFirebase
 import { fetchIncome } from "../store/slices/incomeSlice";
 import { get, ref } from "firebase/database";
 import { auth, database } from "../config/firebaseConfig";
@@ -28,6 +28,9 @@ const StackNavigation: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    // Load user data from Firebase on app startup
+    dispatch(loadUserFromFirebase());
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         const userRef = ref(database, `users/${firebaseUser.uid}`);
@@ -41,7 +44,7 @@ const StackNavigation: React.FC = () => {
             uid: firebaseUser.uid,
             email: firebaseUser.email,
             displayName: userData.displayName || "",
-            photoURL: firebaseUser.photoURL || "",
+            photoURL: userData.profilePicture || "", // Use profilePicture from Firebase
             income: [],
           })
         );
@@ -49,22 +52,27 @@ const StackNavigation: React.FC = () => {
         dispatch(fetchIncome());
         dispatch(fetchExpenses());
   
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "Main" as never }],
-        });
+        if (!hasNavigated.current) {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "Main" as never }],
+          });
+          hasNavigated.current = true;
+        }
       } else {
         dispatch(setUser(null as any));
+        if (!hasNavigated.current) {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "Authentication" as never }],
+          });
+          hasNavigated.current = true;
+        }
       }
     });
   
     return () => unsubscribe();
   }, [dispatch, navigation]);
-
-  // useEffect(() => {
-  //   dispatch(loadUser());
-  // }, [dispatch]);
-
 
   if (isSplashVisible) {
     return <SplashScreen />;

@@ -39,7 +39,7 @@ const LineGraph: React.FC = () => {
             backgroundGradientFrom: "transparent", // No gradient
             backgroundGradientTo: "transparent", // No gradient
             decimalPlaces: 0,
-            color: (opacity = 1) => `rgba(127, 61, 255, ${opacity})`,
+            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
             style: { borderRadius: 0 }, // Remove rounding for edge alignment
           }}
           bezier
