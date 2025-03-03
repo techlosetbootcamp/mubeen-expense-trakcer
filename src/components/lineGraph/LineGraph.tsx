@@ -28,25 +28,27 @@ const LineGraph: React.FC = () => {
         {/* Line Graph */}
         <LineChart
           data={getFilteredData(selectedFilter)}
-          width={width} // Set to full screen width
+          width={width} // Full screen width
           height={220}
+          withDots={false} // Remove dots
           withInnerLines={false}
           withHorizontalLabels={false}
           withVerticalLabels={false}
           chartConfig={{
-            backgroundColor: "white",
-            backgroundGradientFrom: "#faf7ff",
-            backgroundGradientTo: "#faf7ff",
+            backgroundColor: "transparent", // Remove background color
+            backgroundGradientFrom: "transparent", // No gradient
+            backgroundGradientTo: "transparent", // No gradient
             decimalPlaces: 0,
             color: (opacity = 1) => `rgba(127, 61, 255, ${opacity})`,
-            style: { borderRadius: 16 },
+            style: { borderRadius: 0 }, // Remove rounding for edge alignment
           }}
           bezier
           style={{
             marginVertical: 8,
-            borderRadius: 16,
             paddingLeft: 0,
+            paddingRight: 0, // Ensure no padding on right
             marginLeft: 0,
+            marginRight: 0, // Ensure no margin on right
           }}
         />
 

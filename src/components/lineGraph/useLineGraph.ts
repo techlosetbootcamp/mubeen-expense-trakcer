@@ -113,7 +113,7 @@ const useLineGraph = () => {
         {
           data: dataValues,
           color: (opacity = 1) => `rgba(127, 61, 255, ${opacity})`,
-          strokeWidth: 3,
+          strokeWidth: 5,
         },
       ],
     };
