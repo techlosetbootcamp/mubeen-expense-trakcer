@@ -6,12 +6,11 @@ import { get, ref } from 'firebase/database';
 import { signOut } from 'firebase/auth';
 
 const useProfile = () => {
-
     const navigation: any = useNavigation();
     const [username, setUsername] = useState("");
     const [profilePicture, setProfilePicture] = useState("");
     const [isLogoutModalVisible, setLogoutModalVisible] = useState(false);
-
+    const [isImageModalVisible, setImageModalVisible] = useState(false); // New state for image modal
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -40,16 +39,25 @@ const useProfile = () => {
 
     const handleLogout = async () => {
         try {
-            await signOut(auth); // Sign out from Firebase
-            setLogoutModalVisible(false); // Close the modal
+            await signOut(auth);
+            setLogoutModalVisible(false);
             navigation.reset({
                 index: 0,
-                routes: [{ name: "AuthenticationScreen" }], // Reset navigation stack
+                routes: [{ name: "AuthenticationScreen" }],
             });
-            navigation.navigate("AuthenticationScreen")
+            navigation.navigate("AuthenticationScreen");
         } catch (error) {
             console.error("Error signing out:", error);
         }
+    };
+
+    // New functions for image modal
+    const openImageModal = () => {
+        setImageModalVisible(true);
+    };
+
+    const closeImageModal = () => {
+        setImageModalVisible(false);
     };
 
     return {
@@ -60,12 +68,15 @@ const useProfile = () => {
         setProfilePicture,
         isLogoutModalVisible,
         setLogoutModalVisible,
+        isImageModalVisible, // Expose new state
+        setImageModalVisible,
         useEffect,
         openLogoutModal,
         closeLogoutModal,
-        handleLogout
-    }
-}
+        handleLogout,
+        openImageModal, // Expose new function
+        closeImageModal, // Expose new function
+    };
+};
 
-export default useProfile
-
+export default useProfile;

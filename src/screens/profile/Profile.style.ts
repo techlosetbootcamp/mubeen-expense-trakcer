@@ -23,8 +23,6 @@ const styles = StyleSheet.create({
       width: 80,
       height: 80,
       borderRadius: 40,
-      borderColor: "#8A2BE2",
-      borderWidth: 2,
     },
     placeholder: {
       width: 80,
@@ -144,7 +142,23 @@ const styles = StyleSheet.create({
       padding: 5,
     },
     modalOption: { fontSize: 16, paddingVertical: 10, textAlign: "center" },
-  });
-  
-  
-  export default styles
+    // New styles for full-screen image modal
+    fullScreenImageContainer: {
+      flex: 1,
+      backgroundColor: "#000", // Black background for contrast
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    fullScreenImage: {
+      width: "100%",
+      height: "100%",
+    },
+    closeButton: {
+      position: "absolute",
+      top: 40,
+      right: 20,
+      padding: 10,
+    },
+});
+
+export default styles;

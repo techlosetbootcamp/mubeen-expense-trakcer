@@ -4,7 +4,7 @@ import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import styles from "./Profile.style";
 import useProfile from "./useProfile";
-import { useAppSelector } from "../../store/store"; // Import useAppSelector
+import { useAppSelector } from "../../store/store";
 
 const Profile: React.FC = () => {
   const {
@@ -13,22 +13,25 @@ const Profile: React.FC = () => {
     setUsername,
     isLogoutModalVisible,
     setLogoutModalVisible,
+    isImageModalVisible, // Add new state
+    setImageModalVisible,
     useEffect,
     openLogoutModal,
     closeLogoutModal,
-    handleLogout
+    handleLogout,
+    openImageModal, // Add new function
+    closeImageModal, // Add new function
   } = useProfile();
 
-  // Fetch profile picture from Redux
   const profilePicture = useAppSelector((state) => state.user.profilePicture);
 
   return (
     <View style={styles.container}>
       {/* Profile Section */}
       <View style={styles.profileSection}>
-        <TouchableOpacity style={styles.avatarContainer}>
+        <TouchableOpacity style={styles.avatarContainer} onPress={profilePicture ? openImageModal : undefined}>
           {profilePicture ? (
-            <Image source={{ uri: `data:image/png;base64,${profilePicture}` }} style={styles.profileImage} />
+            <Image source={{ uri: `data:image/jpeg;base64,${profilePicture}` }} style={styles.profileImage} />
           ) : (
             <View style={styles.placeholder}>
               <Text style={styles.placeholderText}>{username.charAt(0).toUpperCase()}</Text>
@@ -66,6 +69,7 @@ const Profile: React.FC = () => {
           <Text style={[styles.menuText, styles.logoutText]}>Logout</Text>
         </TouchableOpacity>
 
+        {/* Logout Modal */}
         <Modal
           transparent={true}
           visible={isLogoutModalVisible}
@@ -93,6 +97,28 @@ const Profile: React.FC = () => {
                 </TouchableOpacity>
               </View>
             </View>
+          </View>
+        </Modal>
+
+        {/* Full-Screen Image Modal */}
+        <Modal
+          transparent={false}
+          visible={isImageModalVisible}
+          animationType="fade"
+          onRequestClose={closeImageModal}
+        >
+          <View style={styles.fullScreenImageContainer}>
+            <Image
+              source={{ uri: `data:image/jpeg;base64,${profilePicture}` }}
+              style={styles.fullScreenImage}
+              resizeMode="contain"
+            />
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={closeImageModal}
+            >
+              <MaterialIcons name="close" size={30} color="#fff" />
+            </TouchableOpacity>
           </View>
         </Modal>
       </View>

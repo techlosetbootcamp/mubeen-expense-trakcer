@@ -35,11 +35,11 @@ const LineGraph: React.FC = () => {
           withHorizontalLabels={false}
           withVerticalLabels={false}
           chartConfig={{
-            backgroundColor: "transparent", // Remove background color
-            backgroundGradientFrom: "transparent", // No gradient
-            backgroundGradientTo: "transparent", // No gradient
+            backgroundColor: "Transparent", // Remove background color
+            backgroundGradientFrom: "white", // No gradient
+            backgroundGradientTo: "white", // No gradient
             decimalPlaces: 0,
-            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+            color: (opacity = 1) => `#7f3dff`,
             style: { borderRadius: 0 }, // Remove rounding for edge alignment
           }}
           bezier

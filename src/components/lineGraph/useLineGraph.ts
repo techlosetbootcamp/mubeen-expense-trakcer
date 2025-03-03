@@ -112,7 +112,7 @@ const useLineGraph = () => {
       datasets: [
         {
           data: dataValues,
-          color: (opacity = 1) => `rgba(127, 61, 255, ${opacity})`,
+          color: (opacity = 1) => `#7f3dff`,
           strokeWidth: 5,
         },
       ],

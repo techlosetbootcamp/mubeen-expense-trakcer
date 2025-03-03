@@ -13,12 +13,15 @@ const styles = StyleSheet.create({
     profileSection: {
       flexDirection: "row",
       alignItems: "center",
+      borderColor: "#8A2BE2",
+      borderWidth: 1,
+      borderRadius: 50,
+      padding: 2
     },
     profileImage: {
       width: 40,
       height: 40,
       borderRadius: 20,
-      marginRight: 10,
     },
     placeholder: {
       width: 40,
