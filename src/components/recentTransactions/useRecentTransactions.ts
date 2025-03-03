@@ -4,8 +4,8 @@ import { database } from "../../config/firebaseConfig";
 import { useAppSelector } from "../../store/store";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
+import { exchangeRateApiUrl } from "../../constants/exchangeRateApi";
 
-const exchangeRateApiUrl = "https://v6.exchangerate-api.com/v6/46d49f7b580e6aefec6a3578/latest/USD";
 
 export const useRecentTransactions = () => {
   const [transactions, setTransactions] = useState<any[]>([]);
@@ -19,7 +19,7 @@ export const useRecentTransactions = () => {
 
   const formatAmount = (amount: number) => {
     const numericAmount = Number(amount); // Convert to number
-    return numericAmount.toFixed(2);
+    return numericAmount.toFixed(0);
   }
 
   React.useEffect(() => {

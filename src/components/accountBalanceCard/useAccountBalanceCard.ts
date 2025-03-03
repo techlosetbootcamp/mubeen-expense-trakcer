@@ -1,8 +1,9 @@
-import { RootState, useAppSelector } from "../../store/store";
+import { RootState, useAppDispatch, useAppSelector } from "../../store/store";
 import axios from "axios";
-import React from "react";
+import React, { useEffect } from "react";
+import { loadUser } from "../../store/slices/userSlice";
+import { exchangeRateApiUrl } from "../../constants/exchangeRateApi";
 
-const exchangeRateApiUrl = "https://v6.exchangerate-api.com/v6/46d49f7b580e6aefec6a3578/latest/USD";
 
 const useAccountBalanceCard = () => {
   const income = useAppSelector((state: RootState) => state.income.income || []);
@@ -18,8 +19,10 @@ const useAccountBalanceCard = () => {
   const [convertedIncome, setConvertedIncome] = React.useState(0);
   const [convertedExpenses, setConvertedExpenses] = React.useState(0);
   const [convertedBalance, setConvertedBalance] = React.useState(0);
+  const dispatch = useAppDispatch();
 
-  React.useEffect(() => {
+
+  useEffect(() => {
     const fetchExchangeRates = async () => {
       try {
         const response = await axios.get(exchangeRateApiUrl);
@@ -47,9 +50,9 @@ const useAccountBalanceCard = () => {
     INR: "₹",
     PKR: "PKR ",
     JPY: "¥",
-  };
+  } as const;
 
-  const currencySymbol = currencySymbols[selectedCurrency] || selectedCurrency;
+  const currencySymbol = currencySymbols[selectedCurrency as keyof typeof currencySymbols] || selectedCurrency;
 
   return {
     totalIncome: convertedIncome,

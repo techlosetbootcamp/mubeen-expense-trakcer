@@ -8,10 +8,63 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginBottom: 50,
   },
+  CardContainer: {
+    marginTop: 10,
+    backgroundColor: "#fcfcfc",
+    flexDirection: "row",
+    alignItems: "center", // Changed from flex-start to center for vertical alignment
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    justifyContent: "space-between",
+    width: "90%",
+    overflow: "hidden",
+    padding: 10, // Added padding to the container
+  },
+  CategoryContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+    gap: 10, // Adjusted gap for better spacing
+  },
+  TextContainer: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "space-between",
+  },
+  Row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: 2, // Added some vertical spacing between rows
+  },
+  IncomeText: {
+    color: "black",
+    fontSize: 16,
+    fontWeight: "bold",
+    flexShrink: 1, // Prevents text overflow
+  },
+  BuyText: {
+    color: "gray",
+    fontSize: 16,
+    fontWeight: "bold",
+    flexShrink: 1, // Prevents text overflow
+  },
+  PriceText: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  TiemText: {
+    color: "gray",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    zIndex: 2, 
+    zIndex: 2,
   },
   dropdownContainer: {
     position: "relative", // Needed for dropdown menu positioning
@@ -79,59 +132,12 @@ const styles = StyleSheet.create({
     color: "#7f3dff",
     alignItems: "center",
   },
-  CardContainer: {
-    marginTop: 10,
-    backgroundColor: "#fcfcfc",
-    flexDirection: "row",
-    alignItems: "flex-start",
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    justifyContent: "space-between",
-    width: "90%", // Max width for mobile screens
-    overflow: "hidden",
-  },
-  CategoryContainer: {
-    padding: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-    flex: 1,
-  },
   iconContainer: {
     padding: 10,
     borderRadius: 15,
   },
   icon: {
     marginRight: 5,
-  },
-  IncomeText: {
-    color: "black",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  BuyText: {
-    color: "gray",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  TransactionInfo: {
-    flexDirection: "column",
-    alignItems: "flex-end",
-    justifyContent: "space-between",
-    paddingRight: 10,
-  },
-  PriceText: {
-    color: "#fd3c4a",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  TiemText: {
-    color: "gray",
-    fontSize: 16,
-    fontWeight: "bold",
   },
   emptyText: {
     fontSize: 18,

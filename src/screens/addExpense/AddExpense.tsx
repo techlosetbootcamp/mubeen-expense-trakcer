@@ -5,10 +5,11 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import styles from "./AddExpense.style";
 import { useAddExpense } from "./useAddExpense";
 import Entypo from "@expo/vector-icons/Entypo";
+import Loader from "../../components/loader/Loader";
+
 
 
 const AddExpense = () => {
-   
     const {
         amount,
         setAmount,
@@ -27,8 +28,14 @@ const AddExpense = () => {
         setAttachment,
         whiteSectionHeight,
         setWhiteSectionHeight,
-        handleAttachmentOption
+        handleAttachmentOption,
+        loading, // Add loading from the hook
     } = useAddExpense();
+
+    // Show Loader when loading is true
+    if (loading) {
+        return <Loader />;
+    }
 
     return (
         <View style={styles.container}>
@@ -52,7 +59,7 @@ const AddExpense = () => {
                     keyboardType="numeric"
                 />
             </View>
-            <View style={styles.whiteSection}>
+            <View style={[styles.whiteSection, { flex: whiteSectionHeight }]}>
                 <TouchableOpacity
                     style={styles.input}
                     onPress={() => setDropdownVisible(true)}
@@ -90,8 +97,9 @@ const AddExpense = () => {
                     onChangeText={setDescription}
                     placeholder="Description"
                 />
+
                 {/* Attachment Preview Above Button */}
-                {attachment && typeof attachment === 'string' && (
+                {attachment && typeof attachment === "string" && (
                     <Image
                         source={{ uri: attachment }}
                         style={{ width: 52, height: 52, marginBottom: 8 }}
@@ -105,7 +113,6 @@ const AddExpense = () => {
                     <Entypo name="attachment" size={24} color="gray" />
                     <Text style={styles.attachmentText}>Add attachment</Text>
                 </TouchableOpacity>
-
 
                 <Modal
                     transparent
@@ -139,7 +146,6 @@ const AddExpense = () => {
                         </View>
                     </View>
                 </Modal>
-
 
                 <TouchableOpacity style={styles.continueButton} onPress={handleContinuePress}>
                     <Text style={styles.continueText}>Continue</Text>

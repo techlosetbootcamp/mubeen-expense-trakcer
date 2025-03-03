@@ -23,7 +23,6 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
   recentText = "Recent Transactions",
   enableShowMore = false,
 }) => {
-
   const {
     displayedTransactions,
     showAll,
@@ -31,10 +30,9 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
     transactions,
     truncateDescription,
     navigation,
-    formatAmount
-  } = useRecentTransactions()
-
-  const selectedCurrency = useAppSelector((state: any) => state.user.selectedCurrency);
+    formatAmount,
+  } = useRecentTransactions();
+  const selectedCurrency = useAppSelector((state) => state.user.selectedCurrency as keyof typeof currencySymbols);
   const currencySymbol = currencySymbols[selectedCurrency] || selectedCurrency;
 
   const baseStyles = {
@@ -91,7 +89,7 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
                 <TouchableOpacity
                   style={styles.CategoryContainer}
                   onPress={() =>
-                    navigation.navigate('DetailTransaction', {
+                    navigation.navigate("DetailTransaction", {
                       transactionId: transaction.id,
                       type: transaction.type,
                     })
@@ -100,17 +98,31 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
                   <View style={[styles.iconContainer, { backgroundColor: iconBackgroundColor }]}>
                     <Ionicons name={iconName} size={60} color={iconColor} style={styles.icon} />
                   </View>
-                  <View style={{ flexDirection: "column", gap: 8 }}>
-                    <Text style={styles.IncomeText}>
-                      {transaction.category.length > 15 ? `${transaction.category.slice(0, 15)}...` : transaction.category}
-                    </Text>
-                    <Text style={styles.BuyText}>{truncateDescription(transaction.description, 17)}</Text>
+                  <View style={styles.TextContainer}>
+                    <View style={styles.Row}>
+                      <Text style={styles.IncomeText}>
+                        {transaction.category.length > 15
+                          ? `${transaction.category.slice(0, 15)}...`
+                          : transaction.category}
+                      </Text>
+                      <Text
+                        style={
+                          transaction.type === "income" ? styles.IncomePriceText : styles.PriceText
+                        }
+                      >
+                        {transaction.type === "income" ? "+ " : "- "} {currencySymbol}{formatAmount(transaction.amount)}
+                      </Text>
+                    </View>
+                    <View style={styles.Row}>
+                      <Text style={styles.BuyText}>
+                        {truncateDescription(transaction.description, 17)}
+                      </Text>
+                      <Text style={styles.TiemText}>
+                        {transaction.timestamp?.split("T")[1]?.slice(0, 5) || "N/A"}
+                      </Text>
+                    </View>
                   </View>
                 </TouchableOpacity>
-                <Text style={transaction.type === "income" ? styles.IncomePriceText : styles.PriceText}>
-                  {transaction.type === "income" ? "+ " : "- "} {currencySymbol}{formatAmount(transaction.amount)}
-                </Text>
-
               </View>
             );
           })}

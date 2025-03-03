@@ -33,6 +33,15 @@ export const loadCurrency = createAsyncThunk(
     }
 );
 
+
+export const loadUser = createAsyncThunk(
+    'user/loadUser',
+    async () => {
+        const user = await AsyncStorage.getItem('user');
+        return user ? JSON.parse(user) : null;
+    }
+);
+
 const userSlice = createSlice({
     name: "user",
     initialState: initialUserState,
@@ -41,11 +50,13 @@ const userSlice = createSlice({
             state.user = action.payload;
             state.profilePicture = action.payload.photoURL || "";
             state.name = action.payload.displayName || "";
+            AsyncStorage.setItem('user', JSON.stringify(action.payload)); // Persist user to AsyncStorage
         },
         clearUser(state) {
             state.user = null;
             state.profilePicture = "";
             state.name = "";
+            AsyncStorage.removeItem('user'); // Remove user from AsyncStorage
         },
         setUserProfile(
             state,
@@ -60,6 +71,9 @@ const userSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
+        builder.addCase(loadUser.fulfilled, (state, action) => {
+            state.user = action.payload;
+        });
         builder.addCase(loadCurrency.fulfilled, (state, action) => {
             state.selectedCurrency = action.payload;
         });

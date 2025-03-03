@@ -5,10 +5,9 @@ import { database } from "../../config/firebaseConfig";
 import { ref, onValue } from "firebase/database";
 import { useAppSelector } from "../../store/store";
 import axios from "axios";
+import { exchangeRateApiUrl } from "../../constants/exchangeRateApi";
 
 const screenWidth = Dimensions.get("window").width;
-
-const exchangeRateApiUrl = "https://v6.exchangerate-api.com/v6/46d49f7b580e6aefec6a3578/latest/USD";
 
 const useFinancialReport = () => {
   const navigation: any = useNavigation();
@@ -34,12 +33,13 @@ const useFinancialReport = () => {
 
     fetchExchangeRates();
   }, []);
+
   const formatAmount = (amount: number) => {
     if (selectedCurrency && selectedCurrency in exchangeRates) {
       const convertedAmount = amount * exchangeRates[selectedCurrency as keyof typeof exchangeRates];
-      return convertedAmount.toFixed(2); // Format to 2 decimal places
+      return convertedAmount.toFixed(0); // Format to 2 decimal places
     }
-    return amount.toFixed(2); // Default to original amount if no conversion rate is available
+    return amount.toFixed(0); // Default to original amount if no conversion rate is available
   };
 
   useEffect(() => {
@@ -145,6 +145,13 @@ const useFinancialReport = () => {
     }));
   };
 
+  // New function to calculate total amount
+  const getTotalAmount = () => {
+    const filteredTransactions = getFilteredTransactions();
+    const total = filteredTransactions.reduce((sum, tx) => sum + parseFloat(tx.amount), 0);
+    return formatAmount(total);
+  };
+
   return {
     navigation,
     user,
@@ -162,8 +169,9 @@ const useFinancialReport = () => {
     getCategoryColors,
     getFilteredTransactions,
     getChartData,
+    getTotalAmount, // Add this to the return object
     screenWidth,
-    formatAmount, // Add this function
+    formatAmount,
   };
 };
 

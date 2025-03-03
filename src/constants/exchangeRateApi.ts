@@ -1,0 +1,1 @@
+export const exchangeRateApiUrl = "https://v6.exchangerate-api.com/v6/12449143dc69d363f6104dc0/latest/USD";

@@ -57,7 +57,7 @@ const AccountBalanceCard = () => {
                 <MaterialIcons name="close" size={24} color="#000" />
               </TouchableOpacity>
             </View>
-            <Text style={styles.modalAmount}>{currencySymbol}{totalIncome.toFixed(2)}</Text>
+            <Text style={styles.modalAmount}>{currencySymbol}{totalIncome.toFixed(0)}</Text>
           </View>
         </View>
       </Modal>
@@ -77,7 +77,7 @@ const AccountBalanceCard = () => {
                 <MaterialIcons name="close" size={24} color="#000" />
               </TouchableOpacity>
             </View>
-            <Text style={styles.modalAmount}>{currencySymbol}{totalExpenses.toFixed(2)}</Text>
+            <Text style={styles.modalAmount}>{currencySymbol}{totalExpenses.toFixed(0)}</Text>
           </View>
         </View>
       </Modal>

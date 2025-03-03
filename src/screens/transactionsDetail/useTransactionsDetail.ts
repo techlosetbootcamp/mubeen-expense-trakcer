@@ -6,8 +6,8 @@ import { onValue, ref, remove, set } from 'firebase/database';
 import { auth, database } from '../../config/firebaseConfig';
 import { useAppSelector } from '../../store/store';
 import axios from 'axios';
+import { exchangeRateApiUrl } from "../../constants/exchangeRateApi";
 
-const exchangeRateApiUrl = "https://v6.exchangerate-api.com/v6/46d49f7b580e6aefec6a3578/latest/USD";
 
 const useTransactionsDetail = () => {
 
@@ -52,11 +52,10 @@ const useTransactionsDetail = () => {
                 const transactionData = snapshot.val();
                 setTransaction({ ...transactionData, id: transactionId });
                 setEditedTransaction({ ...transactionData, id: transactionId });
-
                 // Convert amount to selected currency
-                if (selectedCurrency && exchangeRates[selectedCurrency]) {
-                    const rate = exchangeRates[selectedCurrency];
-                    const convertedAmountValue = (parseFloat(transactionData.amount) * rate).toFixed(2);
+                if (selectedCurrency && exchangeRates && selectedCurrency in exchangeRates) {
+                    const rate = exchangeRates[selectedCurrency as keyof typeof exchangeRates];
+                    const convertedAmountValue = (parseFloat(transactionData.amount) * rate).toFixed(0);
                     setConvertedAmount(convertedAmountValue);
                 } else {
                     setConvertedAmount(transactionData.amount);

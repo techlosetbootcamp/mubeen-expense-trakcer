@@ -7,7 +7,7 @@ import {
   ScrollView,
 } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { PieChart } from "react-native-chart-kit";
+import { PieChart } from "react-native-gifted-charts";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import styles from "./FinancialReport.style";
@@ -35,11 +35,20 @@ const FinancialReport = () => {
     handleSelect,
     toggleDropdown,
     getChartData,
+    getTotalAmount, // Add this from useFinancialReport
     screenWidth,
-    formatAmount, // Add this function from useFinancialReport
+    formatAmount,
   } = useFinancialReport();
   const selectedCurrency = useAppSelector((state) => state.user.selectedCurrency as keyof typeof currencySymbols);
   const currencySymbol = currencySymbols[selectedCurrency] || selectedCurrency;
+
+  // Adapt chart data for react-native-gifted-charts
+  const chartData = getChartData().map((item) => ({
+    value: item.population,
+    color: item.color,
+    text: item.name,
+    textColor: "#7F7F7F",
+  }));
 
   return (
     <View style={styles.container}>
@@ -80,22 +89,25 @@ const FinancialReport = () => {
         </View>
       </View>
 
-      <PieChart
-        data={getChartData()}
-        width={screenWidth - 40}
-        height={200}
-        chartConfig={{
-          backgroundColor: "#fff",
-          backgroundGradientFrom: "#fff",
-          backgroundGradientTo: "#fff",
-          decimalPlaces: 0,
-          color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-        }}
-        accessor="population"
-        backgroundColor="transparent"
-        paddingLeft="0"
-        absolute
-      />
+      {/* Donut Chart with total amount in the center */}
+      <View style={styles.chartContainer}>
+        <PieChart
+          data={chartData}
+          donut
+          radius={90}
+          innerRadius={60}
+          textSize={12}
+          textColor="#7F7F7F"
+          showText={false}
+          centerLabelComponent={() => (
+            <View style={styles.centerLabel}>
+              <Text style={styles.centerLabelText}>
+                {currencySymbol}{getTotalAmount()}
+              </Text>
+            </View>
+          )}
+        />
+      </View>
 
       <View style={styles.switchContainer}>
         <TouchableOpacity

@@ -19,7 +19,7 @@ const currencySymbols = {
   EUR: "€",
   GBP: "£",
   INR: "₹",
-  PKR: "₨",
+  PKR: "PKR ",
   JPY: "¥",
 };
 
@@ -57,10 +57,8 @@ const Transactions = () => {
   const selectedCurrency = useAppSelector((state) => state.user.selectedCurrency as keyof typeof currencySymbols);
   const currencySymbol = currencySymbols[selectedCurrency] || selectedCurrency;
 
-  const renderTransactionItem = ({ item }: { item: Transaction }) => {
-    const { iconBackgroundColor, iconColor, iconName } = getCategoryStyles(
-      item.category
-    );
+  const renderTransactionItem = ({ item }: { item: any }) => {
+    const { iconBackgroundColor, iconColor, iconName } = getCategoryStyles(item.category);
     const isIncome = item.type === "income";
 
     return (
@@ -74,9 +72,7 @@ const Transactions = () => {
             })
           }
         >
-          <View
-            style={[styles.iconContainer, { backgroundColor: iconBackgroundColor }]}
-          >
+          <View style={[styles.iconContainer, { backgroundColor: iconBackgroundColor }]}>
             <Ionicons
               name={iconName as keyof typeof Ionicons.glyphMap}
               size={60}
@@ -84,25 +80,41 @@ const Transactions = () => {
               style={styles.icon}
             />
           </View>
-          <View style={{ flexDirection: "column", gap: 8 }}>
-            <Text style={styles.IncomeText}>
-              {item.category.length > 15
-                ? `${item.category.slice(0, 15)}...`
-                : item.category}
-            </Text>
-            <Text style={styles.BuyText}>
-              {item.description.length > 17
-                ? `${item.description.slice(0, 17)}...`
-                : item.description}
-            </Text>
+          <View style={styles.TextContainer}>
+            <View style={styles.Row}>
+              <Text style={styles.IncomeText}>
+                {item.category.length > 15
+                  ? `${item.category.slice(0, 15)}...`
+                  : item.category}
+              </Text>
+              <Text style={[styles.PriceText, { color: isIncome ? "green" : "red" }]}>
+                {isIncome ? "+ " : "- "} {currencySymbol}{formatAmount(item.amount)}
+              </Text>
+            </View>
+            <View style={styles.Row}>
+              <Text style={styles.BuyText}>
+                {item.description.length > 17
+                  ? `${item.description.slice(0, 17)}...`
+                  : item.description}
+              </Text>
+              <Text style={styles.TiemText}>{item.timestamp.split("T")[1].slice(0, 5)}</Text>
+            </View>
           </View>
         </TouchableOpacity>
-        <View style={styles.TransactionInfo}>
-          <Text style={[styles.PriceText, { color: isIncome ? "green" : "red" }]}>
-            {isIncome ? "+ " : "- "} {currencySymbol}{formatAmount(item.amount)}
-          </Text>
-          <Text style={styles.TiemText}>{item.timestamp.split("T")[1].slice(0, 5)}</Text>
-        </View>
+      </View>
+    );
+  };
+
+  const renderSectionHeader = ({ section: { title } }: any) => {
+    return (
+      <View>
+        <Text style={styles.sectionTitle}>{title}</Text>
+        {transactionsToDisplay[title]?.length === 0 && (
+          <View style={styles.emptyContainer}>
+            <MaterialIcons name="history" size={40} color="gray" />
+            <Text style={styles.emptyText}>No {title}'s Transactions Available</Text>
+          </View>
+        )}
       </View>
     );
   };
@@ -166,7 +178,6 @@ const Transactions = () => {
             <Text style={styles.resetButtonText}>Reset Filter</Text>
           </TouchableOpacity>
         )}
-
         {/* Financial Report */}
         <TouchableOpacity
           style={styles.financialReport}
@@ -189,9 +200,16 @@ const Transactions = () => {
           )}
           keyExtractor={(item) => item.id}
           renderItem={renderTransactionItem}
-          renderSectionHeader={({ section: { title } }) => (
-            <Text style={styles.sectionTitle}>{title}</Text>
-          )}
+          renderSectionHeader={renderSectionHeader}
+          ListEmptyComponent={() => {
+            // This will render when there are no filtered transactions
+            return (
+              <View style={styles.emptyContainer}>
+                <MaterialIcons name="filter-list-off" size={80} color="gray" />
+                <Text style={styles.emptyText}>No transactions available with this filter</Text>
+              </View>
+            );
+          }}
         />
       ) : (
         <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -250,7 +268,6 @@ const Transactions = () => {
 
             {/* Sort by heading */}
             <Text style={styles.headingText}>Sort By</Text>
-
             {/* Sort by buttons */}
             <View style={styles.SortButtonsContainer}>
               <TouchableOpacity

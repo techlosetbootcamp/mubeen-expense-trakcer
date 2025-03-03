@@ -13,10 +13,11 @@ const useAddIncome = () => {
     const [category, setCategory] = useState("");
     const [description, setDescription] = useState("");
     const [attachmentModalVisible, setAttachmentModalVisible] = useState(false);
-    const [attachment, setAttachment] = useState<any>(null); // Changed to any for simplicity
+    const [attachment, setAttachment] = useState<any>(null);
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [whiteSectionHeight, setWhiteSectionHeight] = useState(1.5);
     const [popupVisible, setPopupVisible] = useState(false);
+    const [loading, setLoading] = useState(false); // Add loading state
     const navigation: any = useNavigation();
     const dispatch = useAppDispatch();
     const userIncome = useAppSelector(
@@ -40,9 +41,8 @@ const useAddIncome = () => {
         "Income from Side Hustles",
     ];
 
-
     const handleAttachmentOption = async (option: string) => {
-        let result: any = null; // Changed type to any
+        let result: any = null;
 
         try {
             if (option === "Camera") {
@@ -52,13 +52,13 @@ const useAddIncome = () => {
                     allowsEditing: true,
                     aspect: [1, 1],
                     quality: 1,
-                    base64: true, // Include Base64
+                    base64: true,
                 });
             } else if (option === "Image") {
                 await ImagePicker.requestMediaLibraryPermissionsAsync();
                 result = await ImagePicker.launchImageLibraryAsync({
                     mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                    base64: true, // Include Base64
+                    base64: true,
                 });
             } else if (option === "Document") {
                 result = await DocumentPicker.getDocumentAsync({
@@ -70,7 +70,7 @@ const useAddIncome = () => {
             if (result && !result.canceled) {
                 const selectedImage = result.assets ? result.assets[0] : result;
                 if (selectedImage.base64) {
-                    setAttachment(`data:image/jpeg;base64,${selectedImage.base64}`); // Store Base64 data URL
+                    setAttachment(`data:image/jpeg;base64,${selectedImage.base64}`);
                 }
                 setWhiteSectionHeight(3.0);
             }
@@ -81,8 +81,6 @@ const useAddIncome = () => {
             setAttachmentModalVisible(false);
         }
     };
-
-
 
     const handleContinuePress = () => {
         if (!amount || !category || !description) {
@@ -96,18 +94,20 @@ const useAddIncome = () => {
             return;
         }
 
+        setLoading(true); // Show loader
+
         const newIncomeRef = ref(database, `incomes/${user.uid}`);
         const newIncome = {
             amount,
             category,
             description,
-            attachment: attachment || null, // Store Base64 string
+            attachment: attachment || null,
             timestamp: new Date().toISOString(),
         };
 
         push(newIncomeRef, newIncome)
             .then(() => {
-                dispatch(setIncome([...userIncome, newIncome])); // Update Redux store
+                dispatch(setIncome([...userIncome, newIncome]));
                 setPopupVisible(true);
                 setTimeout(() => {
                     setPopupVisible(false);
@@ -116,15 +116,16 @@ const useAddIncome = () => {
                     setDescription("");
                     setAttachment(null);
                     setWhiteSectionHeight(1.5);
+                    setLoading(false); // Hide loader
                     navigation.navigate("Main");
                 }, 2000);
             })
             .catch((error) => {
                 console.error("Error adding income to Firebase:", error);
                 alert("Failed to add income.");
+                setLoading(false); // Hide loader on error
             });
     };
-
 
     return {
         amount,
@@ -148,6 +149,7 @@ const useAddIncome = () => {
         handleContinuePress,
         attachment,
         setAttachment,
+        loading, // Expose loading state
     };
 };
 

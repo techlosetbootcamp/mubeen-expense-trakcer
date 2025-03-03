@@ -4,13 +4,14 @@ import { database, auth } from "../../config/firebaseConfig"; // Import Firebase
 import { ref, push, onValue } from "firebase/database";
 import { useAppSelector } from "../../store/store";
 import axios from "axios";
+import { exchangeRateApiUrl } from "../../constants/exchangeRateApi";
+
 
 const screenWidth = Dimensions.get("window").width;
 
 const categoriesList = ["Food & Dining", "Shopping", "Transportation", "Entertainment", "Healthcare", "Rent & Bills", "Travel", "Education", "Investments", "Other"];
 const durationList = ["Day", "Week", "Month", "Year"];
 
-const exchangeRateApiUrl = "https://v6.exchangerate-api.com/v6/46d49f7b580e6aefec6a3578/latest/USD";
 
 const useBudget = () => {
   const [budgets, setBudgets] = useState([]);
@@ -40,9 +41,9 @@ const useBudget = () => {
   const formatAmount = (amount: number) => {
     if (selectedCurrency && exchangeRates && selectedCurrency in exchangeRates) {
       const convertedAmount = amount * exchangeRates[selectedCurrency as keyof typeof exchangeRates];
-      return convertedAmount.toFixed(2); // Format to 2 decimal places
+      return convertedAmount.toFixed(0); // Format to 2 decimal places
     }
-    return amount.toFixed(2); // Default to original amount if no conversion rate is available
+    return amount.toFixed(0); // Default to original amount if no conversion rate is available
   };
 
   useEffect(() => {

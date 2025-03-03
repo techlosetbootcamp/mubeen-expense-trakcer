@@ -72,7 +72,7 @@ export default function DetailTransaction() {
         setIsDeleteModalVisible(false);
     };
 
-    const currencySymbol = currencySymbols[selectedCurrency] || selectedCurrency;
+    const currencySymbol = currencySymbols[selectedCurrency as keyof typeof currencySymbols] || selectedCurrency;
 
     return (
         <View style={styles.container}>

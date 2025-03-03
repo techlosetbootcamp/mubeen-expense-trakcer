@@ -1,7 +1,7 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import { RootState, useAppDispatch, useAppSelector } from "../store/store";
 import { onAuthStateChanged } from "firebase/auth";
-import { setUser } from "../store/slices/userSlice";
+import { loadUser, setUser } from "../store/slices/userSlice";
 import { fetchIncome } from "../store/slices/incomeSlice";
 import { get, ref } from "firebase/database";
 import { auth, database } from "../config/firebaseConfig";
@@ -60,6 +60,11 @@ const StackNavigation: React.FC = () => {
   
     return () => unsubscribe();
   }, [dispatch, navigation]);
+
+  // useEffect(() => {
+  //   dispatch(loadUser());
+  // }, [dispatch]);
+
 
   if (isSplashVisible) {
     return <SplashScreen />;

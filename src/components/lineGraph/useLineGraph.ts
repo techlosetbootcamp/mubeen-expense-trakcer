@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { useAppSelector } from "../../store/store";
 import axios from "axios";
+import { exchangeRateApiUrl } from "../../constants/exchangeRateApi";
 
-const exchangeRateApiUrl = "https://v6.exchangerate-api.com/v6/46d49f7b580e6aefec6a3578/latest/USD";
-const apikey = "YOUR_API_KEY"; // Replace with your actual API key
 
 const useLineGraph = () => {
   const [selectedFilter, setSelectedFilter] = useState("Today"); // Default to Today

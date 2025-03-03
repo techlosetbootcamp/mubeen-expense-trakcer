@@ -15,8 +15,9 @@ export const useAddExpense = () => {
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [popupVisible, setPopupVisible] = useState(false);
     const [attachmentModalVisible, setAttachmentModalVisible] = useState(false);
-    const [attachment, setAttachment] = useState<string | null>(null); // Now storing Base64 string
+    const [attachment, setAttachment] = useState<string | null>(null);
     const [whiteSectionHeight, setWhiteSectionHeight] = useState(1.5);
+    const [loading, setLoading] = useState(false); // Add loading state
     const userExpense = useAppSelector(
         (state: RootState) => state.expense.expenses || []
     );
@@ -47,13 +48,13 @@ export const useAddExpense = () => {
                     allowsEditing: true,
                     aspect: [1, 1],
                     quality: 1,
-                    base64: true, // Convert to Base64
+                    base64: true,
                 });
             } else if (option === "Image") {
                 await ImagePicker.requestMediaLibraryPermissionsAsync();
                 result = await ImagePicker.launchImageLibraryAsync({
                     mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                    base64: true, // Convert to Base64
+                    base64: true,
                 });
             } else if (option === "Document") {
                 result = await DocumentPicker.getDocumentAsync({
@@ -90,18 +91,20 @@ export const useAddExpense = () => {
             return;
         }
 
+        setLoading(true); // Show loader
+
         const newExpenseRef = ref(database, `expenses/${user.uid}`);
         const newExpense = {
             amount,
             category,
             description,
-            attachment: attachment, // Store Base64 image in Firebase
+            attachment: attachment,
             timestamp: new Date().toISOString(),
         };
 
         push(newExpenseRef, newExpense)
             .then(() => {
-                dispatch(setExpenses([...userExpense, newExpense])); // Update Redux store
+                dispatch(setExpenses([...userExpense, newExpense]));
                 setPopupVisible(true);
                 setTimeout(() => {
                     setPopupVisible(false);
@@ -110,12 +113,14 @@ export const useAddExpense = () => {
                     setDescription("");
                     setAttachment(null);
                     setWhiteSectionHeight(1.5);
+                    setLoading(false); // Hide loader
                     navigation.navigate("Main");
                 }, 2000);
             })
             .catch((error) => {
                 console.error("Error adding expense to Firebase:", error);
                 alert("Failed to add expense.");
+                setLoading(false); // Hide loader on error
             });
     };
 
@@ -139,5 +144,6 @@ export const useAddExpense = () => {
         whiteSectionHeight,
         setWhiteSectionHeight,
         handleAttachmentOption,
+        loading, // Expose loading state
     };
 };

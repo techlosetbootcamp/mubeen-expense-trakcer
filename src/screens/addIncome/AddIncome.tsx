@@ -6,13 +6,14 @@ import {
     TouchableOpacity,
     Modal,
     Image,
-    ScrollView, // Import Image
+    ScrollView,
 } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import styles from "./AddIncome.style";
 import useAddIncome from "./useAddIncome";
+import Loader from "../../components/loader/Loader";
 
 
 const AddIncome = () => {
@@ -37,7 +38,13 @@ const AddIncome = () => {
         handleAttachmentOption,
         handleContinuePress,
         attachment,
+        loading, // Add loading from the hook
     } = useAddIncome();
+
+    // Show Loader when loading is true
+    if (loading) {
+        return <Loader />;
+    }
 
     return (
         <View style={styles.container}>
@@ -62,24 +69,23 @@ const AddIncome = () => {
                 />
             </View>
             <View style={[styles.whiteSection, { flex: whiteSectionHeight }]}>
-                    <TouchableOpacity
-                        style={styles.input}
-                        onPress={() => setDropdownVisible(true)}
+                <TouchableOpacity
+                    style={styles.input}
+                    onPress={() => setDropdownVisible(true)}
+                >
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                        }}
                     >
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                            }}
-                        >
-                            <Text style={{ color: category ? "black" : "gray" }}>
-                                {category || "Select Category"}
-                            </Text>
-                            <MaterialIcons name="keyboard-arrow-down" size={24} color="gray" />
-                        </View>
-                    </TouchableOpacity>
-                
+                        <Text style={{ color: category ? "black" : "gray" }}>
+                            {category || "Select Category"}
+                        </Text>
+                        <MaterialIcons name="keyboard-arrow-down" size={24} color="gray" />
+                    </View>
+                </TouchableOpacity>
 
                 {/* Dropdown Modal */}
                 <Modal
@@ -130,7 +136,6 @@ const AddIncome = () => {
                     <Entypo name="attachment" size={24} color="gray" />
                     <Text style={styles.attachmentText}>Add attachment</Text>
                 </TouchableOpacity>
-
 
                 <Modal
                     transparent
