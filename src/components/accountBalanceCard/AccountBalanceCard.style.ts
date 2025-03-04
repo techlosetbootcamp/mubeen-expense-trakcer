@@ -21,8 +21,9 @@ const styles = StyleSheet.create({
   },
   IncomButton: {
     backgroundColor: "#00a86b",
-    padding: 10,
-    borderRadius: 5,
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    borderRadius: 15,
     width: "45%",
     marginTop: 20,
     flexDirection: "row",
@@ -31,8 +32,9 @@ const styles = StyleSheet.create({
   },
   ExpenseButton: {
     backgroundColor: "#fd3c4a",
-    padding: 10,
-    borderRadius: 5,
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    borderRadius: 15,
     width: "45%",
     marginTop: 20,
     flexDirection: "row",

@@ -77,6 +77,7 @@ const useAuthenticationScreen = () => {
           })
         );
       }
+      navigation.navigate("Main")
     } catch (error: any) {
       Alert.alert("Error", error.message);
     } finally {

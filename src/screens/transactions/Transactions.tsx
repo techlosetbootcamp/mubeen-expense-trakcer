@@ -13,6 +13,7 @@ import { Modal } from "react-native";
 import styles from "./Transactions.style";
 import useTransaction from "./useTransaction";
 import { useAppSelector } from "../../store/store";
+import { baseStyles } from "../../constants/baseStyles";
 
 const currencySymbols = {
   USD: "$",
@@ -22,6 +23,7 @@ const currencySymbols = {
   PKR: "PKR ",
   JPY: "¥",
 };
+
 
 const Transactions = () => {
   const {
@@ -46,7 +48,7 @@ const Transactions = () => {
     resetMonthFilter,
     filterTransactionsByMonth,
     toggleFilterModal,
-    getCategoryStyles,
+    getCategoryStyles, // This will no longer be used directly
     applyFilters,
     handleResetFilters,
     resetAllFilters,
@@ -58,7 +60,9 @@ const Transactions = () => {
   const currencySymbol = currencySymbols[selectedCurrency] || selectedCurrency;
 
   const renderTransactionItem = ({ item }: { item: any }) => {
-    const { iconBackgroundColor, iconColor, iconName } = getCategoryStyles(item.category);
+    // Use baseStyles instead of getCategoryStyles
+    const { iconBackgroundColor, iconColor, iconName } =
+      baseStyles[item.category as keyof typeof baseStyles] || baseStyles.default;
     const isIncome = item.type === "income";
 
     return (
@@ -202,7 +206,6 @@ const Transactions = () => {
           renderItem={renderTransactionItem}
           renderSectionHeader={renderSectionHeader}
           ListEmptyComponent={() => {
-            // This will render when there are no filtered transactions
             return (
               <View style={styles.emptyContainer}>
                 <MaterialIcons name="filter-list-off" size={80} color="gray" />
@@ -229,7 +232,6 @@ const Transactions = () => {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
-            {/* Modal content */}
             <View style={styles.resetContainer}>
               <Text style={styles.modalTitle}>Filter Transaction</Text>
               <TouchableOpacity onPress={handleResetFilters}>
@@ -237,10 +239,7 @@ const Transactions = () => {
               </TouchableOpacity>
             </View>
 
-            {/* Filtered by heading */}
             <Text style={styles.headingText}>Filtered By</Text>
-
-            {/* Expense and Income buttons */}
             <View style={styles.buttonsContainer}>
               <TouchableOpacity
                 style={[
@@ -266,9 +265,7 @@ const Transactions = () => {
               </TouchableOpacity>
             </View>
 
-            {/* Sort by heading */}
             <Text style={styles.headingText}>Sort By</Text>
-            {/* Sort by buttons */}
             <View style={styles.SortButtonsContainer}>
               <TouchableOpacity
                 style={[
@@ -308,10 +305,7 @@ const Transactions = () => {
               </TouchableOpacity>
             </View>
 
-            {/* Category text */}
             <Text style={styles.headingText}>Category</Text>
-
-            {/* Category Input */}
             <TouchableOpacity style={styles.categoryContainer}>
               <View>
                 <Text style={styles.categoryText}>Choose Category</Text>
@@ -322,7 +316,6 @@ const Transactions = () => {
               </View>
             </TouchableOpacity>
 
-            {/* Apply button */}
             <TouchableOpacity style={styles.modalButton} onPress={applyFilters}>
               <Text style={styles.modalButtonText}>Apply</Text>
             </TouchableOpacity>

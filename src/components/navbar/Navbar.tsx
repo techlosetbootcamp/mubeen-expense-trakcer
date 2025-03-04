@@ -1,3 +1,4 @@
+// Navbar.tsx
 import React from "react";
 import {
   View,
@@ -9,7 +10,9 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import useNavbar from "./useNavbar";
 import styles from "./Navbar.style";
-import { useAppSelector } from "../../store/store"; // Import useAppSelector
+import { useAppSelector } from "../../store/store";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+
 
 const Navbar: React.FC = () => {
   const {
@@ -21,13 +24,12 @@ const Navbar: React.FC = () => {
     handleSelect,
   } = useNavbar();
 
-  // Fetch profile picture and name from Redux
   const profilePicture = useAppSelector((state) => state.user.profilePicture);
   const name = useAppSelector((state) => state.user.name);
 
   const renderAvatar = () => {
     if (profilePicture) {
-      return <Image source={{ uri: `data:image/png;base64,${profilePicture}` }} style={styles.profileImage} />;
+      return <Image source={{ uri: `data:image/jpeg;base64,${profilePicture}` }} style={styles.profileImage} />;
     }
     return (
       <View style={styles.placeholder}>
@@ -40,7 +42,6 @@ const Navbar: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {/* Profile Section */}
       <TouchableOpacity
         style={styles.profileSection}
         onPress={() => navigation.navigate("Profile", { profilePicture, name })}
@@ -48,10 +49,14 @@ const Navbar: React.FC = () => {
         {renderAvatar()}
       </TouchableOpacity>
 
-      {/* Dropdown Section */}
       <View style={styles.dropdownSection}>
         <TouchableOpacity onPress={toggleDropdown} style={styles.dropdownButton}>
-          <Ionicons name="caret-down-outline" size={20} color="#6B7280" style={styles.icon} />
+          <MaterialIcons
+            name="keyboard-arrow-down"
+            size={24}
+            color="#7f3dff"
+            style = {styles.icon}
+          />
           <Text style={styles.dropdown}>{selectedMonth}</Text>
         </TouchableOpacity>
 
@@ -71,7 +76,6 @@ const Navbar: React.FC = () => {
         )}
       </View>
 
-      {/* Notification Icon */}
       <View style={styles.icons}>
         <TouchableOpacity>
           <Ionicons name="notifications-outline" size={24} color="#6B7280" />

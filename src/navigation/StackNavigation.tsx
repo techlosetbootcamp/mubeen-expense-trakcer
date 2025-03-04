@@ -1,86 +1,64 @@
-import { createStackNavigator } from "@react-navigation/stack";
-import { RootState, useAppDispatch, useAppSelector } from "../store/store";
-import { onAuthStateChanged } from "firebase/auth";
-import {  setUser, loadUserFromFirebase } from "../store/slices/userSlice"; // Add loadUserFromFirebase
-import { fetchIncome } from "../store/slices/incomeSlice";
-import { get, ref } from "firebase/database";
-import { auth, database } from "../config/firebaseConfig";
-import { useEffect, useRef, useState } from "react";
-import SplashScreen from "../screens/splashScree/SplashScreen";
-import { authScreens, mainScreens } from "../constants/ScreenNames";
-import { fetchExpenses } from "../store/slices/expenseSlice";
-import { useNavigation } from "@react-navigation/native";
+import { createStackNavigator } from '@react-navigation/stack';
+import { RootState, useAppDispatch, useAppSelector } from '../store/store';
+import { fetchIncome } from '../store/slices/incomeSlice';
+import { fetchExpenses } from '../store/slices/expenseSlice';
+import { useEffect, useRef, useState } from 'react';
+import SplashScreen from '../screens/splashScree/SplashScreen';
+import { authScreens, mainScreens } from '../constants/ScreenNames';
+import { useNavigation } from '@react-navigation/native';
 
-const StackNavigation: React.FC = () => {
+interface StackNavigationProps {
+  initialUser: any;
+}
+
+const StackNavigation: React.FC<StackNavigationProps> = ({ initialUser }) => {
   const Stack = createStackNavigator();
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const hasNavigated = useRef(false);
   const [isSplashVisible, setIsSplashVisible] = useState(true);
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state: RootState) => state.user.user);
+  const reduxUser = useAppSelector((state: RootState) => state.user.user);
 
   useEffect(() => {
+    console.log('StackNavigation.tsx: Setting splash timer');
     const splashTimer = setTimeout(() => {
       setIsSplashVisible(false);
+      console.log('StackNavigation.tsx: Splash timer complete, isSplashVisible set to false');
     }, 3000);
-    
     return () => clearTimeout(splashTimer);
   }, []);
 
   useEffect(() => {
-    // Load user data from Firebase on app startup
-    dispatch(loadUserFromFirebase());
-
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        const userRef = ref(database, `users/${firebaseUser.uid}`);
-        const snapshot = await get(userRef);
-        const userData = snapshot.exists()
-          ? snapshot.val()
-          : { displayName: "" };
-  
-        dispatch(
-          setUser({
-            uid: firebaseUser.uid,
-            email: firebaseUser.email,
-            displayName: userData.displayName || "",
-            photoURL: userData.profilePicture || "", // Use profilePicture from Firebase
-            income: [],
-          })
-        );
-  
+    console.log('StackNavigation.tsx: Checking navigation with initialUser:', initialUser ? initialUser.uid : null);
+    if (!isSplashVisible && !hasNavigated.current) {
+      if (initialUser) {
+        console.log('StackNavigation.tsx: Navigating to Main');
         dispatch(fetchIncome());
         dispatch(fetchExpenses());
-  
-        if (!hasNavigated.current) {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: "Main" as never }],
-          });
-          hasNavigated.current = true;
-        }
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Main' }],
+        });
       } else {
-        dispatch(setUser(null as any));
-        if (!hasNavigated.current) {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: "Authentication" as never }],
-          });
-          hasNavigated.current = true;
-        }
+        console.log('StackNavigation.tsx: Navigating to Authentication');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Authentication' }],
+        });
       }
-    });
-  
-    return () => unsubscribe();
-  }, [dispatch, navigation]);
+      hasNavigated.current = true;
+    }
+  }, [isSplashVisible, initialUser, navigation, dispatch]);
 
   if (isSplashVisible) {
+    console.log('StackNavigation.tsx: Rendering SplashScreen');
     return <SplashScreen />;
   }
 
+  console.log('StackNavigation.tsx: Rendering Stack.Navigator with reduxUser:', reduxUser ? reduxUser.uid : null);
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {!user
+    <Stack.Navigator screenOptions={{ headerShown: false }} id={initialUser}>
+      {!reduxUser
         ? authScreens.map((screen) => (
             <Stack.Screen
               key={screen.name}
