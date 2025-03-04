@@ -1,11 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { Provider, useDispatch } from 'react-redux';
-import store from './src/store/store';
-import StackNavigation from './src/navigation/StackNavigation';
-import { loadCurrency, loadUserFromFirebase } from './src/store/slices/userSlice';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from './src/config/firebaseConfig';
+import React, { useEffect, useState } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { Provider, useDispatch } from "react-redux";
+import store from "./src/store/store";
+import StackNavigation from "./src/navigation/StackNavigation";
+import { loadCurrency, loadUserFromFirebase } from "./src/store/slices/userSlice";
+import { fetchNotifications } from "./src/store/slices/BudgetSlice";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./src/config/firebaseConfig";
+import * as Notifications from "expo-notifications";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 
 const AppWrapper = () => {
   const dispatch = useDispatch();
@@ -13,17 +23,25 @@ const AppWrapper = () => {
   const [initialUser, setInitialUser] = useState<any>(null);
 
   useEffect(() => {
-    console.log('App.tsx: Starting auth state check');
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      console.log('App.tsx onAuthStateChanged User:', firebaseUser ? firebaseUser.uid : null);
+    const requestPermissions = async () => {
+      const { status } = await Notifications.requestPermissionsAsync();
+      if (status !== "granted") {
+      }
+    };
+    requestPermissions();
+
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setInitialUser(firebaseUser);
       if (firebaseUser) {
-        dispatch(loadUserFromFirebase() as any);
+        try {
+          await dispatch(loadUserFromFirebase() as any).unwrap(); // Wait for completion
+          await dispatch(fetchNotifications() as any).unwrap();
+        } catch (error) {
+        }
       } else {
-        dispatch({ type: 'user/clearUser' });
+        dispatch({ type: "user/clearUser" });
       }
       if (initializing) {
-        console.log('App.tsx: First auth state resolved, setting initializing to false');
         setInitializing(false);
       }
     });
@@ -31,17 +49,14 @@ const AppWrapper = () => {
     dispatch(loadCurrency() as any);
 
     return () => {
-      console.log('App.tsx: Unsubscribing from onAuthStateChanged');
       unsubscribe();
     };
   }, [dispatch, initializing]);
 
   if (initializing) {
-    console.log('App.tsx: Still initializing, rendering null');
-    return null; // Wait for first auth state resolution
+    return null;
   }
 
-  console.log('App.tsx: Rendering NavigationContainer with initialUser:', initialUser ? initialUser.uid : null);
   return (
     <NavigationContainer>
       <StackNavigation initialUser={initialUser} />

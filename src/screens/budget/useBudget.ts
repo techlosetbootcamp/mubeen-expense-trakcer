@@ -1,17 +1,16 @@
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { Dimensions } from "react-native";
 import React, { useState, useEffect } from "react";
-import { database, auth } from "../../config/firebaseConfig"; // Import Firebase
+import { database, auth } from "../../config/firebaseConfig";
 import { ref, push, onValue } from "firebase/database";
-import { useAppSelector } from "../../store/store";
+import { useAppSelector, useAppDispatch } from "../../store/store";
 import axios from "axios";
 import { exchangeRateApiUrl } from "../../constants/exchangeRateApi";
-
+import * as Notifications from "expo-notifications";
 
 const screenWidth = Dimensions.get("window").width;
 
 const categoriesList = ["Food & Dining", "Shopping", "Transportation", "Entertainment", "Healthcare", "Rent & Bills", "Travel", "Education", "Investments", "Other"];
 const durationList = ["Day", "Week", "Month", "Year"];
-
 
 const useBudget = () => {
   const [budgets, setBudgets] = useState([]);
@@ -21,9 +20,10 @@ const useBudget = () => {
   const [selectedDuration, setSelectedDuration] = useState("");
   const [exchangeRates, setExchangeRates] = useState({});
 
-  // Access expenses from Redux
   const expenses = useAppSelector((state) => state.expense.expenses);
   const selectedCurrency = useAppSelector((state) => state.user.selectedCurrency);
+  const notifiedBudgetIds = useAppSelector((state) => state.budget.notifiedBudgetIds);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const fetchExchangeRates = async () => {
@@ -38,43 +38,47 @@ const useBudget = () => {
 
     fetchExchangeRates();
   }, []);
+
   const formatAmount = (amount: number) => {
     if (selectedCurrency && exchangeRates && selectedCurrency in exchangeRates) {
       const convertedAmount = amount * exchangeRates[selectedCurrency as keyof typeof exchangeRates];
-      return convertedAmount.toFixed(0); // Format to 2 decimal places
+      return convertedAmount.toFixed(0);
     }
-    return amount.toFixed(0); // Default to original amount if no conversion rate is available
+    return amount.toFixed(0);
   };
 
   useEffect(() => {
     const user = auth.currentUser;
     if (user) {
       const budgetRef = ref(database, `users/${user.uid}/budgets`);
-
-      // Set up a listener for real-time updates
       const unsubscribe = onValue(budgetRef, (snapshot) => {
         const data = snapshot.val();
         if (data) {
-          // Convert the object of objects into an array of objects
           const budgetList = Object.keys(data).map(key => ({
-            id: key, // Use the Firebase key as the ID
+            id: key,
             ...data[key]
           }));
           setBudgets(budgetList);
+
+          budgetList.forEach(budget => {
+            if (!notifiedBudgetIds.includes(budget.id)) {
+              const spent = calculateExpenses(budget.category);
+              if (spent > budget.amount) {
+                sendBudgetNotification(budget.id, budget.category, budget.amount, spent);
+              }
+            }
+          });
         } else {
-          setBudgets([]); // Set to empty array if no data exists
+          setBudgets([]);
         }
       });
 
-      // Clean up the listener when the component unmounts
       return () => unsubscribe();
     } else {
       console.log("User not logged in.");
-      // Handle the case where the user is not logged in (e.g., redirect to login)
     }
-  }, []);
+  }, [expenses, notifiedBudgetIds]);
 
-  // Function to add budget
   const handleAddBudget = () => {
     if (selectedCategory && budgetAmount && selectedDuration) {
       const user = auth.currentUser;
@@ -89,11 +93,9 @@ const useBudget = () => {
         duration: selectedDuration,
       };
 
-      const budgetRef = ref(database, `users/${user.uid}/budgets`); // Reference to the user's budgets
-
+      const budgetRef = ref(database, `users/${user.uid}/budgets`);
       push(budgetRef, newBudget)
         .then(() => {
-          // Budget added successfully
           setModalVisible(false);
           setSelectedCategory("");
           setBudgetAmount("");
@@ -106,18 +108,46 @@ const useBudget = () => {
     }
   };
 
-  // Function to calculate expenses for a given category
   const calculateExpenses = (category: string) => {
     return expenses.filter(expense => expense.category.includes(category)).reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
+  };
+
+  const sendBudgetNotification = async (budgetId: string, category: string, budget: number, spent: number) => {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Budget Alert",
+        body: `You've exceeded your ${category} budget of ${formatAmount(budget)} ${selectedCurrency}! Spent: ${formatAmount(spent)} ${selectedCurrency}.`,
+        data: { category, budget, spent },
+      },
+      trigger: null,
+    });
+
+    const notification = {
+      message: `Budget exceeded for ${category}: ${formatAmount(budget)} ${selectedCurrency} vs Spent: ${formatAmount(spent)} ${selectedCurrency}`,
+      timestamp: new Date().toISOString(),
+      budgetId,
+      isSeen: false, // Explicitly set isSeen
+    };
+
+    const user = auth.currentUser;
+    if (user) {
+      const notificationsRef = ref(database, `users/${user.uid}/notifications`);
+      push(notificationsRef, notification);
+    }
+
+    dispatch({
+      type: "budget/addNotification",
+      payload: notification,
+    });
   };
 
   const chartConfig = {
     backgroundGradientFrom: "#fff",
     backgroundGradientTo: "#fff",
     color: (opacity = 5) => `rgba(26, 255, 146, ${opacity})`,
-    strokeWidth: 2, // optional, default 3
+    strokeWidth: 2,
     barPercentage: 0.5,
-    useShadowColorFromDataset: false // optional
+    useShadowColorFromDataset: false,
   };
 
   return {
@@ -139,7 +169,7 @@ const useBudget = () => {
     screenWidth,
     categoriesList,
     durationList,
-    formatAmount, // Add this function
+    formatAmount,
   };
 };
 

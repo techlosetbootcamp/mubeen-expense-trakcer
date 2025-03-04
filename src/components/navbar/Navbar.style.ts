@@ -84,6 +84,22 @@ const styles = StyleSheet.create({
       flexDirection: "row",
       alignItems: "center",
     },
+    badge: {
+      position: "absolute",
+      top: -5,
+      right: -5,
+      backgroundColor: "#FF6347",
+      borderRadius: 10,
+      width: 20,
+      height: 20,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    badgeText: {
+      color: "#fff",
+      fontSize: 12,
+      fontWeight: "bold",
+    },
   });
   
   export default styles

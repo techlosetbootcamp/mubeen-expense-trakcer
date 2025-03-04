@@ -6,7 +6,7 @@ import { auth, database } from '../../config/firebaseConfig';
 import * as ImagePicker from 'expo-image-picker';
 import { EmailAuthProvider, reauthenticateWithCredential, updateEmail } from 'firebase/auth';
 import { useDispatch } from 'react-redux';
-import { setUserProfile } from '../../store/slices/userSlice';
+import { setUserProfile, setUser } from '../../store/slices/userSlice'; // Add setUser
 
 const useUpdateProfile = () => {
     const navigation: any = useNavigation();
@@ -40,6 +40,14 @@ const useUpdateProfile = () => {
                     dispatch(setUserProfile({
                         profilePicture: userData.profilePicture || '',
                         name: userData.displayName || ''
+                    }));
+                    // Ensure full user object is updated in Redux
+                    dispatch(setUser({
+                        uid: user.uid,
+                        email: user.email,
+                        displayName: userData.displayName || '',
+                        photoURL: userData.profilePicture || '',
+                        income: userData.income || []
                     }));
                 }
             });
@@ -85,10 +93,16 @@ const useUpdateProfile = () => {
                         profilePicture: base64Image,
                         name: username
                     }));
+                    dispatch(setUser({
+                        uid: user.uid,
+                        email: user.email,
+                        displayName: username,
+                        photoURL: base64Image,
+                        income: [] // Preserve existing income if any
+                    }));
                 }
             }
         } catch (error) {
-            console.error('Error selecting image:', error);
             Alert.alert('Error', 'Failed to pick an image.');
         }
     };
@@ -111,6 +125,13 @@ const useUpdateProfile = () => {
                             await reauthenticateWithCredential(user, credential);
                             await updateEmail(user, email);
                             await set(ref(database, `users/${user.uid}/email`), email);
+                            dispatch(setUser({
+                                uid: user.uid,
+                                email: email,
+                                displayName: username,
+                                photoURL: profilePicture,
+                                income: []
+                            }));
                             Alert.alert('Success', 'Email updated successfully!');
                         } catch (error) {
                             Alert.alert('Error', 'Re-authentication failed. Please check your password.');
@@ -141,6 +162,13 @@ const useUpdateProfile = () => {
             dispatch(setUserProfile({
                 profilePicture: profilePicture || '',
                 name: username
+            }));
+            dispatch(setUser({
+                uid: user.uid,
+                email: email,
+                displayName: username,
+                photoURL: profilePicture || '',
+                income: [] // Preserve existing income if any
             }));
 
             Alert.alert('Success', 'Profile updated successfully!');

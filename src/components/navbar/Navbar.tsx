@@ -1,4 +1,3 @@
-// Navbar.tsx
 import React from "react";
 import {
   View,
@@ -13,7 +12,6 @@ import styles from "./Navbar.style";
 import { useAppSelector } from "../../store/store";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
-
 const Navbar: React.FC = () => {
   const {
     navigation,
@@ -26,6 +24,9 @@ const Navbar: React.FC = () => {
 
   const profilePicture = useAppSelector((state) => state.user.profilePicture);
   const name = useAppSelector((state) => state.user.name);
+  const unseenNotificationsCount = useAppSelector((state) =>
+    state.budget.notifications.filter((n) => !n.isSeen).length
+  ); // Count unseen notifications
 
   const renderAvatar = () => {
     if (profilePicture) {
@@ -55,7 +56,7 @@ const Navbar: React.FC = () => {
             name="keyboard-arrow-down"
             size={24}
             color="#7f3dff"
-            style = {styles.icon}
+            style={styles.icon}
           />
           <Text style={styles.dropdown}>{selectedMonth}</Text>
         </TouchableOpacity>
@@ -77,8 +78,15 @@ const Navbar: React.FC = () => {
       </View>
 
       <View style={styles.icons}>
-        <TouchableOpacity>
-          <Ionicons name="notifications-outline" size={24} color="#6B7280" />
+        <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
+          <View style={{ position: "relative" }}>
+            <Ionicons name="notifications-outline" size={24} color="#6B7280" />
+            {unseenNotificationsCount > 0 && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{unseenNotificationsCount}</Text>
+              </View>
+            )}
+          </View>
         </TouchableOpacity>
       </View>
     </View>

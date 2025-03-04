@@ -32,6 +32,7 @@ const useProfile = () => {
     fetchUserProfile();
   }, []);
 
+
   const openLogoutModal = () => {
     setLogoutModalVisible(true);
   };
