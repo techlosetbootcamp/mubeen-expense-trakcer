@@ -1,11 +1,12 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
-  inputField: { borderBottomWidth: 0, textAlign: "center" },
+  inputField: { borderBottomWidth: 0, textAlign: "left" },
   container: {
     flex: 1,
     backgroundColor: "#fd3c4a",
-    maxHeight: "100%",  },
+    maxHeight: "100%",
+  },
   arrowText: {
     flex: 1,
     flexDirection: "row",
@@ -27,15 +28,25 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   label: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: "bold",
+    color: "#e8e8e8",
+  },
+  amountContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  dollarSign: {
+    fontSize: 50,
     color: "#fff",
+    fontWeight: "bold",
+    marginRight: 5,
   },
   amount: {
-    fontSize: 40,
+    fontSize: 50,
     color: "#fff",
     fontWeight: "bold",
-    marginTop: 3,
+    marginTop: 0,
   },
   whiteSection: {
     flex: 1.5,
@@ -127,26 +138,20 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   attachmentPreviewContainer: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-    marginBottom: 15,
-    width: "95%",
+    alignSelf: "flex-start", // Align to the left
+    marginBottom: 8,
+    position: "relative", // For positioning the close button
   },
   attachmentPreview: {
-    position: "relative",
-    width: 118,
-    height: 118,
-    borderRadius: 10,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: "#ccc",
+    width: 52,
+    height: 52,
+    borderRadius: 8,
   },
   closeButton: {
     position: "absolute",
-    top: 5,
-    right: 5,
-    backgroundColor: "red",
+    top: 0, // On the image’s top-right corner
+    right: 0,
+    backgroundColor: "black",
     borderRadius: 12,
     width: 24,
     height: 24,
@@ -221,6 +226,4 @@ const styles = StyleSheet.create({
   },
 });
 
-
-
-export default styles
+export default styles;

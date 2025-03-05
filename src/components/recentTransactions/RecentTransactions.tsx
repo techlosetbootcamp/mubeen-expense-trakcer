@@ -59,7 +59,7 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
               baseStyles[transaction.category as keyof typeof baseStyles] || baseStyles.default;
 
             return (
-              <View key={transaction.id} style={styles.CardContainer}>
+              <View style={styles.CardContainer}>
                 <TouchableOpacity
                   style={styles.CategoryContainer}
                   onPress={() =>
@@ -76,7 +76,7 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
                     <View style={styles.Row}>
                       <Text style={styles.IncomeText}>
                         {transaction.category.length > 15
-                          ? `${transaction.category.slice(0, 15)}...`
+                          ? `${transaction.category.slice(0, 10)}...`
                           : transaction.category}
                       </Text>
                       <Text

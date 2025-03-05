@@ -7,8 +7,6 @@ import { useAddExpense } from "./useAddExpense";
 import Entypo from "@expo/vector-icons/Entypo";
 import Loader from "../../components/loader/Loader";
 
-
-
 const AddExpense = () => {
     const {
         amount,
@@ -29,10 +27,9 @@ const AddExpense = () => {
         whiteSectionHeight,
         setWhiteSectionHeight,
         handleAttachmentOption,
-        loading, // Add loading from the hook
+        loading,
     } = useAddExpense();
 
-    // Show Loader when loading is true
     if (loading) {
         return <Loader />;
     }
@@ -42,7 +39,7 @@ const AddExpense = () => {
             <View style={styles.arrowText}>
                 <AntDesign
                     name="arrowleft"
-                    size={36}
+                    size={24}
                     color="white"
                     onPress={() => navigation.navigate("Main")}
                 />
@@ -52,12 +49,17 @@ const AddExpense = () => {
             </View>
             <View style={styles.greenSection}>
                 <Text style={styles.label}>How much?</Text>
-                <TextInput
-                    style={[styles.amount, styles.inputField]}
-                    value={amount}
-                    onChangeText={setAmount}
-                    keyboardType="numeric"
-                />
+                <View style={styles.amountContainer}>
+                    <Text style={styles.dollarSign}>$</Text>
+                    <TextInput
+                        style={[styles.amount, styles.inputField]}
+                        value={amount}
+                        onChangeText={setAmount}
+                        keyboardType="numeric"
+                        placeholder="0"
+                        placeholderTextColor="#fff"
+                    />
+                </View>
             </View>
             <View style={[styles.whiteSection, { flex: whiteSectionHeight }]}>
                 <TouchableOpacity
@@ -98,12 +100,23 @@ const AddExpense = () => {
                     placeholder="Description"
                 />
 
-                {/* Attachment Preview Above Button */}
+                {/* Attachment Preview with Cross Icon */}
                 {attachment && typeof attachment === "string" && (
-                    <Image
-                        source={{ uri: attachment }}
-                        style={{ width: 52, height: 52, marginBottom: 8 }}
-                    />
+                    <View style={styles.attachmentPreviewContainer}>
+                        <Image
+                            source={{ uri: attachment }}
+                            style={styles.attachmentPreview}
+                        />
+                        <TouchableOpacity
+                            style={styles.closeButton}
+                            onPress={() => {
+                                setAttachment(null);
+                                setWhiteSectionHeight(1.5);
+                            }}
+                        >
+                            <MaterialIcons name="close" size={16} color="white" />
+                        </TouchableOpacity>
+                    </View>
                 )}
 
                 <TouchableOpacity

@@ -54,7 +54,7 @@ const Navbar: React.FC = () => {
         <TouchableOpacity onPress={toggleDropdown} style={styles.dropdownButton}>
           <MaterialIcons
             name="keyboard-arrow-down"
-            size={24}
+            size={32}
             color="#7f3dff"
             style={styles.icon}
           />
@@ -80,7 +80,7 @@ const Navbar: React.FC = () => {
       <View style={styles.icons}>
         <TouchableOpacity onPress={() => navigation.navigate("Notifications")}>
           <View style={{ position: "relative" }}>
-            <Ionicons name="notifications-outline" size={24} color="#6B7280" />
+            <Ionicons name="notifications" size={28} color="#7f3dff" />
             {unseenNotificationsCount > 0 && (
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>{unseenNotificationsCount}</Text>

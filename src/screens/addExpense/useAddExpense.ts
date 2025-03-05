@@ -9,7 +9,7 @@ import { auth, database } from "../../config/firebaseConfig";
 import { push, ref } from "firebase/database";
 
 export const useAddExpense = () => {
-    const [amount, setAmount] = useState("0");
+    const [amount, setAmount] = useState("0"); // Initial value is just "0", no $
     const [category, setCategory] = useState("");
     const [description, setDescription] = useState("");
     const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -17,7 +17,8 @@ export const useAddExpense = () => {
     const [attachmentModalVisible, setAttachmentModalVisible] = useState(false);
     const [attachment, setAttachment] = useState<string | null>(null);
     const [whiteSectionHeight, setWhiteSectionHeight] = useState(1.5);
-    const [loading, setLoading] = useState(false); // Add loading state
+    const [loading, setLoading] = useState(false);
+
     const userExpense = useAppSelector(
         (state: RootState) => state.expense.expenses || []
     );
@@ -91,11 +92,11 @@ export const useAddExpense = () => {
             return;
         }
 
-        setLoading(true); // Show loader
+        setLoading(true);
 
         const newExpenseRef = ref(database, `expenses/${user.uid}`);
         const newExpense = {
-            amount,
+            amount, // Store only the numeric value
             category,
             description,
             attachment: attachment,
@@ -108,19 +109,19 @@ export const useAddExpense = () => {
                 setPopupVisible(true);
                 setTimeout(() => {
                     setPopupVisible(false);
-                    setAmount("0");
+                    setAmount("0"); // Reset to "0" without $
                     setCategory("");
                     setDescription("");
                     setAttachment(null);
                     setWhiteSectionHeight(1.5);
-                    setLoading(false); // Hide loader
+                    setLoading(false);
                     navigation.navigate("Main");
                 }, 2000);
             })
             .catch((error) => {
                 console.error("Error adding expense to Firebase:", error);
                 alert("Failed to add expense.");
-                setLoading(false); // Hide loader on error
+                setLoading(false);
             });
     };
 
@@ -144,6 +145,6 @@ export const useAddExpense = () => {
         whiteSectionHeight,
         setWhiteSectionHeight,
         handleAttachmentOption,
-        loading, // Expose loading state
+        loading,
     };
 };

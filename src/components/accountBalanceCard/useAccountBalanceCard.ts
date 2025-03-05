@@ -1,7 +1,6 @@
 import { RootState, useAppDispatch, useAppSelector } from "../../store/store";
 import axios from "axios";
 import React, { useEffect } from "react";
-import { loadUser } from "../../store/slices/userSlice";
 import { exchangeRateApiUrl } from "../../constants/exchangeRateApi";
 
 

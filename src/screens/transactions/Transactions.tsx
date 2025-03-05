@@ -87,8 +87,8 @@ const Transactions = () => {
           <View style={styles.TextContainer}>
             <View style={styles.Row}>
               <Text style={styles.IncomeText}>
-                {item.category.length > 15
-                  ? `${item.category.slice(0, 15)}...`
+                {item.category.length > 9
+                  ? `${item.category.slice(0, 9)}...`
                   : item.category}
               </Text>
               <Text style={[styles.PriceText, { color: isIncome ? "green" : "red" }]}>
@@ -182,15 +182,19 @@ const Transactions = () => {
             <Text style={styles.resetButtonText}>Reset Filter</Text>
           </TouchableOpacity>
         )}
-        {/* Financial Report */}
-        <TouchableOpacity
+      </View>
+
+
+
+      {/* Financial Report */}
+      <TouchableOpacity
           style={styles.financialReport}
           onPress={() => navigation.navigate("FinancialReport")}
         >
           <Text style={styles.financialText}>See Your Financial Report</Text>
-          <MaterialIcons name="keyboard-arrow-right" size={36} color="#7f3dff" />
+          <MaterialIcons name="keyboard-arrow-right" size={32} color="#7f3dff" />
         </TouchableOpacity>
-      </View>
+
 
       {/* Transactions List */}
       {hasDisplayableTransactions ? (
@@ -244,22 +248,22 @@ const Transactions = () => {
               <TouchableOpacity
                 style={[
                   styles.fileterButtons,
-                  selectedFilter === "income" && { backgroundColor: "#7f3dff" },
+                  selectedFilter === "income" && { backgroundColor: "#eee5ff", },
                 ]}
                 onPress={() => setSelectedFilter("income")}
               >
-                <Text style={selectedFilter === "income" ? { color: "white" } : { color: "black" }}>
+                <Text style={selectedFilter === "income" ? { color: "#7f3dff" } : { color: "black" }}>
                   Income
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[
                   styles.fileterButtons,
-                  selectedFilter === "expense" && { backgroundColor: "#7f3dff" },
+                  selectedFilter === "expense" && { backgroundColor: "#eee5ff" },
                 ]}
                 onPress={() => setSelectedFilter("expense")}
               >
-                <Text style={selectedFilter === "expense" ? { color: "white" } : { color: "black" }}>
+                <Text style={selectedFilter === "expense" ? { color: "#7f3dff" } : { color: "black" }}>
                   Expense
                 </Text>
               </TouchableOpacity>
@@ -270,38 +274,38 @@ const Transactions = () => {
               <TouchableOpacity
                 style={[
                   styles.SortButtons,
-                  selectedSort === "highest" && { backgroundColor: "#7f3dff" },
+                  selectedSort === "highest" && { backgroundColor: "#eee5ff" },
                 ]}
                 onPress={() => setSelectedSort("highest")}
               >
-                <Text style={selectedSort === "highest" && { color: "white" }}>Highest</Text>
+                <Text style={selectedSort === "highest" && { color: "#7f3dff" }}>Highest</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[
                   styles.SortButtons,
-                  selectedSort === "lowest" && { backgroundColor: "#7f3dff" },
+                  selectedSort === "lowest" && { backgroundColor: "#eee5ff" },
                 ]}
                 onPress={() => setSelectedSort("lowest")}
               >
-                <Text style={selectedSort === "lowest" && { color: "white" }}>Lowest</Text>
+                <Text style={selectedSort === "lowest" && { color: "#7f3dff" }}>Lowest</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[
                   styles.SortButtons,
-                  selectedSort === "newest" && { backgroundColor: "#7f3dff" },
+                  selectedSort === "newest" && { backgroundColor: "#eee5ff" },
                 ]}
                 onPress={() => setSelectedSort("newest")}
               >
-                <Text style={selectedSort === "newest" && { color: "white" }}>Newest</Text>
+                <Text style={selectedSort === "newest" && { color: "#7f3dff" }}>Newest</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[
                   styles.SortButtons,
-                  selectedSort === "oldest" && { backgroundColor: "#7f3dff" },
+                  selectedSort === "oldest" && { backgroundColor: "#eee5ff" },
                 ]}
                 onPress={() => setSelectedSort("oldest")}
               >
-                <Text style={selectedSort === "oldest" && { color: "white" }}>Oldest</Text>
+                <Text style={selectedSort === "oldest" && { color: "#7f3dff" }}>Oldest</Text>
               </TouchableOpacity>
             </View>
 
@@ -331,7 +335,6 @@ const internalStyles = StyleSheet.create({
     backgroundColor: "#fff",
     zIndex: 10,
     paddingTop: 50,
-    paddingHorizontal: 20,
   },
 });
 

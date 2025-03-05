@@ -1,20 +1,76 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
+  progressContainer: {
+    marginTop: 20,
+  },
+  progressItem: {
+    marginBottom: 15,
+  },
+  progressHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  categoryContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f1f1fa', // Light gray background
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 25,
+    borderColor: '#e8e8e8',
+    borderWidth: 0.5
+  },
+  progressDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginRight: 6,
+  },
+  categoryText: {
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  progressBar: {
+    height: 10,
+    backgroundColor: "#f1f1fa",
+    borderRadius: 5,
+    overflow: "hidden",
+  },
+  progressFill: {
+    height: "100%",
+    borderRadius: 5,
+  },
+  amountText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
   container: {
     flex: 1,
-    padding: 30,
+    paddingHorizontal: 30,
     backgroundColor: "#f5f5f5",
+    paddingTop: 40,
+    paddingBottom: 30
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 40,
+    justifyContent: "center",
+    position: "relative",
+    height: 50, // Adjust height if needed
   },
+  
+  iconContainer: {
+    position: "absolute",
+    left: 10, // Adjust as needed
+  },
+  
   title: {
     fontSize: 18,
     fontWeight: "bold",
-    marginLeft: 10,
+    textAlign: "center",
   },
   NavHeader: {
     flexDirection: "row",
@@ -77,6 +133,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     backgroundColor: "#f1f1fa",
     borderRadius: 50,
+    // paddingVertical: 10
   },
   button: {
     paddingVertical: 15,
@@ -91,30 +148,6 @@ const styles = StyleSheet.create({
   },
   activeButtonText: {
     color: "white",
-  },
-  progressContainer: {
-    marginTop: 20,
-  },
-  progressItem: {
-    marginBottom: 10,
-  },
-  categoryText: {
-    fontSize: 14,
-    fontWeight: "bold",
-  },
-  progressBar: {
-    height: 10,
-    backgroundColor: "#ddd",
-    borderRadius: 5,
-    overflow: "hidden",
-  },
-  progressFill: {
-    height: "100%",
-  },
-  amountText: {
-    fontSize: 14,
-    marginTop: 5,
-    marginBottom: 5,
   },
 });
 

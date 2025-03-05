@@ -15,7 +15,6 @@ import styles from "./AddIncome.style";
 import useAddIncome from "./useAddIncome";
 import Loader from "../../components/loader/Loader";
 
-
 const AddIncome = () => {
     const {
         amount,
@@ -38,10 +37,10 @@ const AddIncome = () => {
         handleAttachmentOption,
         handleContinuePress,
         attachment,
-        loading, // Add loading from the hook
+        setAttachment, // Ensure this is destructured
+        loading,
     } = useAddIncome();
 
-    // Show Loader when loading is true
     if (loading) {
         return <Loader />;
     }
@@ -51,7 +50,7 @@ const AddIncome = () => {
             <View style={styles.arrowText}>
                 <AntDesign
                     name="arrowleft"
-                    size={36}
+                    size={24}
                     color="white"
                     onPress={() => navigation.navigate("Main")}
                 />
@@ -61,12 +60,17 @@ const AddIncome = () => {
             </View>
             <View style={styles.greenSection}>
                 <Text style={styles.label}>How much?</Text>
-                <TextInput
-                    style={[styles.amount, styles.inputField]}
-                    value={amount}
-                    onChangeText={setAmount}
-                    keyboardType="numeric"
-                />
+                <View style={styles.amountContainer}>
+                    <Text style={styles.dollarSign}>$</Text>
+                    <TextInput
+                        style={[styles.amount, styles.inputField]}
+                        value={amount}
+                        onChangeText={setAmount}
+                        keyboardType="numeric"
+                        placeholder="0"
+                        placeholderTextColor="#fff"
+                    />
+                </View>
             </View>
             <View style={[styles.whiteSection, { flex: whiteSectionHeight }]}>
                 <TouchableOpacity
@@ -121,12 +125,23 @@ const AddIncome = () => {
                     placeholder="Description"
                 />
 
-                {/* Attachment Preview Above Button */}
-                {attachment && attachment.uri && (
-                    <Image
-                        source={{ uri: attachment.uri }}
-                        style={{ width: 52, height: 52, marginBottom: 8 }}
-                    />
+                {/* Attachment Preview with Cross Icon */}
+                {attachment && typeof attachment === "string" && (
+                    <View style={styles.attachmentPreviewContainer}>
+                        <Image
+                            source={{ uri: attachment }}
+                            style={styles.attachmentPreview}
+                        />
+                        <TouchableOpacity
+                            style={styles.closeButton}
+                            onPress={() => {
+                                setAttachment(null);
+                                setWhiteSectionHeight(1.5);
+                            }}
+                        >
+                            <MaterialIcons name="close" size={16} color="white" />
+                        </TouchableOpacity>
+                    </View>
                 )}
 
                 <TouchableOpacity
@@ -169,6 +184,7 @@ const AddIncome = () => {
                         </View>
                     </View>
                 </Modal>
+
                 <TouchableOpacity
                     style={styles.continueButton}
                     onPress={handleContinuePress}

@@ -17,7 +17,7 @@ const useAddIncome = () => {
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [whiteSectionHeight, setWhiteSectionHeight] = useState(1.5);
     const [popupVisible, setPopupVisible] = useState(false);
-    const [loading, setLoading] = useState(false); // Add loading state
+    const [loading, setLoading] = useState(false);
     const navigation: any = useNavigation();
     const dispatch = useAppDispatch();
     const userIncome = useAppSelector(
@@ -94,7 +94,7 @@ const useAddIncome = () => {
             return;
         }
 
-        setLoading(true); // Show loader
+        setLoading(true);
 
         const newIncomeRef = ref(database, `incomes/${user.uid}`);
         const newIncome = {
@@ -116,14 +116,14 @@ const useAddIncome = () => {
                     setDescription("");
                     setAttachment(null);
                     setWhiteSectionHeight(1.5);
-                    setLoading(false); // Hide loader
+                    setLoading(false);
                     navigation.navigate("Main");
                 }, 2000);
             })
             .catch((error) => {
                 console.error("Error adding income to Firebase:", error);
                 alert("Failed to add income.");
-                setLoading(false); // Hide loader on error
+                setLoading(false);
             });
     };
 
@@ -148,8 +148,8 @@ const useAddIncome = () => {
         handleAttachmentOption,
         handleContinuePress,
         attachment,
-        setAttachment,
-        loading, // Expose loading state
+        setAttachment, // Explicitly returned to fix the error
+        loading,
     };
 };
 

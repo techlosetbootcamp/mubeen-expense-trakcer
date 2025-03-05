@@ -14,14 +14,17 @@ const styles = StyleSheet.create({
   },
   filterContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
-    width: "100%",
+    justifyContent: "space-between", // Keeps buttons flush with border edges
     marginBottom: 10,
+    borderColor: "#e8e8e8", // Light gray color
+    borderWidth: 1, // Small width for smaller dots
+    borderRadius: 25,
+    width: '95%',
   },
   filterButton: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 25,
   },
   selectedFilterButton: {
     backgroundColor: "#fceed4",

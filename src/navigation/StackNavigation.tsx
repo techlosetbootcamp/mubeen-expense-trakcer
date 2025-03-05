@@ -20,19 +20,15 @@ const StackNavigation: React.FC<StackNavigationProps> = ({ initialUser }) => {
   const reduxUser = useAppSelector((state: RootState) => state.user.user);
 
   useEffect(() => {
-    console.log('StackNavigation.tsx: Setting splash timer');
     const splashTimer = setTimeout(() => {
       setIsSplashVisible(false);
-      console.log('StackNavigation.tsx: Splash timer complete, isSplashVisible set to false');
     }, 3000);
     return () => clearTimeout(splashTimer);
   }, []);
 
   useEffect(() => {
-    console.log('StackNavigation.tsx: Checking navigation with initialUser:', initialUser ? initialUser.uid : null);
     if (!isSplashVisible && !hasNavigated.current) {
       if (initialUser) {
-        console.log('StackNavigation.tsx: Navigating to Main');
         dispatch(fetchIncome());
         dispatch(fetchExpenses());
         navigation.reset({
@@ -40,7 +36,6 @@ const StackNavigation: React.FC<StackNavigationProps> = ({ initialUser }) => {
           routes: [{ name: 'Main' }],
         });
       } else {
-        console.log('StackNavigation.tsx: Navigating to Authentication');
         navigation.reset({
           index: 0,
           routes: [{ name: 'Authentication' }],
@@ -51,11 +46,9 @@ const StackNavigation: React.FC<StackNavigationProps> = ({ initialUser }) => {
   }, [isSplashVisible, initialUser, navigation, dispatch]);
 
   if (isSplashVisible) {
-    console.log('StackNavigation.tsx: Rendering SplashScreen');
     return <SplashScreen />;
   }
 
-  console.log('StackNavigation.tsx: Rendering Stack.Navigator with reduxUser:', reduxUser ? reduxUser.uid : null);
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }} id={initialUser}>
       {!reduxUser

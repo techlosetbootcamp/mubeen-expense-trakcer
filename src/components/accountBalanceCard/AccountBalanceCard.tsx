@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { Text, View, Modal, TouchableOpacity } from "react-native";
+import { Text, View, Modal, TouchableOpacity, Image } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import useAccountBalanceCard from "./useAccountBalanceCard"; // Import the custom hook
 import styles from "./AccountBalanceCard.style";
 
 const AccountBalanceCard = () => {
-  
+
   const { totalIncome, totalExpenses, accountBalance, currencySymbol } = useAccountBalanceCard(); // Use the hook
 
   const [isIncomeModalVisible, setIsIncomeModalVisible] = useState(false);
@@ -27,14 +27,26 @@ const AccountBalanceCard = () => {
 
       <View style={styles.IncomeAndTextCont}>
         <TouchableOpacity style={styles.IncomButton} onPress={handleIncomeModalToggle}>
-          <Ionicons name="arrow-up-circle" size={40} color="#fff" />
+          <View style={{ backgroundColor: 'white', paddingVertical: 8, paddingHorizontal: 8, borderRadius: 15, marginRight: 5 }}>
+            <Image
+              source={require('../../constants/icons/income.png')}
+              style={{ width: 30, height: 30, resizeMode: 'contain' }}
+            />
+          </View>
           <View style={styles.boxContent}>
             <Text style={styles.IncomeText}>Income</Text>
-            <Text style={[styles.IncomeText, styles.amountText]} numberOfLines={1}>{currencySymbol}{totalIncome}</Text>
+            <Text style={[styles.IncomeText, styles.amountText]} numberOfLines={1}>
+              {currencySymbol}{totalIncome}
+            </Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity style={styles.ExpenseButton} onPress={handleExpenseModalToggle}>
-          <Ionicons name="arrow-down-circle" size={40} color="#fff" />
+          <View style={{ backgroundColor: 'white', paddingVertical: 8, paddingHorizontal:8, borderRadius: 15, marginRight: 5 }}>
+            <Image
+              source={require('../../constants/icons/Expense.png')}
+              style={{ width: 30, height: 30, resizeMode: 'contain' }}
+            />
+          </View>
           <View style={styles.boxContent}>
             <Text style={styles.IncomeText}>Expense</Text>
             <Text style={[styles.IncomeText, styles.amountText]} numberOfLines={1}>{currencySymbol}{totalExpenses}</Text>

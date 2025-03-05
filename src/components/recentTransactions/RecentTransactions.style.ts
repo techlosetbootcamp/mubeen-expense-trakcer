@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#eee5ff",
     paddingHorizontal: 20,
     paddingVertical: 10,
-    borderRadius: 15,
+    borderRadius: 25,
     color: "#8647ff",
     fontWeight: "bold",
     fontSize: 16,
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   BuyText: {
     color: "gray",
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "semibold",
     flexShrink: 1, // Prevents text overflow
   },
   PriceText: {
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   TiemText: {
     color: "gray",
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "semibold",
   },
   iconContainer: {
     padding: 10,

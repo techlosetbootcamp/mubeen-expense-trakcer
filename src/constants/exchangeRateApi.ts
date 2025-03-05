@@ -1,1 +1,1 @@
-export const exchangeRateApiUrl = "https://v6.exchangerate-api.com/v6/12449143dc69d363f6104dc0/latest/USD";
+export const exchangeRateApiUrl = "https://v6.exchangerate-api.com/v6/06e9d6740b3c1cf662607a35/latest/USD";

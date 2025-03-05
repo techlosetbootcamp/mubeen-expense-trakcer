@@ -53,7 +53,7 @@ const FinancialReport = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconContainer}>
           <AntDesign name="arrowleft" size={24} color="black" />
         </TouchableOpacity>
         <Text style={styles.title}>Financial Report</Text>
@@ -131,7 +131,23 @@ const FinancialReport = () => {
       <ScrollView style={styles.progressContainer} showsVerticalScrollIndicator={false}>
         {getChartData().map((item, index) => (
           <View key={index} style={styles.progressItem}>
-            <Text style={styles.categoryText}>{item.barGraphname}</Text>
+            <View style={styles.progressHeader}>
+              <View style={styles.categoryContainer}>
+                <View style={[styles.progressDot, { backgroundColor: item.color }]} />
+                <Text style={styles.categoryText}>{item.barGraphname}</Text>
+              </View>
+              <Text
+                style={[
+                  styles.amountText,
+                  {
+                    color: selectedType === 'expense' ? '#ff0000' : '#00cc00',
+                  }
+                ]}
+              >
+                {selectedType === 'expense' ? '-' : '+'}
+                {currencySymbol}{formatAmount(item.population)}
+              </Text>
+            </View>
             <View style={styles.progressBar}>
               <View
                 style={[
@@ -140,7 +156,6 @@ const FinancialReport = () => {
                 ]}
               />
             </View>
-            <Text style={styles.amountText}>{currencySymbol}{formatAmount(item.population)}</Text>
           </View>
         ))}
       </ScrollView>

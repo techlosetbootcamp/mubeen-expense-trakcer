@@ -75,7 +75,6 @@ const useBudget = () => {
 
       return () => unsubscribe();
     } else {
-      console.log("User not logged in.");
     }
   }, [expenses, notifiedBudgetIds]);
 
@@ -83,7 +82,6 @@ const useBudget = () => {
     if (selectedCategory && budgetAmount && selectedDuration) {
       const user = auth.currentUser;
       if (!user) {
-        console.log("User not logged in.");
         return;
       }
 

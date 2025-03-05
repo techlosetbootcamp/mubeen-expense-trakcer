@@ -55,17 +55,17 @@ const Profile: React.FC = () => {
       {/* Menu Options */}
       <View style={styles.menu}>
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate("Setting")}>
-          <MaterialIcons name="settings" size={48} color="#8A2BE2" />
+          <MaterialIcons name="settings" size={36} color="#8A2BE2" style={{backgroundColor: "#eee5ff", padding:5, borderRadius: 15}}/>
           <Text style={styles.menuText}>Settings</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate("ResetPassword")}>
-          <MaterialIcons name="lock-reset" size={48} color="#8A2BE2" />
+          <MaterialIcons name="lock-reset" size={36} color="#8A2BE2" style={{backgroundColor: "#eee5ff", padding:5, borderRadius: 15}}/>
           <Text style={styles.menuText}>Reset Password</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuItem} onPress={openLogoutModal}>
-          <MaterialIcons name="logout" size={48} color="#FF6347" />
+        <TouchableOpacity style={styles.logoutmenuItem} onPress={openLogoutModal}>
+          <MaterialIcons name="logout" size={36} color="#FF6347" style={{backgroundColor: "#ffe2e4", padding:5, borderRadius: 15}}/>
           <Text style={[styles.menuText, styles.logoutText]}>Logout</Text>
         </TouchableOpacity>
 
@@ -80,7 +80,7 @@ const Profile: React.FC = () => {
             <View style={styles.modalContainer}>
               <Text style={styles.modalTitle}>Logout?</Text>
               <Text style={styles.modalMessage}>
-                Are you sure you want to logout?
+                Are you sure you wanna to logout?
               </Text>
               <View style={styles.modalActions}>
                 <TouchableOpacity

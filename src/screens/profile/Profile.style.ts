@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     },
     menu: {
       backgroundColor: "#FFFFFF",
-      borderRadius: 12,
+      borderRadius: 25,
       padding: 16,
       shadowColor: "#000",
       shadowOffset: { width: 0, height: 2 },
@@ -69,14 +69,19 @@ const styles = StyleSheet.create({
       borderBottomWidth: 1,
       borderBottomColor: "#E5E7EB",
     },
+    logoutmenuItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingVertical: 12,
+    },
     menuText: {
       fontSize: 16,
       fontWeight: "500",
-      color: "#374151",
+      color: "black",
       marginLeft: 12,
     },
     logoutText: {
-      color: "#FF6347",
+      color: "black",
     },
     modalOverlay: {
       flex: 1,

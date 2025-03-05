@@ -1,4 +1,3 @@
-// components/TransactionsDetail.tsx
 import {
     View,
     Text,
@@ -28,7 +27,6 @@ const currencySymbols = {
 };
 
 export default function DetailTransaction() {
-
     const {
         openModal,
         setOpenModal,
@@ -59,16 +57,16 @@ export default function DetailTransaction() {
         setFullScreenImage,
         convertedAmount,
         selectedCurrency,
-    } = useTransactionsDetail()
+    } = useTransactionsDetail();
 
-    const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);  // new State
+    const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
-    const openDeleteModal = () => {  // new function
-        setOpenModal(false)
+    const openDeleteModal = () => {
+        setOpenModal(false);
         setIsDeleteModalVisible(true);
     };
 
-    const closeDeleteModal = () => {  // new function
+    const closeDeleteModal = () => {
         setIsDeleteModalVisible(false);
     };
 
@@ -100,51 +98,61 @@ export default function DetailTransaction() {
                 </View>
             </View>
             <View style={styles.belowContainer}>
-                <View style={styles.belowBox1}>
-                    <View>
-                        <Text style={styles.box1Text}>Type</Text>
-                        <Text style={styles.box1Text2}>{type}</Text>
-                    </View>
-                    <View>
-                        <Text style={styles.box1Text}>Category</Text>
-                        <TouchableOpacity onPress={() => setShowFullCategory(!showFullCategory)}>
-                            <Text style={styles.box1Text2}>
-                                {transaction.category && transaction.category.length > 15
-                                    ? `${transaction.category.slice(0, 15)}...`
-                                    : transaction.category}
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View>
-                        <Text style={styles.box1Text}>Wallet</Text>
-                        <Text style={styles.box1Text2}>PayPal</Text>
-                    </View>
-                </View>
-                <View style={styles.description}>
-                    <Text style={styles.descriptionHead}>Description</Text>
-                    <Text style={styles.descriptionText}>{transaction.description}</Text>
-                </View>
-                <View style={styles.pictureBox}>
-                    <Text style={styles.imageText}>Attachment</Text>
-                    <View style={styles.pic}>
-                        {transaction.attachment ? (
-                            <TouchableOpacity onPress={() => setFullScreenImage(transaction.attachment)}>
-                                <Image
-                                    style={styles.actualpic}
-                                    resizeMode="cover"
-                                    source={{ uri: transaction.attachment }}
-                                />
+                {/* New Card for Type, Category, and Wallet */}
+                <View style={styles.infoCard}>
+                    <View style={styles.belowBox1}>
+                        <View>
+                            <Text style={styles.box1Text}>Type</Text>
+                            <Text style={styles.box1Text2}>{type}</Text>
+                        </View>
+                        <View>
+                            <Text style={styles.box1Text}>Category</Text>
+                            <TouchableOpacity onPress={() => setShowFullCategory(!showFullCategory)}>
+                                <Text style={styles.box1Text2}>
+                                    {transaction.category && transaction.category.length > 15
+                                        ? `${transaction.category.slice(0, 15)}...`
+                                        : transaction.category}
+                                </Text>
                             </TouchableOpacity>
-                        ) : (
-                            <Text>No image available</Text>
-                        )}
+                        </View>
+                        <View>
+                            <Text style={styles.box1Text}>Wallet</Text>
+                            <Text style={styles.box1Text2}>PayPal</Text>
+                        </View>
                     </View>
                 </View>
+                
+                {/* Dashed Line */}
+                <View style={styles.dashedLine} />
 
-                {/* Edit Transaction Button */}
-                <TouchableOpacity style={styles.button} onPress={handleEditTransaction}>
-                    <Text style={styles.btnText}>Edit Transaction</Text>
-                </TouchableOpacity>
+                {/* Remaining Content */}
+                <View style={styles.remainingContent}>
+                    <View style={styles.description}>
+                        <Text style={styles.descriptionHead}>Description</Text>
+                        <Text style={styles.descriptionText}>{transaction.description}</Text>
+                    </View>
+                    <View style={styles.pictureBox}>
+                        <Text style={styles.imageText}>Attachment</Text>
+                        <View style={styles.pic}>
+                            {transaction.attachment ? (
+                                <TouchableOpacity onPress={() => setFullScreenImage(transaction.attachment)}>
+                                    <Image
+                                        style={styles.actualpic}
+                                        resizeMode="cover"
+                                        source={{ uri: transaction.attachment }}
+                                    />
+                                </TouchableOpacity>
+                            ) : (
+                                <Text>No image available</Text>
+                            )}
+                        </View>
+                    </View>
+
+                    {/* Edit Transaction Button */}
+                    <TouchableOpacity style={styles.button} onPress={handleEditTransaction}>
+                        <Text style={styles.btnText}>Edit</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
 
             <Modal
@@ -171,8 +179,8 @@ export default function DetailTransaction() {
             <Modal
                 transparent={true}
                 animationType="fade"
-                visible={isDeleteModalVisible}  // change state here
-                onRequestClose={closeDeleteModal}  // change function here
+                visible={isDeleteModalVisible}
+                onRequestClose={closeDeleteModal}
             >
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContainer}>
@@ -183,13 +191,13 @@ export default function DetailTransaction() {
                         <View style={styles.modalActions}>
                             <TouchableOpacity
                                 style={[styles.cancelButton]}
-                                onPress={closeDeleteModal}  // change function here
+                                onPress={closeDeleteModal}
                             >
                                 <Text style={styles.modalCancelButtonText}>No</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={[styles.confirmButton]}
-                                onPress={confirmDeleteTransaction}  // remain same functionality
+                                onPress={confirmDeleteTransaction}
                             >
                                 <Text style={styles.modalYesButtonText}>Yes</Text>
                             </TouchableOpacity>
@@ -197,6 +205,7 @@ export default function DetailTransaction() {
                     </View>
                 </View>
             </Modal>
+
             {/* Full Category Modal */}
             <Modal
                 transparent={true}
@@ -206,15 +215,12 @@ export default function DetailTransaction() {
             >
                 <View style={styles.fullCategoryModalContainer}>
                     <View style={styles.fullCategoryModalContent}>
-                        {/* Cross Icon at Top Right */}
                         <TouchableOpacity
                             style={styles.fullCategoryCloseIcon}
                             onPress={() => setShowFullCategory(false)}
                         >
                             <Ionicons name="close" size={24} color="#000" />
                         </TouchableOpacity>
-
-                        {/* Full Category Text */}
                         <Text style={styles.fullCategoryText}>{transaction.category}</Text>
                     </View>
                 </View>
@@ -231,7 +237,6 @@ export default function DetailTransaction() {
                     <View style={styles.editModalContent}>
                         <Text style={styles.editModalTitle}>Edit Transaction</Text>
                         <ScrollView>
-                            {/* Amount Input */}
                             <View style={styles.inputContainer}>
                                 <Text style={styles.inputLabel}>Amount</Text>
                                 <TextInput
@@ -242,7 +247,6 @@ export default function DetailTransaction() {
                                     keyboardType="numeric"
                                 />
                             </View>
-                            {/* Description Input */}
                             <View style={styles.inputContainer}>
                                 <Text style={styles.inputLabel}>Description</Text>
                                 <TextInput
@@ -252,8 +256,6 @@ export default function DetailTransaction() {
                                     onChangeText={(text) => setEditedTransaction({ ...editedTransaction, description: text })}
                                 />
                             </View>
-
-                            {/* Type Dropdown */}
                             <View style={styles.inputContainer}>
                                 <Text style={styles.inputLabel}>Type</Text>
                                 <View style={styles.dropdown}>
@@ -267,8 +269,6 @@ export default function DetailTransaction() {
                                     </Picker>
                                 </View>
                             </View>
-
-                            {/* Category Dropdown */}
                             <View style={styles.inputContainer}>
                                 <Text style={styles.inputLabel}>Category</Text>
                                 <View style={styles.dropdown}>
@@ -284,8 +284,6 @@ export default function DetailTransaction() {
                                 </View>
                             </View>
                         </ScrollView>
-
-                        {/* Save and Cancel Buttons */}
                         <View style={styles.modalButtons}>
                             <TouchableOpacity
                                 style={[styles.modalButton, { backgroundColor: 'gray' }]}

@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   BuyText: {
     color: "gray",
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "semibold",
     flexShrink: 1, // Prevents text overflow
   },
   PriceText: {
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   TiemText: {
     color: "gray",
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "semibold",
   },
   header: {
     flexDirection: "row",
@@ -130,7 +130,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     color: "#7f3dff",
-    alignItems: "center",
   },
   iconContainer: {
     padding: 10,
@@ -183,7 +182,7 @@ const styles = StyleSheet.create({
   },
   modalButton: {
     backgroundColor: "#7f3dff",
-    padding: 10,
+    paddingVertical: 15,
     borderRadius: 15,
     alignItems: "center",
     marginTop: 20,
@@ -199,7 +198,8 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 15,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    color: '#7f3dff'
   },
   resetContainer: {
     flexDirection: "row",
@@ -208,7 +208,8 @@ const styles = StyleSheet.create({
     alignContent: "center"
   },
   headingText: {
-    fontSize: 25,
+    fontSize: 20,
+    fontWeight: "bold"
   },
   buttonsContainer: {
     flexDirection: "row",
@@ -216,7 +217,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   fileterButtons: {
-    color: "#8647ff",
     borderRadius: 25,
     paddingVertical: 15,
     paddingHorizontal: 30,
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   categoryText: {
-    fontSize: 10
+    fontSize: 20
   }
 });
 

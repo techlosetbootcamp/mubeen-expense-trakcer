@@ -1,6 +1,5 @@
-// hooks/useTransactionsDetail.ts
-import { View, Text, Alert } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { onValue, ref, remove, set } from 'firebase/database';
 import { auth, database } from '../../config/firebaseConfig';
@@ -8,12 +7,10 @@ import { useAppSelector } from '../../store/store';
 import axios from 'axios';
 import { exchangeRateApiUrl } from "../../constants/exchangeRateApi";
 
-
 const useTransactionsDetail = () => {
-
     const [openModal, setOpenModal] = useState(false);
     const [openEditModal, setOpenEditModal] = useState(false);
-    const [showFullCategory, setShowFullCategory] = useState(false); // State for full category popup
+    const [showFullCategory, setShowFullCategory] = useState(false);
     const navigation: any = useNavigation();
     const route = useRoute<any>();
     const { transactionId, type } = route.params;
@@ -41,7 +38,6 @@ const useTransactionsDetail = () => {
 
     useEffect(() => {
         if (!transactionId || !type) {
-            console.log('Transaction ID or Type missing');
             return;
         }
 
@@ -52,7 +48,6 @@ const useTransactionsDetail = () => {
                 const transactionData = snapshot.val();
                 setTransaction({ ...transactionData, id: transactionId });
                 setEditedTransaction({ ...transactionData, id: transactionId });
-                // Convert amount to selected currency
                 if (selectedCurrency && exchangeRates && selectedCurrency in exchangeRates) {
                     const rate = exchangeRates[selectedCurrency as keyof typeof exchangeRates];
                     const convertedAmountValue = (parseFloat(transactionData.amount) * rate).toFixed(0);
@@ -61,14 +56,12 @@ const useTransactionsDetail = () => {
                     setConvertedAmount(transactionData.amount);
                 }
             } else {
-                console.log('No data available for transaction ID:', transactionId);
             }
         });
 
         return () => unsubscribe();
     }, [transactionId, type, selectedCurrency, exchangeRates]);
 
-    // Function to delete a transaction after confirmation
     const confirmDeleteTransaction = async () => {
         try {
             const transactionRef = ref(database, `${type.toLowerCase()}s/${auth.currentUser?.uid}/${transactionId}`);
@@ -82,12 +75,10 @@ const useTransactionsDetail = () => {
         }
     };
 
-    // Function to handle edit transaction
     const handleEditTransaction = () => {
         setOpenEditModal(true);
     };
 
-    // Function to save the edited transaction
     const saveEditedTransaction = async () => {
         try {
             const transactionRef = ref(database, `${type.toLowerCase()}s/${auth.currentUser?.uid}/${transactionId}`);
@@ -104,7 +95,6 @@ const useTransactionsDetail = () => {
 
     const [categories, setCategories] = useState<string[]>([]);
 
-    // Define income and expense categories
     const incomeCategories = [
         "Salary",
         "Business",
@@ -135,7 +125,6 @@ const useTransactionsDetail = () => {
         "Other",
     ];
 
-    // Update categories when type changes
     useEffect(() => {
         if (editedTransaction.type === 'Income') {
             setCategories(incomeCategories);
@@ -144,7 +133,6 @@ const useTransactionsDetail = () => {
         }
     }, [editedTransaction.type]);
 
-    // Function to handle type change
     const handleTypeChange = (itemValue: string) => {
         setEditedTransaction({ ...editedTransaction, type: itemValue });
     };
@@ -179,7 +167,7 @@ const useTransactionsDetail = () => {
         setFullScreenImage,
         convertedAmount,
         selectedCurrency,
-    }
-}
+    };
+};
 
-export default useTransactionsDetail
+export default useTransactionsDetail;
