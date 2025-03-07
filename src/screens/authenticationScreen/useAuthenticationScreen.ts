@@ -1,5 +1,5 @@
-import { Alert, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import { Alert } from 'react-native'
+import { useState } from 'react'
 import { setUser } from "../../store/slices/userSlice";
 import { auth, database } from "../../config/firebaseConfig";
 import {
@@ -38,19 +38,19 @@ const useAuthenticationScreen = () => {
           email,
           password
         );
-        const user = userCredential.user;
-        const userRef = ref(database, `users/${user.uid}`);
+        const user = userCredential?.user;
+        const userRef = ref(database, `users/${user?.uid}`);
         const snapshot = await get(userRef);
-        const userData = snapshot.exists()
+        const userData = snapshot?.exists()
           ? snapshot.val()
           : { displayName: "" };
 
         dispatch(
           setUser({
-            uid: user.uid,
-            email: user.email,
-            displayName: userData.displayName || "",
-            photoURL: user.photoURL || "",
+            uid: user?.uid,
+            email: user?.email,
+            displayName: userData?.displayName || "",
+            photoURL: user?.photoURL || "",
             income: [],
           })
         );
@@ -62,15 +62,15 @@ const useAuthenticationScreen = () => {
         );
         const user = userCredential.user;
         await updateProfile(user, { displayName: username });
-        await set(ref(database, `users/${user.uid}`), {
+        await set(ref(database, `users/${user?.uid}`), {
           displayName: username,
-          email: user.email,
+          email: user?.email,
           income: 0,
         });
         dispatch(
           setUser({
-            uid: user.uid,
-            email: user.email,
+            uid: user?.uid,
+            email: user?.email,
             displayName: username,
             photoURL: "",
             income: [],

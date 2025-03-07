@@ -5,188 +5,210 @@ import { onValue, ref } from 'firebase/database';
 import { database } from '../../config/firebaseConfig';
 import axios from 'axios';
 import { exchangeRateApiUrl } from "../../constants/exchangeRateApi";
+import { baseStyles } from '../../constants/baseStyles';
+import { currencySymbols } from '../../constants/currencySymbols';
 
 const useTransaction = () => {
-    const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
-    const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
-    const [selectedSort, setSelectedSort] = useState<string | null>(null);
-    const [filteredTransactionsData, setFilteredTransactionsData] = useState<any[]>([]);
-    const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-    const [selectedMonth, setSelectedMonth] = useState("Month");
-    const [transactions, setTransactions] = useState<any[]>([]);
-    const user = useAppSelector((state) => state.user.user);
-    const [exchangeRates, setExchangeRates] = useState({});
-    const selectedCurrency = useAppSelector((state) => state.user.selectedCurrency);
-    const navigation: any = useNavigation();
-    const [transactionsToDisplay, setTransactionsToDisplay] = useState<{[key: string]: any[]}>({});
-    const [hasDisplayableTransactions, setHasDisplayableTransactions] = useState(false);
+  const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
+  const [selectedSort, setSelectedSort] = useState<string | null>(null);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
+  const [filteredTransactionsData, setFilteredTransactionsData] = useState<any[]>([]);
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState("Month");
+  const [transactions, setTransactions] = useState<any[]>([]);
+  const user = useAppSelector((state) => state?.user?.user);
+  const [exchangeRates, setExchangeRates] = useState({});
+  const selectedCurrency = useAppSelector((state) => state?.user?.selectedCurrency);
+  const navigation: any = useNavigation();
+  const [transactionsToDisplay, setTransactionsToDisplay] = useState<{ [key: string]: any[] }>({});
+  const [hasDisplayableTransactions, setHasDisplayableTransactions] = useState(false);
+  const currencySymbol = currencySymbols[selectedCurrency] || selectedCurrency;
 
-    useEffect(() => {
-        if (!user) return;
 
-        const expensesRef = ref(database, `expenses/${user.uid}`);
-        const incomesRef = ref(database, `incomes/${user.uid}`);
+  useEffect(() => {
+    if (!user) return;
 
-        const handleTransactions = (snapshot: any, type: "expense" | "income") => {
-            if (snapshot.exists()) {
-                const data = snapshot.val();
-                const transactionsList = Object.keys(data).map((key) => ({
-                    id: key,
-                    ...data[key],
-                    type,
-                }));
-                return transactionsList;
-            }
-            return [];
-        };
+    const expensesRef = ref(database, `expenses/${user?.uid}`);
+    const incomesRef = ref(database, `incomes/${user?.uid}`);
 
-        const unsubscribeExpenses = onValue(expensesRef, (snapshot) => {
-            const expenseData = handleTransactions(snapshot, "expense");
-            setTransactions((prev) => [...expenseData, ...prev].sort((a, b) => b.timestamp.localeCompare(a.timestamp)));
-        });
+    const handleTransactions = (snapshot: any, type: "expense" | "income") => {
+      if (snapshot.exists()) {
+        const data = snapshot?.val();
+        return Object.keys(data)?.map((key) => ({
+          id: key,
+          ...data[key],
+          type,
+        }));
+      }
+      return [];
+    };
 
-        const unsubscribeIncomes = onValue(incomesRef, (snapshot) => {
-            const incomeData = handleTransactions(snapshot, "income");
-            setTransactions((prev) => [...incomeData, ...prev].sort((a, b) => b.timestamp.localeCompare(a.timestamp)));
-        });
+    const unsubscribeExpenses = onValue(expensesRef, (snapshot) => {
+      const expenseData = handleTransactions(snapshot, "expense");
+      setTransactions((prev) => [...expenseData, ...prev.filter(t => t.type !== "expense")].sort((a, b) => b?.timestamp?.localeCompare(a?.timestamp)));
+    });
 
-        return () => {
-            unsubscribeExpenses();
-            unsubscribeIncomes();
-        };
-    }, [user]);
+    const unsubscribeIncomes = onValue(incomesRef, (snapshot) => {
+      const incomeData = handleTransactions(snapshot, "income");
+      setTransactions((prev) => [...incomeData, ...prev.filter(t => t.type !== "income")].sort((a, b) => b?.timestamp?.localeCompare(a?.timestamp)));
+    });
 
-    useEffect(() => {
-        const fetchExchangeRates = async () => {
-            try {
-                const response = await axios.get(exchangeRateApiUrl);
-                const rates = response.data.conversion_rates;
-                setExchangeRates(rates);
-            } catch (error) {
-                console.error("Error fetching exchange rates:", error);
-            }
-        };
+    return () => {
+      unsubscribeExpenses();
+      unsubscribeIncomes();
+    };
+  }, [user]);
 
-        fetchExchangeRates();
-    }, []);
+  useEffect(() => {
+    const fetchExchangeRates = async () => {
+      try {
+        const response = await axios?.get(exchangeRateApiUrl);
+        const rates = response?.data?.conversion_rates;
+        setExchangeRates(rates);
+      } catch (error) {
+        console.error("Error fetching exchange rates:", error);
+      }
+    };
+    fetchExchangeRates();
+  }, []);
 
-    const formatAmount = (amount: number) => {
-        if (selectedCurrency && selectedCurrency in exchangeRates) {
-            const convertedAmount = amount * exchangeRates[selectedCurrency as keyof typeof exchangeRates];
-            return convertedAmount.toFixed(0); // Format to 2 decimal places
-        }
-        return amount;
+  const formatAmount = (amount: number) => {
+    if (selectedCurrency && selectedCurrency in exchangeRates) {
+      const convertedAmount = amount * exchangeRates[selectedCurrency as keyof typeof exchangeRates];
+      return convertedAmount?.toFixed(0);
+    }
+    return amount;
+  };
+
+  const toggleDropdown = () => setIsDropdownVisible(!isDropdownVisible);
+
+  const handleSelect = (month: string) => {
+    setSelectedMonth(month);
+    setIsDropdownVisible(false);
+  };
+
+  const resetMonthFilter = () => setSelectedMonth("Month");
+
+  const filterTransactionsByMonth = () => {
+    const today = new Date()?.toISOString()?.split("T")[0];
+    const yesterday = new Date();
+    yesterday.setDate(yesterday?.getDate() - 1);
+    const yesterdayStr = yesterday?.toISOString()?.split("T")[0];
+
+    let filtered: { [key: string]: any[] } = {};
+
+    if (selectedMonth !== "Month") {
+      filtered[selectedMonth] = transactions?.filter(
+        (tx) => new Date(tx?.timestamp).toLocaleString("en-US", { month: "long" }) === selectedMonth
+      );
+    } else if (!selectedFilter && !selectedSort && selectedCategories.length === 0) {
+      const todayTransactions = transactions?.filter((tx) => tx.timestamp.split("T")[0] === today);
+      const yesterdayTransactions = transactions?.filter((tx) => tx?.timestamp?.split("T")[0] === yesterdayStr);
+
+      if (todayTransactions?.length > 0) filtered["Today"] = todayTransactions;
+      if (yesterdayTransactions?.length > 0) filtered["Yesterday"] = yesterdayTransactions;
     }
 
-    const toggleDropdown = () => {
-        setIsDropdownVisible(!isDropdownVisible);
-    };
+    setTransactionsToDisplay(filtered);
+    setHasDisplayableTransactions(Object?.keys(filtered)?.length > 0);
+    return filtered;
+  };
 
-    const handleSelect = (month: string) => {
-        setSelectedMonth(month);
-        setIsDropdownVisible(false);
-    };
+  useEffect(() => {
+    if (!selectedFilter && !selectedSort && selectedCategories?.length === 0) {
+      const filteredTransactions = filterTransactionsByMonth();
+      setTransactionsToDisplay(filteredTransactions);
+      setHasDisplayableTransactions(Object.keys(filteredTransactions)?.length > 0);
+    }
+  }, [transactions, selectedMonth, selectedFilter, selectedSort, selectedCategories]);
 
-    const resetMonthFilter = () => {
-        setSelectedMonth("Month");
-    };
+  const toggleFilterModal = () => setIsFilterModalVisible(!isFilterModalVisible);
 
-    const filterTransactionsByMonth = () => {
-        const today = new Date().toISOString().split("T")[0];
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        const yesterdayStr = yesterday.toISOString().split("T")[0];
+  const toggleCategoryModal = () => setIsCategoryModalVisible(!isCategoryModalVisible);
 
-        let filtered: {[key: string]: any[]} = {};
+  const applyFilters = () => {
+    let filtered = [...transactions];
 
-        if (selectedMonth !== "Month") {
-            filtered = {
-                [selectedMonth]: transactions.filter(
-                    (tx) =>
-                        new Date(tx.timestamp).toLocaleString("en-US", { month: "long" }) === selectedMonth
-                ),
-            };
-        } else {
-            const todayTransactions = transactions.filter((tx) => tx.timestamp.split("T")[0] === today);
-            const yesterdayTransactions = transactions.filter((tx) => tx.timestamp.split("T")[0] === yesterdayStr);
+    // Apply type filter
+    if (selectedFilter) {
+      filtered = filtered?.filter((tx) => tx?.type === selectedFilter);
+    }
 
-            if (todayTransactions.length > 0) {
-                filtered["Today"] = todayTransactions;
-            }
+    // Apply category filter
+    if (selectedCategories.length > 0) {
+      filtered = filtered.filter((tx) => selectedCategories?.includes(tx?.category));
+    }
 
-            if (yesterdayTransactions.length > 0) {
-                filtered["Yesterday"] = yesterdayTransactions;
-            }
-        }
+    // Apply sort
+    if (selectedSort) {
+      switch (selectedSort) {
+        case "highest":
+          filtered.sort((a, b) => b?.amount - a?.amount);
+          break;
+        case "lowest":
+          filtered.sort((a, b) => a?.amount - b?.amount);
+          break;
+        case "newest":
+          filtered.sort((a, b) => b?.timestamp?.localeCompare(a?.timestamp));
+          break;
+        case "oldest":
+          filtered.sort((a, b) => a?.timestamp?.localeCompare(b?.timestamp));
+          break;
+      }
+    }
 
-        setTransactionsToDisplay(filtered);
-        setHasDisplayableTransactions(Object.keys(filtered).length > 0);
-        return filtered;
-    };
+    setTransactionsToDisplay({ "Filtered Transactions": filtered });
+    setHasDisplayableTransactions(filtered.length > 0);
+    setFilteredTransactionsData(filtered);
+    toggleFilterModal();
+  };
 
-    useEffect(() => {
-        const filteredTransactions = filterTransactionsByMonth();
-        setTransactionsToDisplay(filteredTransactions);
-        setHasDisplayableTransactions(Object.keys(filteredTransactions).length > 0);
+  const resetFilters = () => {
+    setSelectedFilter(null);
+    setSelectedSort(null);
+    setSelectedCategories([]);
+    setFilteredTransactionsData([]);
+    filterTransactionsByMonth(); // Reset to default Today/Yesterday view
+    setIsFilterModalVisible(false);
+  };
 
-    }, [transactions, selectedMonth]);
 
-    const toggleFilterModal = () => {
-        setIsFilterModalVisible(!isFilterModalVisible);
-    };
-
-    const getCategoryStyles = (category: string) => {
-        // Your category style logic here
-        return {
-            iconBackgroundColor: "#f2f2f2",
-            iconColor: "#333",
-            iconName: "help-outline",
-        };
-    };
-
-    const applyFilters = () => {
-        // Your filter logic here
-    };
-
-    const handleResetFilters = () => {
-        // Your reset filter logic here
-    };
-
-    const resetAllFilters = () => {
-        resetMonthFilter();
-        // Reset other filters as needed
-    };
-
-    return {
-        isFilterModalVisible,
-        setIsFilterModalVisible,
-        selectedFilter,
-        setSelectedFilter,
-        selectedSort,
-        setSelectedSort,
-        filteredTransactionsData,
-        setFilteredTransactionsData,
-        isDropdownVisible,
-        setIsDropdownVisible,
-        selectedMonth,
-        setSelectedMonth,
-        transactions,
-        setTransactions,
-        user,
-        navigation,
-        toggleDropdown,
-        handleSelect,
-        resetMonthFilter,
-        filterTransactionsByMonth,
-        toggleFilterModal,
-        getCategoryStyles,
-        applyFilters,
-        handleResetFilters,
-        resetAllFilters,
-        hasDisplayableTransactions,
-        transactionsToDisplay,
-        formatAmount,
-    };
+  return {
+    isFilterModalVisible,
+    setIsFilterModalVisible,
+    selectedFilter,
+    setSelectedFilter,
+    selectedSort,
+    setSelectedSort,
+    selectedCategories,
+    setSelectedCategories,
+    isCategoryModalVisible,
+    setIsCategoryModalVisible,
+    filteredTransactionsData,
+    setFilteredTransactionsData,
+    isDropdownVisible,
+    setIsDropdownVisible,
+    selectedMonth,
+    setSelectedMonth,
+    transactions,
+    setTransactions,
+    user,
+    navigation,
+    toggleDropdown,
+    handleSelect,
+    resetMonthFilter,
+    filterTransactionsByMonth,
+    toggleFilterModal,
+    toggleCategoryModal,
+    applyFilters,
+    resetFilters,
+    hasDisplayableTransactions,
+    transactionsToDisplay,
+    formatAmount,
+    currencySymbol,
+  };
 };
 
 export default useTransaction;

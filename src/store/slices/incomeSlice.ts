@@ -18,17 +18,16 @@ const initialIncomeState: IncomeState = {
   income: [],
 };
 
-// Async thunk to fetch income from Firebase
 export const fetchIncome = createAsyncThunk("income/fetchIncome", async () => {
   const user = auth.currentUser;
   if (!user) return [];
 
-  const incomeRef = ref(database, `incomes/${user.uid}`);
+  const incomeRef = ref(database, `incomes/${user?.uid}`);
   const snapshot = await get(incomeRef);
   
   if (snapshot.exists()) {
-    const incomeData = snapshot.val();
-    return Object.values(incomeData) as Income[];
+    const incomeData = snapshot?.val();
+    return Object?.values(incomeData) as Income[];
   }
   return [];
 });
@@ -38,12 +37,12 @@ const incomeSlice = createSlice({
   initialState: initialIncomeState,
   reducers: {
     setIncome(state, action: PayloadAction<Income[]>) {
-      state.income = action.payload;
+      state.income = action?.payload;
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchIncome.fulfilled, (state, action) => {
-      state.income = action.payload;
+    builder.addCase(fetchIncome?.fulfilled, (state, action) => {
+      state.income = action?.payload;
     });
   },
 });

@@ -1,24 +1,20 @@
-import React, { useState } from "react";
+import React from "react";
 import { Text, View, Modal, TouchableOpacity, Image } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import useAccountBalanceCard from "./useAccountBalanceCard"; // Import the custom hook
+import useAccountBalanceCard from "./useAccountBalanceCard";
 import styles from "./AccountBalanceCard.style";
 
 const AccountBalanceCard = () => {
-
-  const { totalIncome, totalExpenses, accountBalance, currencySymbol } = useAccountBalanceCard(); // Use the hook
-
-  const [isIncomeModalVisible, setIsIncomeModalVisible] = useState(false);
-  const [isExpenseModalVisible, setIsExpenseModalVisible] = useState(false);
-
-  const handleIncomeModalToggle = () => {
-    setIsIncomeModalVisible(!isIncomeModalVisible);
-  };
-
-  const handleExpenseModalToggle = () => {
-    setIsExpenseModalVisible(!isExpenseModalVisible);
-  };
+  const {
+    totalIncome,
+    totalExpenses,
+    accountBalance,
+    currencySymbol,
+    handleIncomeModalToggle,
+    handleExpenseModalToggle,
+    isIncomeModalVisible,
+    isExpenseModalVisible,
+  } = useAccountBalanceCard()
 
   return (
     <View style={styles.container}>
@@ -54,7 +50,6 @@ const AccountBalanceCard = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Income Modal */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -74,7 +69,6 @@ const AccountBalanceCard = () => {
         </View>
       </Modal>
 
-      {/* Expense Modal */}
       <Modal
         animationType="slide"
         transparent={true}

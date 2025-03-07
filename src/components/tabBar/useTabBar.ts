@@ -20,7 +20,7 @@ export const useTabBar = () => {
   const rotateStyle = {
     transform: [
       {
-        rotate: rotation.interpolate({
+        rotate: rotation?.interpolate({
           inputRange: [0, 1],
           outputRange: ["0deg", "45deg"],
         }),

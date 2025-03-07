@@ -4,6 +4,7 @@ import { getDatabase } from 'firebase/database';
 import { getStorage } from 'firebase/storage';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 
+
 const firebaseConfig = {
   apiKey: 'AIzaSyBDa2wJ5618ctuM1RsLtyKMjNPifOvIq14',
   projectId: 'expenseapp-3b41c',

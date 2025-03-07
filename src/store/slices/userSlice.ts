@@ -26,27 +26,26 @@ const initialUserState: UserState = {
     selectedCurrency: "USD"
 };
 
-// Load user data from Firebase on app startup
 export const loadUserFromFirebase = createAsyncThunk(
     'user/loadUserFromFirebase',
     async (_, { dispatch }) => {
-        const user = auth.currentUser;
+        const user = auth?.currentUser;
         if (user) {
-            const userRef = ref(database, `users/${user.uid}`);
+            const userRef = ref(database, `users/${user?.uid}`);
             const snapshot = await get(userRef);
             if (snapshot.exists()) {
-                const userData = snapshot.val();
+                const userData = snapshot?.val();
                 const profileData = {
-                    profilePicture: userData.profilePicture || "",
+                    profilePicture: userData?.profilePicture || "",
                     name: userData.displayName || ""
                 };
-                dispatch(setUserProfile(profileData)); // Update Redux
+                dispatch(setUserProfile(profileData));
                 return {
-                    uid: user.uid,
-                    email: user.email,
-                    displayName: userData.displayName,
-                    photoURL: userData.profilePicture,
-                    income: userData.income || []
+                    uid: user?.uid,
+                    email: user?.email,
+                    displayName: userData?.displayName,
+                    photoURL: userData?.profilePicture,
+                    income: userData?.income || []
                 };
             }
         }
@@ -68,9 +67,9 @@ const userSlice = createSlice({
     reducers: {
         setUser(state, action: PayloadAction<User>) {
             state.user = action.payload;
-            state.profilePicture = action.payload.photoURL || "";
-            state.name = action.payload.displayName || "";
-            AsyncStorage.setItem('user', JSON.stringify(action.payload));
+            state.profilePicture = action?.payload?.photoURL || "";
+            state.name = action?.payload?.displayName || "";
+            AsyncStorage?.setItem('user', JSON?.stringify(action?.payload));
         },
         clearUser(state) {
             state.user = null;
@@ -82,23 +81,23 @@ const userSlice = createSlice({
             state,
             action: PayloadAction<{ profilePicture: string; name: string }>
         ) {
-            state.profilePicture = action.payload.profilePicture;
-            state.name = action.payload.name;
+            state.profilePicture = action?.payload?.profilePicture;
+            state.name = action?.payload?.name;
         },
         setCurrency(state, action: PayloadAction<string>) {
-            state.selectedCurrency = action.payload;
-            AsyncStorage.setItem('selectedCurrency', action.payload);
+            state.selectedCurrency = action?.payload;
+            AsyncStorage.setItem('selectedCurrency', action?.payload);
         },
     },
     extraReducers: (builder) => {
         builder
-            .addCase(loadUserFromFirebase.fulfilled, (state, action) => {
-                if (action.payload) {
-                    state.user = action.payload;
+            .addCase(loadUserFromFirebase?.fulfilled, (state, action) => {
+                if (action?.payload) {
+                    state.user = action?.payload;
                 }
             })
-            .addCase(loadCurrency.fulfilled, (state, action) => {
-                state.selectedCurrency = action.payload;
+            .addCase(loadCurrency?.fulfilled, (state, action) => {
+                state.selectedCurrency = action?.payload;
             });
     }
 });

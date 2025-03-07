@@ -12,8 +12,8 @@ export interface Expense {
 
 interface ExpenseState {
     expenses: Expense[];
-    loading: boolean; // Add loading state
-    error: string | null; // Add error state
+    loading: boolean; 
+    error: string | null; 
 }
 
 const initialState: ExpenseState = {
@@ -22,32 +22,28 @@ const initialState: ExpenseState = {
     error: null,
 };
 
-// Fetch expenses from Firebase when the user logs in
 export const fetchExpenses = createAsyncThunk("expense/fetchExpenses", async () => {
-    const user = auth.currentUser;
+    const user = auth?.currentUser;
     if (!user) return [];
 
-    const expensesRef = ref(database, `expenses/${user.uid}`);
+    const expensesRef = ref(database, `expenses/${user?.uid}`);
     const snapshot = await get(expensesRef);
 
     if (snapshot.exists()) {
-        const expensesData = snapshot.val();
-        return Object.values(expensesData) as Expense[];
+        const expensesData = snapshot?.val();
+        return Object?.values(expensesData) as Expense[];
     }
     return [];
 });
 
-// Add expense to Firebase
 export const addExpenseToFirebase = createAsyncThunk(
     "expense/addExpense",
-    async (expense: Expense, { dispatch }) => {  // Remove getState
-        const user = auth.currentUser;
-        if (!user) throw new Error("User not logged in"); // Throw an error to be caught by rejectWithValue
+    async (expense: Expense, { dispatch }) => {
+        const user = auth?.currentUser;
+        if (!user) throw new Error("User not logged in");
 
-        const newExpenseRef = ref(database, `expenses/${user.uid}`);
+        const newExpenseRef = ref(database, `expenses/${user?.uid}`);
         const pushedExpenseRef = await push(newExpenseRef, expense);
-
-        // Return the expense with its ID (key) from Firebase
         return { ...expense, id: pushedExpenseRef.key };
     }
 );
@@ -57,25 +53,25 @@ const expenseSlice = createSlice({
     initialState,
     reducers: {
         setExpenses(state, action: PayloadAction<Expense[]>) {
-            state.expenses = action.payload;
+            state.expenses = action?.payload;
         },
     },
     extraReducers: (builder) => {
         builder
-            .addCase(fetchExpenses.fulfilled, (state, action) => {
-                state.expenses = action.payload;
+            .addCase(fetchExpenses?.fulfilled, (state, action) => {
+                state.expenses = action?.payload;
             })
-            .addCase(addExpenseToFirebase.pending, (state) => {
+            .addCase(addExpenseToFirebase?.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(addExpenseToFirebase.fulfilled, (state, action) => {
+            .addCase(addExpenseToFirebase?.fulfilled, (state, action) => {
                 state.loading = false;
-                state.expenses = [...state.expenses, action.payload as Expense];
+                state.expenses = [...state?.expenses, action?.payload as Expense];
             })
-            .addCase(addExpenseToFirebase.rejected, (state, action) => {
+            .addCase(addExpenseToFirebase?.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.error.message || "Failed to add expense";
+                state.error = action?.error?.message || "Failed to add expense";
             });
     },
 });

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Text,
   TouchableOpacity,
@@ -14,16 +14,8 @@ import styles from "./Transactions.style";
 import useTransaction from "./useTransaction";
 import { useAppSelector } from "../../store/store";
 import { baseStyles } from "../../constants/baseStyles";
-
-const currencySymbols = {
-  USD: "$",
-  EUR: "€",
-  GBP: "£",
-  INR: "₹",
-  PKR: "PKR ",
-  JPY: "¥",
-};
-
+import { MonthNames } from "../../constants/MonthsNames";
+import { currencySymbols } from "../../constants/currencySymbols";
 
 const Transactions = () => {
   const {
@@ -33,6 +25,10 @@ const Transactions = () => {
     setSelectedFilter,
     selectedSort,
     setSelectedSort,
+    selectedCategories,
+    setSelectedCategories,
+    isCategoryModalVisible,
+    setIsCategoryModalVisible,
     filteredTransactionsData,
     setFilteredTransactionsData,
     isDropdownVisible,
@@ -48,19 +44,17 @@ const Transactions = () => {
     resetMonthFilter,
     filterTransactionsByMonth,
     toggleFilterModal,
-    getCategoryStyles, // This will no longer be used directly
+    toggleCategoryModal,
     applyFilters,
-    handleResetFilters,
-    resetAllFilters,
+    resetFilters,
     hasDisplayableTransactions,
     transactionsToDisplay,
     formatAmount,
+    currencySymbol,
   } = useTransaction();
-  const selectedCurrency = useAppSelector((state) => state.user.selectedCurrency as keyof typeof currencySymbols);
-  const currencySymbol = currencySymbols[selectedCurrency] || selectedCurrency;
+
 
   const renderTransactionItem = ({ item }: { item: any }) => {
-    // Use baseStyles instead of getCategoryStyles
     const { iconBackgroundColor, iconColor, iconName } =
       baseStyles[item.category as keyof typeof baseStyles] || baseStyles.default;
     const isIncome = item.type === "income";
@@ -109,60 +103,32 @@ const Transactions = () => {
     );
   };
 
-  const renderSectionHeader = ({ section: { title } }: any) => {
-    return (
-      <View>
-        <Text style={styles.sectionTitle}>{title}</Text>
-        {transactionsToDisplay[title]?.length === 0 && (
-          <View style={styles.emptyContainer}>
-            <MaterialIcons name="history" size={40} color="gray" />
-            <Text style={styles.emptyText}>No {title}'s Transactions Available</Text>
-          </View>
-        )}
-      </View>
-    );
-  };
+  const renderSectionHeader = ({ section: { title } }: any) => (
+    <View>
+      <Text style={styles.sectionTitle}>{title}</Text>
+      {transactionsToDisplay[title]?.length === 0 && (
+        <View style={styles.emptyContainer}>
+          <MaterialIcons name="history" size={40} color="gray" />
+          <Text style={styles.emptyText}>No {title}'s Transactions Available</Text>
+        </View>
+      )}
+    </View>
+  );
 
   return (
     <View style={[styles.container, { flex: 1 }]}>
-      {/* Sticky Header */}
       <View style={internalStyles.stickyHeader}>
         <View style={styles.header}>
           <View style={styles.dropdownContainer}>
-            <TouchableOpacity
-              style={styles.monthSelection}
-              onPress={toggleDropdown}
-            >
-              <MaterialIcons
-                name="keyboard-arrow-down"
-                size={36}
-                color="#7f3dff"
-              />
+            <TouchableOpacity style={styles.monthSelection} onPress={toggleDropdown}>
+              <MaterialIcons name="keyboard-arrow-down" size={36} color="#7f3dff" />
               <Text>{selectedMonth}</Text>
             </TouchableOpacity>
-
             {isDropdownVisible && (
               <View style={styles.dropdownMenu}>
                 <ScrollView>
-                  {[
-                    "January",
-                    "February",
-                    "March",
-                    "April",
-                    "May",
-                    "June",
-                    "July",
-                    "August",
-                    "September",
-                    "October",
-                    "November",
-                    "December",
-                  ].map((month) => (
-                    <TouchableOpacity
-                      key={month}
-                      style={styles.dropdownItem}
-                      onPress={() => handleSelect(month)}
-                    >
+                  {MonthNames?.map((month) => (
+                    <TouchableOpacity key={month} style={styles.dropdownItem} onPress={() => handleSelect(month)}>
                       <Text style={styles.dropdownItemText}>{month}</Text>
                     </TouchableOpacity>
                   ))}
@@ -170,53 +136,38 @@ const Transactions = () => {
               </View>
             )}
           </View>
-
           <TouchableOpacity style={styles.menuIcon} onPress={toggleFilterModal}>
             <Ionicons name="menu" size={24} color="black" />
           </TouchableOpacity>
         </View>
-
-        {/* Reset Filter Button */}
         {selectedMonth !== "Month" && (
-          <TouchableOpacity style={styles.resetButton} onPress={resetAllFilters}>
+          <TouchableOpacity style={styles.resetButton} onPress={resetFilters}>
             <Text style={styles.resetButtonText}>Reset Filter</Text>
           </TouchableOpacity>
         )}
       </View>
 
+      <TouchableOpacity style={styles.financialReport} onPress={() => navigation.navigate("FinancialReport")}>
+        <Text style={styles.financialText}>See Your Financial Report</Text>
+        <MaterialIcons name="keyboard-arrow-right" size={32} color="#7f3dff" />
+      </TouchableOpacity>
 
-
-      {/* Financial Report */}
-      <TouchableOpacity
-          style={styles.financialReport}
-          onPress={() => navigation.navigate("FinancialReport")}
-        >
-          <Text style={styles.financialText}>See Your Financial Report</Text>
-          <MaterialIcons name="keyboard-arrow-right" size={32} color="#7f3dff" />
-        </TouchableOpacity>
-
-
-      {/* Transactions List */}
       {hasDisplayableTransactions ? (
         <SectionList
           style={{ marginVertical: 10, marginLeft: 0 }}
-          sections={Object.entries(transactionsToDisplay).map(
-            ([sectionTitle, transactionsList]) => ({
-              title: sectionTitle,
-              data: transactionsList,
-            })
-          )}
+          sections={Object.entries(transactionsToDisplay).map(([sectionTitle, transactionsList]) => ({
+            title: sectionTitle,
+            data: transactionsList,
+          }))}
           keyExtractor={(item) => item.id}
           renderItem={renderTransactionItem}
           renderSectionHeader={renderSectionHeader}
-          ListEmptyComponent={() => {
-            return (
-              <View style={styles.emptyContainer}>
-                <MaterialIcons name="filter-list-off" size={80} color="gray" />
-                <Text style={styles.emptyText}>No transactions available with this filter</Text>
-              </View>
-            );
-          }}
+          ListEmptyComponent={() => (
+            <View style={styles.emptyContainer}>
+              <MaterialIcons name="filter-list-off" size={80} color="gray" />
+              <Text style={styles.emptyText}>No transactions available with this filter</Text>
+            </View>
+          )}
         />
       ) : (
         <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -228,17 +179,12 @@ const Transactions = () => {
       )}
 
       {/* Filter Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={isFilterModalVisible}
-        onRequestClose={toggleFilterModal}
-      >
+      <Modal animationType="slide" transparent={true} visible={isFilterModalVisible} onRequestClose={toggleFilterModal}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <View style={styles.resetContainer}>
               <Text style={styles.modalTitle}>Filter Transaction</Text>
-              <TouchableOpacity onPress={handleResetFilters}>
+              <TouchableOpacity onPress={resetFilters}>
                 <Text style={styles.modalResetButton}>Reset</Text>
               </TouchableOpacity>
             </View>
@@ -246,82 +192,75 @@ const Transactions = () => {
             <Text style={styles.headingText}>Filtered By</Text>
             <View style={styles.buttonsContainer}>
               <TouchableOpacity
-                style={[
-                  styles.fileterButtons,
-                  selectedFilter === "income" && { backgroundColor: "#eee5ff", },
-                ]}
-                onPress={() => setSelectedFilter("income")}
+                style={[styles.fileterButtons, selectedFilter === "income" && { backgroundColor: "#eee5ff" }]}
+                onPress={() => setSelectedFilter(selectedFilter === "income" ? null : "income")}
               >
-                <Text style={selectedFilter === "income" ? { color: "#7f3dff" } : { color: "black" }}>
-                  Income
-                </Text>
+                <Text style={selectedFilter === "income" ? { color: "#7f3dff" } : { color: "black" }}>Income</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[
-                  styles.fileterButtons,
-                  selectedFilter === "expense" && { backgroundColor: "#eee5ff" },
-                ]}
-                onPress={() => setSelectedFilter("expense")}
+                style={[styles.fileterButtons, selectedFilter === "expense" && { backgroundColor: "#eee5ff" }]}
+                onPress={() => setSelectedFilter(selectedFilter === "expense" ? null : "expense")}
               >
-                <Text style={selectedFilter === "expense" ? { color: "#7f3dff" } : { color: "black" }}>
-                  Expense
-                </Text>
+                <Text style={selectedFilter === "expense" ? { color: "#7f3dff" } : { color: "black" }}>Expense</Text>
               </TouchableOpacity>
             </View>
 
             <Text style={styles.headingText}>Sort By</Text>
             <View style={styles.SortButtonsContainer}>
-              <TouchableOpacity
-                style={[
-                  styles.SortButtons,
-                  selectedSort === "highest" && { backgroundColor: "#eee5ff" },
-                ]}
-                onPress={() => setSelectedSort("highest")}
-              >
-                <Text style={selectedSort === "highest" && { color: "#7f3dff" }}>Highest</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.SortButtons,
-                  selectedSort === "lowest" && { backgroundColor: "#eee5ff" },
-                ]}
-                onPress={() => setSelectedSort("lowest")}
-              >
-                <Text style={selectedSort === "lowest" && { color: "#7f3dff" }}>Lowest</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.SortButtons,
-                  selectedSort === "newest" && { backgroundColor: "#eee5ff" },
-                ]}
-                onPress={() => setSelectedSort("newest")}
-              >
-                <Text style={selectedSort === "newest" && { color: "#7f3dff" }}>Newest</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.SortButtons,
-                  selectedSort === "oldest" && { backgroundColor: "#eee5ff" },
-                ]}
-                onPress={() => setSelectedSort("oldest")}
-              >
-                <Text style={selectedSort === "oldest" && { color: "#7f3dff" }}>Oldest</Text>
-              </TouchableOpacity>
+              {["highest", "lowest", "newest", "oldest"].map((sort) => (
+                <TouchableOpacity
+                  key={sort}
+                  style={[styles.SortButtons, selectedSort === sort && { backgroundColor: "#eee5ff" }]}
+                  onPress={() => setSelectedSort(selectedSort === sort ? null : sort)}
+                >
+                  <Text style={selectedSort === sort ? { color: "#7f3dff" } : {}}>{sort.charAt(0).toUpperCase() + sort.slice(1)}</Text>
+                </TouchableOpacity>
+              ))}
             </View>
 
             <Text style={styles.headingText}>Category</Text>
-            <TouchableOpacity style={styles.categoryContainer}>
+            <TouchableOpacity style={styles.categoryContainer} onPress={toggleCategoryModal}>
               <View>
                 <Text style={styles.categoryText}>Choose Category</Text>
               </View>
               <View style={styles.selectedCategoriesContainer}>
-                <Text>0 Selected</Text>
+                <Text>{selectedCategories.length} Selected</Text>
                 <MaterialIcons name="keyboard-arrow-right" size={36} color="#7f3dff" />
               </View>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.modalButton} onPress={applyFilters}>
               <Text style={styles.modalButtonText}>Apply</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Category Selection Modal */}
+      <Modal animationType="slide" transparent={true} visible={isCategoryModalVisible} onRequestClose={toggleCategoryModal}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Select Categories</Text>
+            <ScrollView style={{paddingVertical: 50}}>
+              {Object.keys(baseStyles).map((category) => (
+                <TouchableOpacity
+                  key={category}
+                  style={styles.categoryItem}
+                  onPress={() => {
+                    setSelectedCategories((prev) =>
+                      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
+                    );
+                  }}
+                >
+                  <Text>{category}</Text>
+                  {selectedCategories.includes(category) && (
+                    <MaterialIcons name="check" size={24} color="#7f3dff" />
+                  )}
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+            <TouchableOpacity style={styles.modalButton} onPress={toggleCategoryModal}>
+              <Text style={styles.modalButtonText}>Done</Text>
             </TouchableOpacity>
           </View>
         </View>

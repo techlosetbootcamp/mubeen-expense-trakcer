@@ -6,172 +6,186 @@ import { ref, onValue } from "firebase/database";
 import { useAppSelector } from "../../store/store";
 import axios from "axios";
 import { exchangeRateApiUrl } from "../../constants/exchangeRateApi";
+import { categories } from '../../constants/Categories';
+import { incomeCategories } from '../../constants/Categories';
+import { getCategoryColors } from '../../constants/Categories';
 
-const screenWidth = Dimensions.get("window").width;
+const screenWidth = Dimensions?.get("window")?.width;
 
 const useFinancialReport = () => {
   const navigation: any = useNavigation();
-  const user = useAppSelector((state) => state.user.user);
-  const selectedCurrency = useAppSelector((state) => state.user.selectedCurrency);
+  const user = useAppSelector((state) => state?.user?.user);
+  const selectedCurrency = useAppSelector((state) => state?.user?.selectedCurrency);
 
   const [selectedMonth, setSelectedMonth] = useState("Month");
   const [transactions, setTransactions] = useState<any[]>([]);
-  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const [isMonthDropdownVisible, setIsMonthDropdownVisible] = useState(false);
   const [selectedType, setSelectedType] = useState<"expense" | "income">("expense");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
   const [exchangeRates, setExchangeRates] = useState({});
+  const [filteredTransactions, setFilteredTransactions] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchExchangeRates = async () => {
       try {
         const response = await axios.get(exchangeRateApiUrl);
-        const rates = response.data.conversion_rates;
+        const rates = response?.data?.conversion_rates;
         setExchangeRates(rates);
       } catch (error) {
         console.error("Error fetching exchange rates:", error);
       }
     };
-
     fetchExchangeRates();
   }, []);
 
   const formatAmount = (amount: number) => {
     if (selectedCurrency && selectedCurrency in exchangeRates) {
-      const convertedAmount = amount * exchangeRates[selectedCurrency as keyof typeof exchangeRates];
-      return convertedAmount.toFixed(0); // Format to 2 decimal places
+      const convertedAmount = amount * (exchangeRates[selectedCurrency as keyof typeof exchangeRates] || 1);
+      return convertedAmount?.toFixed(0);
     }
-    return amount.toFixed(0); // Default to original amount if no conversion rate is available
+    return amount?.toFixed(0);
   };
 
   useEffect(() => {
     if (!user) return;
 
-    const expenseRef = ref(database, `expenses/${user.uid}`);
-    const incomeRef = ref(database, `incomes/${user.uid}`);
+    const expenseRef = ref(database, `expenses/${user?.uid}`);
+    const incomeRef = ref(database, `incomes/${user?.uid}`);
 
     const fetchTransactions = (refPath: any, type: "expense" | "income") => {
-      onValue(refPath, (snapshot) => {
-        if (snapshot.exists()) {
-          const data = snapshot.val();
-          const transactionList = Object.keys(data).map((key) => ({
-            id: key,
-            type,
-            ...data[key],
-          }));
-          setTransactions((prev) => [
-            ...prev.filter((t) => t.type !== type),
-            ...transactionList,
-          ]);
-        } else {
-          setTransactions((prev) => prev.filter((t) => t.type !== type));
-        }
+      return onValue(refPath, (snapshot) => {
+        const transactionList = snapshot.exists()
+          ? Object.keys(snapshot.val()).map((key) => ({
+              id: key,
+              type,
+              ...snapshot.val()[key],
+            }))
+          : [];
+
+        setTransactions((prev) => {
+          const updatedTransactions = [
+            ...prev.filter((t) => t.type !== type), // Remove old transactions of this type
+            ...transactionList, // Add new ones
+          ];
+          return updatedTransactions;
+        });
+
+        // Apply filters immediately after updating transactions
+        applyFilters();
       });
     };
 
-    fetchTransactions(expenseRef, "expense");
-    fetchTransactions(incomeRef, "income");
+    const unsubscribeExpense = fetchTransactions(expenseRef, "expense");
+    const unsubscribeIncome = fetchTransactions(incomeRef, "income");
 
     return () => {
+      unsubscribeExpense();
+      unsubscribeIncome();
       setTransactions([]);
     };
   }, [user]);
 
-  const handleSelect = (month: string) => {
+  const handleMonthSelect = (month: string) => {
     setSelectedMonth(month);
-    setIsDropdownVisible(false);
+    setIsMonthDropdownVisible(false);
+    applyFilters(month, selectedCategories);
   };
 
-  const toggleDropdown = () => {
-    setIsDropdownVisible(!isDropdownVisible);
+  const toggleMonthDropdown = () => {
+    setIsMonthDropdownVisible(!isMonthDropdownVisible);
   };
 
-  const getCategoryColors = (category: string) => {
-    const categoryColors: { [key: string]: string } = {
-      "Food & Dining": "#fd3c4a",
-      Shopping: "#fcac12",
-      Transportation: "#6c757d",
-      Entertainment: "#ff9800",
-      Healthcare: "#2196f3",
-      "Rent & Bills": "#007bff",
-      Travel: "#4caf50",
-      Education: "#673ab7",
-      Investments: "#388e3c",
-      Salary: "#28a745",
-      Business: "#007bff",
-      Freelancing: "#6c757d",
-      "Overtime Pay": "#9c27b0",
-      "Bonuses and Incentives": "#ff9800",
-      "Stock Dividends": "#4caf50",
-      "Rental Income (from property)": "#0097a7",
-      "Cryptocurrency Gains": "#ff5722",
-      "Child Support/Alimony": "#ff9800",
-      "Scholarships/Grants": "#1565c0",
-      Royalties: "#673ab7",
-      "Lottery or Gambling Winnings": "#dc3545",
-      "Gifts or Donations Received": "#28a745",
-      "Income from Side Hustles": "#e91e63",
-    };
-    return categoryColors[category] || "#6c757d"; // Default color
+  const toggleCategoryModal = () => {
+    setIsCategoryModalVisible(!isCategoryModalVisible);
+  };
+
+  const applyFilters = (month = selectedMonth, cats = selectedCategories) => {
+    let filtered = transactions.filter((tx) => tx.type === selectedType);
+
+    if (month !== "Month") {
+      filtered = filtered?.filter((tx) =>
+        new Date(tx.timestamp)?.toLocaleString("en-US", { month: "long" }) === month
+      );
+    }
+
+    if (cats.length > 0) {
+      filtered = filtered?.filter((tx) => cats?.includes(tx?.category));
+    }
+
+    setFilteredTransactions(filtered);
+    setIsCategoryModalVisible(false);
+  };
+
+  const resetFilters = () => {
+    setSelectedMonth("Month");
+    setSelectedCategories([]);
+    setFilteredTransactions(transactions.filter((tx) => tx.type === selectedType));
+    setIsCategoryModalVisible(false);
+  };
+
+  const getCategoriesForType = () => {
+    return selectedType === "income" ? incomeCategories : categories;
   };
 
   const getFilteredTransactions = () => {
-    return transactions.filter((tx) => {
-      const transactionMonth = new Date(tx.timestamp).toLocaleString("en-US", {
-        month: "long",
-      });
-      return (
-        (selectedMonth === "Month" || transactionMonth === selectedMonth) &&
-        tx.type === selectedType
-      );
-    });
+    return filteredTransactions.length > 0
+      ? filteredTransactions
+      : transactions.filter((tx) => tx.type === selectedType);
   };
 
   const getChartData = () => {
-    const filteredTransactions = getFilteredTransactions();
-    const categories = filteredTransactions.reduce((acc: any, tx) => {
-      if (!acc[tx.category]) {
-        acc[tx.category] = { amount: 0, color: getCategoryColors(tx.category) };
+    const filtered = getFilteredTransactions();
+    const categoryTotals = filtered?.reduce((acc: any, tx) => {
+      if (!acc[tx?.category]) {
+        acc[tx?.category] = { amount: 0, color: getCategoryColors(tx?.category) };
       }
-      acc[tx.category].amount += parseFloat(tx.amount);
+      acc[tx.category].amount += parseFloat(tx.amount || "0");
       return acc;
     }, {});
 
-    return Object.keys(categories).map((category) => ({
-      name: category.length > 13 ? `${category.slice(0, 13)}...` : category,
+    return Object.keys(categoryTotals).map((category) => ({
+      name: category?.length > 13 ? `${category?.slice(0, 13)}...` : category,
       barGraphname: category,
-      population: categories[category].amount,
-      color: categories[category].color,
+      population: categoryTotals[category]?.amount,
+      color: categoryTotals[category]?.color,
       legendFontColor: "#7F7F7F",
       legendFontSize: 12,
     }));
   };
 
-  // New function to calculate total amount
   const getTotalAmount = () => {
-    const filteredTransactions = getFilteredTransactions();
-    const total = filteredTransactions.reduce((sum, tx) => sum + parseFloat(tx.amount), 0);
-    return formatAmount(total);
+    const filtered = getFilteredTransactions();
+    const total = filtered.reduce((sum, tx) => sum + parseFloat(tx?.amount || "0"), 0);
+    return Number(formatAmount(total));
   };
+
+  useEffect(() => {
+    applyFilters();
+  }, [selectedType, transactions]);
 
   return {
     navigation,
-    user,
     selectedMonth,
     setSelectedMonth,
-    transactions,
-    setTransactions,
-    isDropdownVisible,
-    setIsDropdownVisible,
+    isMonthDropdownVisible,
+    setIsMonthDropdownVisible,
     selectedType,
     setSelectedType,
-    useEffect,
-    handleSelect,
-    toggleDropdown,
-    getCategoryColors,
-    getFilteredTransactions,
+    selectedCategories,
+    setSelectedCategories,
+    isCategoryModalVisible,
+    setIsCategoryModalVisible,
+    handleMonthSelect,
+    toggleMonthDropdown,
+    toggleCategoryModal,
+    applyFilters,
+    resetFilters,
     getChartData,
-    getTotalAmount, // Add this to the return object
+    getTotalAmount,
     screenWidth,
     formatAmount,
+    getCategoriesForType,
   };
 };
 

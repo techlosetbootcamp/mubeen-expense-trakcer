@@ -29,24 +29,27 @@ const AddIncome = () => {
         setDropdownVisible,
         whiteSectionHeight,
         setWhiteSectionHeight,
-        popupVisible,
-        setPopupVisible,
+        successModalVisible,
+        setSuccessModalVisible,
         navigation,
         dispatch,
-        categories,
+        incomeCategories,
         handleAttachmentOption,
         handleContinuePress,
         attachment,
-        setAttachment, // Ensure this is destructured
+        setAttachment,
         loading,
     } = useAddIncome();
 
-    if (loading) {
-        return <Loader />;
-    }
-
     return (
         <View style={styles.container}>
+            {/* Conditionally render Loader as an overlay */}
+            {loading && (
+                <View style={styles.loaderOverlay}>
+                    <Loader />
+                </View>
+            )}
+
             <View style={styles.arrowText}>
                 <AntDesign
                     name="arrowleft"
@@ -101,7 +104,7 @@ const AddIncome = () => {
                     <View style={styles.modalOverlay}>
                         <View style={styles.dropdownContainer}>
                             <ScrollView style={{ flex: 1 }}>
-                                {categories.map((item, index) => (
+                                {incomeCategories.map((item, index) => (
                                     <TouchableOpacity
                                         key={index}
                                         style={styles.dropdownItem}
@@ -192,6 +195,25 @@ const AddIncome = () => {
                     <Text style={styles.continueText}>Continue</Text>
                 </TouchableOpacity>
             </View>
+
+            {/* Success Modal */}
+            <Modal
+                transparent={true}
+                animationType="fade"
+                visible={successModalVisible}
+                onRequestClose={() => {}}
+            >
+                <View style={styles.successModalOverlay}>
+                    <View style={styles.successModalContainer}>
+                        <View style={styles.successIconContainer}>
+                            <MaterialIcons name="check" size={40} color="white" />
+                        </View>
+                        <Text style={styles.successModalText}>
+                            Transaction has been successfully added
+                        </Text>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 };

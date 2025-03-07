@@ -9,7 +9,8 @@ import Transactions from "../screens/transactions/Transactions";
 import ForgotPasswordScreen from "../screens/forgotPasswordScreen/ForgotPasswordScreen";
 import Setting from "../screens/setting/Setting";
 import DetailTransaction from "../screens/transactionsDetail/TransactionsDetail";
-import Notifications from "../screens/notifications/Notifications"; // Add this
+import Notifications from "../screens/notifications/Notifications";
+import ResetPassword from "../screens/resetPassword/ResetPassword";
 
 export const authScreens = [
   { name: "Authentication", component: AuthenticationScreen },
@@ -25,7 +26,7 @@ export const mainScreens = [
   { name: "FinancialReport", component: FinancialReport },
   { name: "Transactions", component: Transactions },
   { name: "AuthenticationScreen", component: AuthenticationScreen },
-  { name: "ResetPassword", component: ForgotPasswordScreen },
+  { name: "ResetPassword", component: ResetPassword },
   { name: "Setting", component: Setting },
   { name: "DetailTransaction", component: DetailTransaction },
   { name: "Notifications", component: Notifications } // Add this

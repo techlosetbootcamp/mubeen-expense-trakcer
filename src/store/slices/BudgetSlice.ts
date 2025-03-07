@@ -25,40 +25,39 @@ export const fetchNotifications = createAsyncThunk(
     const user = auth.currentUser;
     if (!user) return { notifications: [], notifiedBudgetIds: [] };
 
-    const notificationsRef = ref(database, `users/${user.uid}/notifications`);
+    const notificationsRef = ref(database, `users/${user?.uid}/notifications`);
     const snapshot = await get(notificationsRef);
-    if (snapshot.exists()) {
-      const data = snapshot.val();
-      const notifications = Object.keys(data).map((key) => ({
+    if (snapshot?.exists()) {
+      const data = snapshot?.val();
+      const notifications = Object?.keys(data)?.map((key) => ({
         ...data[key],
-        budgetId: data[key].budgetId || "",
-        isSeen: data[key].isSeen !== undefined ? data[key].isSeen : false, // Default to false if not set
+        budgetId: data[key]?.budgetId || "",
+        isSeen: data[key]?.isSeen !== undefined ? data[key]?.isSeen : false,
       }));
-      const notifiedBudgetIds = notifications.map((n) => n.budgetId).filter(Boolean);
+      const notifiedBudgetIds = notifications?.map((n) => n.budgetId)?.filter(Boolean);
       return { notifications, notifiedBudgetIds };
     }
     return { notifications: [], notifiedBudgetIds: [] };
   }
 );
 
-// New thunk to update isSeen in Firebase
 export const updateNotificationsSeen = createAsyncThunk(
   "budget/updateNotificationsSeen",
   async (_, { getState }) => {
-    const user = auth.currentUser;
+    const user = auth?.currentUser;
     if (!user) return;
 
     const state = getState() as { budget: BudgetState };
-    const notifications = state.budget.notifications;
+    const notifications = state?.budget?.notifications;
 
-    const notificationsRef = ref(database, `users/${user.uid}/notifications`);
+    const notificationsRef = ref(database, `users/${user?.uid}/notifications`);
     const snapshot = await get(notificationsRef);
     if (snapshot.exists()) {
-      const data = snapshot.val();
-      const updatedData = Object.keys(data).reduce((acc, key) => {
+      const data = snapshot?.val();
+      const updatedData = Object?.keys(data)?.reduce((acc, key) => {
         acc[key] = {
           ...data[key],
-          isSeen: true, // Mark all as seen
+          isSeen: true,
         };
         return acc;
       }, {} as any);
@@ -72,22 +71,22 @@ const budgetSlice = createSlice({
   initialState,
   reducers: {
     addNotification(state, action: PayloadAction<Notification>) {
-      if (!state.notifiedBudgetIds.includes(action.payload.budgetId)) {
-        state.notifications.push({ ...action.payload, isSeen: false });
-        state.notifiedBudgetIds.push(action.payload.budgetId);
+      if (!state?.notifiedBudgetIds?.includes(action?.payload?.budgetId)) {
+        state?.notifications?.push({ ...action?.payload, isSeen: false });
+        state?.notifiedBudgetIds?.push(action?.payload?.budgetId);
       }
     },
     markNotificationsAsSeen(state) {
-      state.notifications = state.notifications.map((notification) => ({
+      state.notifications = state?.notifications?.map((notification) => ({
         ...notification,
         isSeen: true,
       }));
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchNotifications.fulfilled, (state, action) => {
-      state.notifications = action.payload.notifications;
-      state.notifiedBudgetIds = action.payload.notifiedBudgetIds;
+    builder?.addCase(fetchNotifications?.fulfilled, (state, action) => {
+      state.notifications = action?.payload?.notifications;
+      state.notifiedBudgetIds = action?.payload?.notifiedBudgetIds;
     });
   },
 });

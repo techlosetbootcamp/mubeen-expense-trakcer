@@ -14,10 +14,10 @@ const styles = StyleSheet.create({
   },
   filterContainer: {
     flexDirection: "row",
-    justifyContent: "space-between", // Keeps buttons flush with border edges
+    justifyContent: "space-between",
     marginBottom: 10,
-    borderColor: "#e8e8e8", // Light gray color
-    borderWidth: 1, // Small width for smaller dots
+    borderColor: "#e8e8e8",
+    borderWidth: 1,
     borderRadius: 25,
     width: '95%',
   },

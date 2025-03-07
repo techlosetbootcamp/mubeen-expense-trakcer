@@ -6,13 +6,13 @@ import { auth, database } from '../../config/firebaseConfig';
 import * as ImagePicker from 'expo-image-picker';
 import { EmailAuthProvider, reauthenticateWithCredential, updateEmail } from 'firebase/auth';
 import { useDispatch } from 'react-redux';
-import { setUserProfile, setUser } from '../../store/slices/userSlice'; // Add setUser
+import { setUserProfile, setUser } from '../../store/slices/userSlice';
 
 const useUpdateProfile = () => {
     const navigation: any = useNavigation();
     const route = useRoute();
     const dispatch = useDispatch();
-    const { username: initialUsername, profilePicture: initialProfilePicture } = route.params as {
+    const { username: initialUsername, profilePicture: initialProfilePicture } = route?.params as {
         username: string;
         profilePicture: string;
     };
@@ -29,25 +29,24 @@ const useUpdateProfile = () => {
 
     useEffect(() => {
         if (user) {
-            const userRef = ref(database, `users/${user.uid}`);
+            const userRef = ref(database, `users/${user?.uid}`);
             get(userRef).then((snapshot) => {
                 if (snapshot.exists()) {
-                    const userData = snapshot.val();
-                    setUsername(userData.displayName || '');
-                    setOriginalUsername(userData.displayName || '');
-                    setProfilePicture(userData.profilePicture || '');
-                    setOriginalProfilePicture(userData.profilePicture || '');
+                    const userData = snapshot?.val();
+                    setUsername(userData?.displayName || '');
+                    setOriginalUsername(userData?.displayName || '');
+                    setProfilePicture(userData?.profilePicture || '');
+                    setOriginalProfilePicture(userData?.profilePicture || '');
                     dispatch(setUserProfile({
-                        profilePicture: userData.profilePicture || '',
-                        name: userData.displayName || ''
+                        profilePicture: userData?.profilePicture || '',
+                        name: userData?.displayName || ''
                     }));
-                    // Ensure full user object is updated in Redux
                     dispatch(setUser({
-                        uid: user.uid,
-                        email: user.email,
-                        displayName: userData.displayName || '',
-                        photoURL: userData.profilePicture || '',
-                        income: userData.income || []
+                        uid: user?.uid,
+                        email: user?.email,
+                        displayName: userData?.displayName || '',
+                        photoURL: userData?.profilePicture || '',
+                        income: userData?.income || []
                     }));
                 }
             });
@@ -59,24 +58,24 @@ const useUpdateProfile = () => {
 
         try {
             if (fromCamera) {
-                const { status } = await ImagePicker.requestCameraPermissionsAsync();
+                const { status } = await ImagePicker?.requestCameraPermissionsAsync();
                 if (status !== 'granted') {
                     Alert.alert('Permission Denied', 'Camera permission is required.');
                     return;
                 }
-                result = await ImagePicker.launchCameraAsync({
+                result = await ImagePicker?.launchCameraAsync({
                     allowsEditing: true,
                     aspect: [1, 1],
                     quality: 1,
                     base64: true,
                 });
             } else {
-                const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+                const { status } = await ImagePicker?.requestMediaLibraryPermissionsAsync();
                 if (status !== 'granted') {
                     Alert.alert('Permission Denied', 'Gallery access is required.');
                     return;
                 }
-                result = await ImagePicker.launchImageLibraryAsync({
+                result = await ImagePicker?.launchImageLibraryAsync({
                     allowsEditing: true,
                     aspect: [1, 1],
                     quality: 1,
@@ -85,20 +84,20 @@ const useUpdateProfile = () => {
             }
 
             if (!result.canceled) {
-                const base64Image = result.assets[0].base64;
+                const base64Image = result?.assets[0]?.base64;
                 setProfilePicture(base64Image);
                 if (user) {
-                    await set(ref(database, `users/${user.uid}/profilePicture`), base64Image);
+                    await set(ref(database, `users/${user?.uid}/profilePicture`), base64Image);
                     dispatch(setUserProfile({
                         profilePicture: base64Image,
                         name: username
                     }));
                     dispatch(setUser({
-                        uid: user.uid,
-                        email: user.email,
+                        uid: user?.uid,
+                        email: user?.email,
                         displayName: username,
                         photoURL: base64Image,
-                        income: [] // Preserve existing income if any
+                        income: []
                     }));
                 }
             }
@@ -121,12 +120,12 @@ const useUpdateProfile = () => {
                         }
 
                         try {
-                            const credential = EmailAuthProvider.credential(user.email!, password);
+                            const credential = EmailAuthProvider.credential(user?.email!, password);
                             await reauthenticateWithCredential(user, credential);
                             await updateEmail(user, email);
-                            await set(ref(database, `users/${user.uid}/email`), email);
+                            await set(ref(database, `users/${user?.uid}/email`), email);
                             dispatch(setUser({
-                                uid: user.uid,
+                                uid: user?.uid,
                                 email: email,
                                 displayName: username,
                                 photoURL: profilePicture,
@@ -149,14 +148,14 @@ const useUpdateProfile = () => {
         try {
             await handleEmailUpdate();
 
-            const userRef = ref(database, `users/${user.uid}`);
+            const userRef = ref(database, `users/${user?.uid}`);
 
             if (username !== originalUsername) {
-                await set(ref(database, `users/${user.uid}/displayName`), username);
+                await set(ref(database, `users/${user?.uid}/displayName`), username);
             }
 
             if (profilePicture !== originalProfilePicture) {
-                await set(ref(database, `users/${user.uid}/profilePicture`), profilePicture);
+                await set(ref(database, `users/${user?.uid}/profilePicture`), profilePicture);
             }
 
             dispatch(setUserProfile({
@@ -164,11 +163,11 @@ const useUpdateProfile = () => {
                 name: username
             }));
             dispatch(setUser({
-                uid: user.uid,
+                uid: user?.uid,
                 email: email,
                 displayName: username,
                 photoURL: profilePicture || '',
-                income: [] // Preserve existing income if any
+                income: []
             }));
 
             Alert.alert('Success', 'Profile updated successfully!');

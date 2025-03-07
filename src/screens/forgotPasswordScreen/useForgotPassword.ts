@@ -24,7 +24,7 @@ const useForgotPassword = (navigation: any) => {
       if (error.code === "auth/user-not-found") {
         Alert.alert("Error", "No user found with this email address.");
       } else {
-        Alert.alert("Error", error.message);
+        Alert.alert("Error", error?.message);
       }
     }
   };

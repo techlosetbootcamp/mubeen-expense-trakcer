@@ -7,66 +7,54 @@ import * as DocumentPicker from "expo-document-picker";
 import * as MediaLibrary from "expo-media-library";
 import { auth, database } from "../../config/firebaseConfig";
 import { push, ref } from "firebase/database";
+import { categories } from "../../constants/Categories";
 
 export const useAddExpense = () => {
-    const [amount, setAmount] = useState("0"); // Initial value is just "0", no $
+    const [amount, setAmount] = useState("0");
     const [category, setCategory] = useState("");
     const [description, setDescription] = useState("");
     const [dropdownVisible, setDropdownVisible] = useState(false);
-    const [popupVisible, setPopupVisible] = useState(false);
+    const [successModalVisible, setSuccessModalVisible] = useState(false);
     const [attachmentModalVisible, setAttachmentModalVisible] = useState(false);
     const [attachment, setAttachment] = useState<string | null>(null);
     const [whiteSectionHeight, setWhiteSectionHeight] = useState(1.5);
     const [loading, setLoading] = useState(false);
 
     const userExpense = useAppSelector(
-        (state: RootState) => state.expense.expenses || []
+        (state: RootState) => state?.expense?.expenses || []
     );
 
     const navigation: any = useNavigation();
     const dispatch = useAppDispatch();
 
-    const categories = [
-        "Food & Dining",
-        "Shopping",
-        "Transportation",
-        "Entertainment",
-        "Healthcare",
-        "Rent & Bills",
-        "Travel",
-        "Education",
-        "Investments",
-        "Other",
-    ];
-
     const handleAttachmentOption = async (option: string) => {
         let result: any = null;
         try {
             if (option === "Camera") {
-                await MediaLibrary.requestPermissionsAsync();
-                result = await ImagePicker.launchCameraAsync({
-                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                await MediaLibrary?.requestPermissionsAsync();
+                result = await ImagePicker?.launchCameraAsync({
+                    mediaTypes: ImagePicker?.MediaTypeOptions.Images,
                     allowsEditing: true,
                     aspect: [1, 1],
                     quality: 1,
                     base64: true,
                 });
             } else if (option === "Image") {
-                await ImagePicker.requestMediaLibraryPermissionsAsync();
-                result = await ImagePicker.launchImageLibraryAsync({
-                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                await ImagePicker?.requestMediaLibraryPermissionsAsync();
+                result = await ImagePicker?.launchImageLibraryAsync({
+                    mediaTypes: ImagePicker?.MediaTypeOptions?.Images,
                     base64: true,
                 });
             } else if (option === "Document") {
-                result = await DocumentPicker.getDocumentAsync({
+                result = await DocumentPicker?.getDocumentAsync({
                     type: "*/*",
                     copyToCacheDirectory: true,
                 });
             }
 
             if (result && !result.canceled) {
-                if (result.assets && result.assets[0].base64) {
-                    setAttachment(`data:image/jpeg;base64,${result.assets[0].base64}`);
+                if (result.assets && result?.assets[0]?.base64) {
+                    setAttachment(`data:image/jpeg;base64,${result?.assets[0]?.base64}`);
                 } else {
                     setAttachment(null);
                 }
@@ -92,31 +80,29 @@ export const useAddExpense = () => {
             return;
         }
 
-        setLoading(true);
-
-        const newExpenseRef = ref(database, `expenses/${user.uid}`);
+        const newExpenseRef = ref(database, `expenses/${user?.uid}`);
         const newExpense = {
-            amount, // Store only the numeric value
+            amount,
             category,
             description,
             attachment: attachment,
-            timestamp: new Date().toISOString(),
+            timestamp: new Date()?.toISOString(),
         };
 
         push(newExpenseRef, newExpense)
             .then(() => {
                 dispatch(setExpenses([...userExpense, newExpense]));
-                setPopupVisible(true);
+                setLoading(false); // Stop loading before showing the success modal
+                setSuccessModalVisible(true);
                 setTimeout(() => {
-                    setPopupVisible(false);
-                    setAmount("0"); // Reset to "0" without $
+                    setSuccessModalVisible(false);
+                    setAmount("0");
                     setCategory("");
                     setDescription("");
                     setAttachment(null);
                     setWhiteSectionHeight(1.5);
-                    setLoading(false);
                     navigation.navigate("Main");
-                }, 2000);
+                }, 3000); // Show success modal for 3 seconds
             })
             .catch((error) => {
                 console.error("Error adding expense to Firebase:", error);
@@ -134,7 +120,8 @@ export const useAddExpense = () => {
         setDescription,
         dropdownVisible,
         setDropdownVisible,
-        popupVisible,
+        successModalVisible,
+        setSuccessModalVisible,
         categories,
         handleContinuePress,
         navigation,

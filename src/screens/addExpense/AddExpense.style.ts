@@ -138,9 +138,9 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   attachmentPreviewContainer: {
-    alignSelf: "flex-start", // Align to the left
+    alignSelf: "flex-start",
     marginBottom: 8,
-    position: "relative", // For positioning the close button
+    position: "relative",
   },
   attachmentPreview: {
     width: 52,
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: "absolute",
-    top: 0, // On the image’s top-right corner
+    top: 0,
     right: 0,
     backgroundColor: "black",
     borderRadius: 12,
@@ -223,6 +223,44 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     paddingTop: 20,
+  },
+  loaderOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 1000,
+  },
+  successModalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  successModalContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 20,
+    marginHorizontal: 10,
+    alignItems: 'center',
+  },
+  successIconContainer: {
+    backgroundColor: '#7f3dff',
+    borderRadius: 50,
+    width: 60,
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  successModalText: {
+    fontSize: 16,
+    color: '#333',
+    textAlign: 'center',
   },
 });
 

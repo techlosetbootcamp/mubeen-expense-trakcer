@@ -7,6 +7,7 @@ import { setIncome } from "../../store/slices/incomeSlice";
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 import * as MediaLibrary from "expo-media-library";
+import { incomeCategories } from '../../constants/Categories';
 
 const useAddIncome = () => {
     const [amount, setAmount] = useState("0");
@@ -16,30 +17,14 @@ const useAddIncome = () => {
     const [attachment, setAttachment] = useState<any>(null);
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [whiteSectionHeight, setWhiteSectionHeight] = useState(1.5);
-    const [popupVisible, setPopupVisible] = useState(false);
+    const [successModalVisible, setSuccessModalVisible] = useState(false);
     const [loading, setLoading] = useState(false);
     const navigation: any = useNavigation();
     const dispatch = useAppDispatch();
     const userIncome = useAppSelector(
-        (state: RootState) => state.income.income || []
+        (state: RootState) => state?.income?.income || []
     );
 
-    const categories = [
-        "Salary",
-        "Business",
-        "Freelancing",
-        "Overtime Pay",
-        "Bonuses and Incentives",
-        "Stock Dividends",
-        "Rental Income (from property)",
-        "Cryptocurrency Gains",
-        "Child Support/Alimony",
-        "Scholarships/Grants",
-        "Royalties",
-        "Lottery or Gambling Winnings",
-        "Gifts or Donations Received",
-        "Income from Side Hustles",
-    ];
 
     const handleAttachmentOption = async (option: string) => {
         let result: any = null;
@@ -48,29 +33,29 @@ const useAddIncome = () => {
             if (option === "Camera") {
                 await MediaLibrary.requestPermissionsAsync();
                 result = await ImagePicker.launchCameraAsync({
-                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                    mediaTypes: ImagePicker?.MediaTypeOptions?.Images,
                     allowsEditing: true,
                     aspect: [1, 1],
                     quality: 1,
                     base64: true,
                 });
             } else if (option === "Image") {
-                await ImagePicker.requestMediaLibraryPermissionsAsync();
-                result = await ImagePicker.launchImageLibraryAsync({
-                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                await ImagePicker?.requestMediaLibraryPermissionsAsync();
+                result = await ImagePicker?.launchImageLibraryAsync({
+                    mediaTypes: ImagePicker?.MediaTypeOptions.Images,
                     base64: true,
                 });
             } else if (option === "Document") {
-                result = await DocumentPicker.getDocumentAsync({
+                result = await DocumentPicker?.getDocumentAsync({
                     type: "*/*",
                     copyToCacheDirectory: true,
                 });
             }
 
             if (result && !result.canceled) {
-                const selectedImage = result.assets ? result.assets[0] : result;
+                const selectedImage = result?.assets ? result?.assets[0] : result;
                 if (selectedImage.base64) {
-                    setAttachment(`data:image/jpeg;base64,${selectedImage.base64}`);
+                    setAttachment(`data:image/jpeg;base64,${selectedImage?.base64}`);
                 }
                 setWhiteSectionHeight(3.0);
             }
@@ -94,31 +79,29 @@ const useAddIncome = () => {
             return;
         }
 
-        setLoading(true);
-
-        const newIncomeRef = ref(database, `incomes/${user.uid}`);
+        const newIncomeRef = ref(database, `incomes/${user?.uid}`);
         const newIncome = {
             amount,
             category,
             description,
             attachment: attachment || null,
-            timestamp: new Date().toISOString(),
+            timestamp: new Date()?.toISOString(),
         };
 
         push(newIncomeRef, newIncome)
             .then(() => {
                 dispatch(setIncome([...userIncome, newIncome]));
-                setPopupVisible(true);
+                setLoading(false); // Stop loading before showing the success modal
+                setSuccessModalVisible(true);
                 setTimeout(() => {
-                    setPopupVisible(false);
+                    setSuccessModalVisible(false);
                     setAmount("0");
                     setCategory("");
                     setDescription("");
                     setAttachment(null);
                     setWhiteSectionHeight(1.5);
-                    setLoading(false);
                     navigation.navigate("Main");
-                }, 2000);
+                }, 3000); // Show success modal for 3 seconds
             })
             .catch((error) => {
                 console.error("Error adding income to Firebase:", error);
@@ -140,15 +123,15 @@ const useAddIncome = () => {
         setDropdownVisible,
         whiteSectionHeight,
         setWhiteSectionHeight,
-        popupVisible,
-        setPopupVisible,
+        successModalVisible,
+        setSuccessModalVisible,
         navigation,
         dispatch,
-        categories,
+        incomeCategories,
         handleAttachmentOption,
         handleContinuePress,
         attachment,
-        setAttachment, // Explicitly returned to fix the error
+        setAttachment,
         loading,
     };
 };

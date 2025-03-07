@@ -1,4 +1,3 @@
-// Setting.tsx
 import React from "react";
 import {
     Text,
@@ -30,7 +29,6 @@ const Setting = () => {
                 <Text style={styles.header}>Settings</Text>
             </View>
             
-            {/* Currency Selection */}
             <View style={styles.option}>
                 <Ionicons name="cash-outline" size={24} color="#333" />
                 <Text style={styles.optionText}>Currency</Text>
@@ -45,7 +43,6 @@ const Setting = () => {
                 </Picker>
             </View>
 
-            {/* Dark Mode Toggle */}
             <View style={styles.option}>
                 <Ionicons name="moon-outline" size={24} color="#333" />
                 <Text style={styles.optionText}>Dark Mode</Text>

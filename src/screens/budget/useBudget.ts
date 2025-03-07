@@ -6,11 +6,11 @@ import { useAppSelector, useAppDispatch } from "../../store/store";
 import axios from "axios";
 import { exchangeRateApiUrl } from "../../constants/exchangeRateApi";
 import * as Notifications from "expo-notifications";
+import { categories } from "../../constants/Categories";
+import { durationList } from "../../constants/MonthsNames";
 
 const screenWidth = Dimensions.get("window").width;
 
-const categoriesList = ["Food & Dining", "Shopping", "Transportation", "Entertainment", "Healthcare", "Rent & Bills", "Travel", "Education", "Investments", "Other"];
-const durationList = ["Day", "Week", "Month", "Year"];
 
 const useBudget = () => {
   const [budgets, setBudgets] = useState([]);
@@ -20,16 +20,16 @@ const useBudget = () => {
   const [selectedDuration, setSelectedDuration] = useState("");
   const [exchangeRates, setExchangeRates] = useState({});
 
-  const expenses = useAppSelector((state) => state.expense.expenses);
-  const selectedCurrency = useAppSelector((state) => state.user.selectedCurrency);
-  const notifiedBudgetIds = useAppSelector((state) => state.budget.notifiedBudgetIds);
+  const expenses = useAppSelector((state) => state?.expense?.expenses);
+  const selectedCurrency = useAppSelector((state) => state?.user?.selectedCurrency);
+  const notifiedBudgetIds = useAppSelector((state) => state?.budget?.notifiedBudgetIds);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     const fetchExchangeRates = async () => {
       try {
         const response = await axios.get(exchangeRateApiUrl);
-        const rates = response.data.conversion_rates;
+        const rates = response?.data?.conversion_rates;
         setExchangeRates(rates);
       } catch (error) {
         console.error("Error fetching exchange rates:", error);
@@ -42,29 +42,29 @@ const useBudget = () => {
   const formatAmount = (amount: number) => {
     if (selectedCurrency && exchangeRates && selectedCurrency in exchangeRates) {
       const convertedAmount = amount * exchangeRates[selectedCurrency as keyof typeof exchangeRates];
-      return convertedAmount.toFixed(0);
+      return convertedAmount?.toFixed(0);
     }
-    return amount.toFixed(0);
+    return amount?.toFixed(0);
   };
 
   useEffect(() => {
-    const user = auth.currentUser;
+    const user = auth?.currentUser;
     if (user) {
-      const budgetRef = ref(database, `users/${user.uid}/budgets`);
+      const budgetRef = ref(database, `users/${user?.uid}/budgets`);
       const unsubscribe = onValue(budgetRef, (snapshot) => {
-        const data = snapshot.val();
+        const data = snapshot?.val();
         if (data) {
-          const budgetList = Object.keys(data).map(key => ({
+          const budgetList = Object?.keys(data)?.map(key => ({
             id: key,
             ...data[key]
           }));
           setBudgets(budgetList);
 
           budgetList.forEach(budget => {
-            if (!notifiedBudgetIds.includes(budget.id)) {
-              const spent = calculateExpenses(budget.category);
+            if (!notifiedBudgetIds.includes(budget?.id)) {
+              const spent = calculateExpenses(budget?.category);
               if (spent > budget.amount) {
-                sendBudgetNotification(budget.id, budget.category, budget.amount, spent);
+                sendBudgetNotification(budget?.id, budget?.category, budget?.amount, spent);
               }
             }
           });
@@ -80,7 +80,7 @@ const useBudget = () => {
 
   const handleAddBudget = () => {
     if (selectedCategory && budgetAmount && selectedDuration) {
-      const user = auth.currentUser;
+      const user = auth?.currentUser;
       if (!user) {
         return;
       }
@@ -91,7 +91,7 @@ const useBudget = () => {
         duration: selectedDuration,
       };
 
-      const budgetRef = ref(database, `users/${user.uid}/budgets`);
+      const budgetRef = ref(database, `users/${user?.uid}/budgets`);
       push(budgetRef, newBudget)
         .then(() => {
           setModalVisible(false);
@@ -107,11 +107,11 @@ const useBudget = () => {
   };
 
   const calculateExpenses = (category: string) => {
-    return expenses.filter(expense => expense.category.includes(category)).reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
+    return expenses.filter(expense => expense?.category?.includes(category))?.reduce((sum, expense) => sum + parseFloat(expense?.amount), 0);
   };
 
   const sendBudgetNotification = async (budgetId: string, category: string, budget: number, spent: number) => {
-    await Notifications.scheduleNotificationAsync({
+    await Notifications?.scheduleNotificationAsync({
       content: {
         title: "Budget Alert",
         body: `You've exceeded your ${category} budget of ${formatAmount(budget)} ${selectedCurrency}! Spent: ${formatAmount(spent)} ${selectedCurrency}.`,
@@ -129,7 +129,7 @@ const useBudget = () => {
 
     const user = auth.currentUser;
     if (user) {
-      const notificationsRef = ref(database, `users/${user.uid}/notifications`);
+      const notificationsRef = ref(database, `users/${user?.uid}/notifications`);
       push(notificationsRef, notification);
     }
 
@@ -165,7 +165,7 @@ const useBudget = () => {
     calculateExpenses,
     chartConfig,
     screenWidth,
-    categoriesList,
+    categories,
     durationList,
     formatAmount,
   };

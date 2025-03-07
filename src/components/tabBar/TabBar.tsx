@@ -32,7 +32,7 @@ const TabBar = () => {
             backgroundColor: "#fcfcfc",
             height: 80,
             paddingTop: 18,
-            zIndex: 2, // Ensure tab bar is above overlay
+            zIndex: 2,
           },
         }}
       >
@@ -63,7 +63,13 @@ const TabBar = () => {
                 <View>
                   <Image
                     source={require('../../constants/icons/Transaction.png')}
-                    style={{ width: 33, height: 33, resizeMode: 'contain', marginTop: 12 }}
+                    style={{
+                      width: 33,
+                      height: 33,
+                      resizeMode: 'contain',
+                      marginTop: 12,
+                      tintColor: focused ? "#7f3dff" : "#c6c6c6",
+                    }}
                   />
                 </View>
                 <Text style={{ color: focused ? "#7f3dff" : "#c6c6c6", minWidth: 80, textAlign: "center" }}>
@@ -73,6 +79,7 @@ const TabBar = () => {
             ),
           }}
         />
+
         <Tab.Screen
           name="Plus"
           options={{

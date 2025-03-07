@@ -5,15 +5,7 @@ import styles from "./RecentTransactions.style";
 import { useRecentTransactions } from "./useRecentTransactions";
 import { useAppSelector } from "../../store/store";
 import { baseStyles } from "../../constants/baseStyles";
-
-const currencySymbols = {
-  USD: "$",
-  EUR: "€",
-  GBP: "£",
-  INR: "₹",
-  PKR: "PKR ",
-  JPY: "¥",
-};
+import { currencySymbols } from "../../constants/currencySymbols";
 
 type RecentTransactionsProps = {
   recentText: string;
@@ -24,6 +16,8 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
   recentText = "Recent Transactions",
   enableShowMore = false,
 }) => {
+
+  
   const {
     displayedTransactions,
     showAll,
@@ -32,9 +26,10 @@ const RecentTransactions: React.FC<RecentTransactionsProps> = ({
     truncateDescription,
     navigation,
     formatAmount,
+    currencySymbol,
+    selectedCurrency
   } = useRecentTransactions();
-  const selectedCurrency = useAppSelector((state) => state.user.selectedCurrency as keyof typeof currencySymbols);
-  const currencySymbol = currencySymbols[selectedCurrency] || selectedCurrency;
+  
 
   return (
     <>

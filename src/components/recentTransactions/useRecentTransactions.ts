@@ -5,33 +5,38 @@ import { useAppSelector } from "../../store/store";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { exchangeRateApiUrl } from "../../constants/exchangeRateApi";
+import { currencySymbols } from "../../constants/currencySymbols";
 
 
 export const useRecentTransactions = () => {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [showAll, setShowAll] = useState(false);
-  const user = useAppSelector((state) => state.user.user);
-  const selectedCurrency = useAppSelector((state: any) => state.user.selectedCurrency);
+  const user = useAppSelector((state) => state?.user?.user);
   const navigation: any = useNavigation();
 
   const [exchangeRates, setExchangeRates] = React.useState({});
   const [convertedTransactions, setConvertedTransactions] = React.useState(transactions);
+  const selectedCurrency = useAppSelector((state) => state?.user?.selectedCurrency as keyof typeof currencySymbols);
+  const currencySymbol = currencySymbols[selectedCurrency] || selectedCurrency;
+
+  
 
   const formatAmount = (amount: number) => {
     const numericAmount = Number(amount); // Convert to number
-    return numericAmount.toFixed(0);
+    return numericAmount?.toFixed(0);
   }
+  
 
   React.useEffect(() => {
     if (!user) return;
 
-    const expensesRef = ref(database, `expenses/${user.uid}`);
-    const incomesRef = ref(database, `incomes/${user.uid}`);
+    const expensesRef = ref(database, `expenses/${user?.uid}`);
+    const incomesRef = ref(database, `incomes/${user?.uid}`);
 
     const unsubscribeExpenses = onValue(expensesRef, (snapshot) => {
-      if (snapshot.exists()) {
+      if (snapshot?.exists()) {
         const data = snapshot.val();
-        const expenseList = Object.keys(data).map((key) => ({
+        const expenseList = Object?.keys(data)?.map((key) => ({
           id: key,
           ...data[key],
           type: "expense",
@@ -41,9 +46,9 @@ export const useRecentTransactions = () => {
     });
 
     const unsubscribeIncomes = onValue(incomesRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        const incomeList = Object.keys(data).map((key) => ({
+      if (snapshot?.exists()) {
+        const data = snapshot?.val();
+        const incomeList = Object?.keys(data)?.map((key) => ({
           id: key,
           ...data[key],
           type: "income",
@@ -62,14 +67,14 @@ export const useRecentTransactions = () => {
     const fetchExchangeRates = async () => {
       try {
         const response = await axios.get(exchangeRateApiUrl);
-        const rates = response.data.conversion_rates;
+        const rates = response?.data?.conversion_rates;
         setExchangeRates(rates);
 
         if (selectedCurrency && rates[selectedCurrency]) {
           const rate = rates[selectedCurrency];
-          const convertedTransactionsList = transactions.map((transaction) => ({
+          const convertedTransactionsList = transactions?.map((transaction) => ({
             ...transaction,
-            amount: (parseFloat(transaction.amount) * rate).toString(),
+            amount: (parseFloat(transaction.amount) * rate)?.toString(),
           }));
           setConvertedTransactions(convertedTransactionsList);
         }
@@ -82,7 +87,7 @@ export const useRecentTransactions = () => {
   }, [selectedCurrency, transactions]);
 
   const sortedTransactions = convertedTransactions.sort(
-    (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()
+    (a, b) => new Date(b?.time).getTime() - new Date(a?.time).getTime()
   );
 
   const displayedTransactions = showAll
@@ -90,7 +95,7 @@ export const useRecentTransactions = () => {
     : sortedTransactions.slice(0, 3);
 
   const truncateDescription = (text: string, maxLength: number) => {
-    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+    return text?.length > maxLength ? text?.slice(0, maxLength) + "..." : text;
   };
 
   return {
@@ -100,6 +105,8 @@ export const useRecentTransactions = () => {
     transactions: convertedTransactions,
     truncateDescription,
     navigation,
-    formatAmount
+    formatAmount,
+    currencySymbol,
+    selectedCurrency
   };
 };

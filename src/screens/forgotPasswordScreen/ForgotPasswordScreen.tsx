@@ -13,7 +13,6 @@ const ForgotPasswordScreen = ({ navigation }: any) => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="#000" />
@@ -21,13 +20,11 @@ const ForgotPasswordScreen = ({ navigation }: any) => {
         <Text style={styles.headerText}>Forgot Password</Text>
       </View>
 
-      {/* Instruction Text */}
       <Text style={styles.text}>
         Don’t worry. Enter your email and we’ll send you a link to reset your
         password.
       </Text>
 
-      {/* Input Field */}
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -37,7 +34,6 @@ const ForgotPasswordScreen = ({ navigation }: any) => {
       />
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-      {/* Send Email Button */}
       <TouchableOpacity
         style={styles.forgotButton}
         onPress={handlePasswordReset}

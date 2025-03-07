@@ -17,6 +17,8 @@ const AddExpense = () => {
         setDescription,
         dropdownVisible,
         setDropdownVisible,
+        successModalVisible,
+        setSuccessModalVisible,
         categories,
         handleContinuePress,
         navigation,
@@ -30,12 +32,15 @@ const AddExpense = () => {
         loading,
     } = useAddExpense();
 
-    if (loading) {
-        return <Loader />;
-    }
-
     return (
         <View style={styles.container}>
+            {/* Conditionally render Loader as an overlay */}
+            {loading && (
+                <View style={styles.loaderOverlay}>
+                    <Loader />
+                </View>
+            )}
+
             <View style={styles.arrowText}>
                 <AntDesign
                     name="arrowleft"
@@ -164,6 +169,25 @@ const AddExpense = () => {
                     <Text style={styles.continueText}>Continue</Text>
                 </TouchableOpacity>
             </View>
+
+            {/* Success Modal */}
+            <Modal
+                transparent={true}
+                animationType="fade"
+                visible={successModalVisible}
+                onRequestClose={() => {}}
+            >
+                <View style={styles.successModalOverlay}>
+                    <View style={styles.successModalContainer}>
+                        <View style={styles.successIconContainer}>
+                            <MaterialIcons name="check" size={40} color="white" />
+                        </View>
+                        <Text style={styles.successModalText}>
+                            Transaction has been successfully added
+                        </Text>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 };

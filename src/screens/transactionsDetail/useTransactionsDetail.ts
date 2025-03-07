@@ -1,47 +1,48 @@
-import { View, Text, Alert } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { onValue, ref, remove, set } from 'firebase/database';
 import { auth, database } from '../../config/firebaseConfig';
 import { useAppSelector } from '../../store/store';
 import axios from 'axios';
 import { exchangeRateApiUrl } from "../../constants/exchangeRateApi";
+import { Alert } from 'react-native';
+import { incomeCategories } from '../../constants/Categories';
+import { categories } from '../../constants/Categories';
 
 const useTransactionsDetail = () => {
     const [openModal, setOpenModal] = useState(false);
     const [openEditModal, setOpenEditModal] = useState(false);
     const [showFullCategory, setShowFullCategory] = useState(false);
+    const [successModalVisible, setSuccessModalVisible] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
     const navigation: any = useNavigation();
     const route = useRoute<any>();
-    const { transactionId, type } = route.params;
+    const { transactionId, type } = route?.params;
     const [transaction, setTransaction] = useState<any>({});
     const [editedTransaction, setEditedTransaction] = useState<any>({});
     const isExpense = type === 'Expense';
     const [fullScreenImage, setFullScreenImage] = useState(null);
-    const selectedCurrency = useAppSelector((state: any) => state.user.selectedCurrency);
+    const selectedCurrency = useAppSelector((state: any) => state?.user?.selectedCurrency);
     const [exchangeRates, setExchangeRates] = useState({});
     const [convertedAmount, setConvertedAmount] = useState<string>('');
 
     useEffect(() => {
         const fetchExchangeRates = async () => {
             try {
-                const response = await axios.get(exchangeRateApiUrl);
-                const rates = response.data.conversion_rates;
+                const response = await axios?.get(exchangeRateApiUrl);
+                const rates = response?.data?.conversion_rates;
                 setExchangeRates(rates);
             } catch (error) {
                 console.error("Error fetching exchange rates:", error);
             }
         };
-
         fetchExchangeRates();
     }, []);
 
     useEffect(() => {
-        if (!transactionId || !type) {
-            return;
-        }
+        if (!transactionId || !type) return;
 
-        const transactionRef = ref(database, `${type.toLowerCase()}s/${auth.currentUser?.uid}/${transactionId}`);
+        const transactionRef = ref(database, `${type?.toLowerCase()}s/${auth?.currentUser?.uid}/${transactionId}`);
 
         const unsubscribe = onValue(transactionRef, (snapshot) => {
             if (snapshot.exists()) {
@@ -50,12 +51,11 @@ const useTransactionsDetail = () => {
                 setEditedTransaction({ ...transactionData, id: transactionId });
                 if (selectedCurrency && exchangeRates && selectedCurrency in exchangeRates) {
                     const rate = exchangeRates[selectedCurrency as keyof typeof exchangeRates];
-                    const convertedAmountValue = (parseFloat(transactionData.amount) * rate).toFixed(0);
+                    const convertedAmountValue = (parseFloat(transactionData?.amount) * rate)?.toFixed(0);
                     setConvertedAmount(convertedAmountValue);
                 } else {
-                    setConvertedAmount(transactionData.amount);
+                    setConvertedAmount(transactionData?.amount);
                 }
-            } else {
             }
         });
 
@@ -64,11 +64,15 @@ const useTransactionsDetail = () => {
 
     const confirmDeleteTransaction = async () => {
         try {
-            const transactionRef = ref(database, `${type.toLowerCase()}s/${auth.currentUser?.uid}/${transactionId}`);
+            const transactionRef = ref(database, `${type?.toLowerCase()}s/${auth?.currentUser?.uid}/${transactionId}`);
             await remove(transactionRef);
             setOpenModal(false);
-            Alert.alert('Deleted', 'Transaction deleted successfully');
-            navigation.goBack();
+            setSuccessMessage('Transaction has been successfully removed');
+            setSuccessModalVisible(true);
+            setTimeout(() => {
+                setSuccessModalVisible(false);
+                navigation.goBack();
+            }, 3000);
         } catch (error) {
             console.error('Error deleting transaction:', error);
             Alert.alert('Error', 'Failed to delete transaction');
@@ -81,55 +85,29 @@ const useTransactionsDetail = () => {
 
     const saveEditedTransaction = async () => {
         try {
-            const transactionRef = ref(database, `${type.toLowerCase()}s/${auth.currentUser?.uid}/${transactionId}`);
+            const transactionRef = ref(database, `${type?.toLowerCase()}s/${auth?.currentUser?.uid}/${transactionId}`);
             await set(transactionRef, editedTransaction);
             setOpenEditModal(false);
-            Alert.alert('Success', 'Transaction updated successfully');
+            setSuccessMessage('Transaction has been successfully updated');
+            setSuccessModalVisible(true);
+            setTimeout(() => {
+                setSuccessModalVisible(false);
+            }, 3000); // Hide modal after 3 seconds
         } catch (error) {
             console.error('Error updating transaction:', error);
             Alert.alert('Error', 'Failed to update transaction');
         }
     };
 
-    const formattedDate = new Date().toISOString();
+    const formattedDate = new Date()?.toISOString();
 
     const [categories, setCategories] = useState<string[]>([]);
 
-    const incomeCategories = [
-        "Salary",
-        "Business",
-        "Freelancing",
-        "Overtime Pay",
-        "Bonuses and Incentives",
-        "Stock Dividends",
-        "Rental Income (from property)",
-        "Cryptocurrency Gains",
-        "Child Support/Alimony",
-        "Scholarships/Grants",
-        "Royalties",
-        "Lottery or Gambling Winnings",
-        "Gifts or Donations Received",
-        "Income from Side Hustles",
-    ];
-
-    const expenseCategories = [
-        "Food & Dining",
-        "Shopping",
-        "Transportation",
-        "Entertainment",
-        "Healthcare",
-        "Rent & Bills",
-        "Travel",
-        "Education",
-        "Investments",
-        "Other",
-    ];
-
     useEffect(() => {
-        if (editedTransaction.type === 'Income') {
+        if (editedTransaction?.type === 'Income') {
             setCategories(incomeCategories);
-        } else if (editedTransaction.type === 'Expense') {
-            setCategories(expenseCategories);
+        } else if (editedTransaction?.type === 'Expense') {
+            setCategories(categories);
         }
     }, [editedTransaction.type]);
 
@@ -144,6 +122,9 @@ const useTransactionsDetail = () => {
         setOpenEditModal,
         showFullCategory,
         setShowFullCategory,
+        successModalVisible,
+        setSuccessModalVisible,
+        successMessage,
         navigation,
         route,
         transactionId,
@@ -153,7 +134,6 @@ const useTransactionsDetail = () => {
         editedTransaction,
         setEditedTransaction,
         isExpense,
-        useEffect,
         confirmDeleteTransaction,
         handleEditTransaction,
         saveEditedTransaction,
@@ -161,7 +141,6 @@ const useTransactionsDetail = () => {
         categories,
         setCategories,
         incomeCategories,
-        expenseCategories,
         handleTypeChange,
         fullScreenImage,
         setFullScreenImage,

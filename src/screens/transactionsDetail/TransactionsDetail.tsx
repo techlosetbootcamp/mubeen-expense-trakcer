@@ -1,10 +1,8 @@
 import {
     View,
     Text,
-    StyleSheet,
     TouchableOpacity,
     Image,
-    Alert,
     Modal,
     TextInput,
     ScrollView
@@ -14,8 +12,9 @@ import moment from 'moment';
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import styles from './TransactionsDetail.style';
-import { Picker } from '@react-native-picker/picker'; // Import Picker for dropdowns
+import { Picker } from '@react-native-picker/picker';
 import useTransactionsDetail from './useTransactionsDetail';
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 const currencySymbols = {
     USD: "$",
@@ -34,6 +33,8 @@ export default function DetailTransaction() {
         setOpenEditModal,
         showFullCategory,
         setShowFullCategory,
+        successModalVisible,
+        successMessage,
         navigation,
         route,
         transactionId,
@@ -43,15 +44,11 @@ export default function DetailTransaction() {
         editedTransaction,
         setEditedTransaction,
         isExpense,
-        useEffect,
         confirmDeleteTransaction,
         handleEditTransaction,
         saveEditedTransaction,
         formattedDate,
         categories,
-        setCategories,
-        incomeCategories,
-        expenseCategories,
         handleTypeChange,
         fullScreenImage,
         setFullScreenImage,
@@ -98,7 +95,6 @@ export default function DetailTransaction() {
                 </View>
             </View>
             <View style={styles.belowContainer}>
-                {/* New Card for Type, Category, and Wallet */}
                 <View style={styles.infoCard}>
                     <View style={styles.belowBox1}>
                         <View>
@@ -122,10 +118,8 @@ export default function DetailTransaction() {
                     </View>
                 </View>
                 
-                {/* Dashed Line */}
                 <View style={styles.dashedLine} />
 
-                {/* Remaining Content */}
                 <View style={styles.remainingContent}>
                     <View style={styles.description}>
                         <Text style={styles.descriptionHead}>Description</Text>
@@ -148,7 +142,6 @@ export default function DetailTransaction() {
                         </View>
                     </View>
 
-                    {/* Edit Transaction Button */}
                     <TouchableOpacity style={styles.button} onPress={handleEditTransaction}>
                         <Text style={styles.btnText}>Edit</Text>
                     </TouchableOpacity>
@@ -202,6 +195,23 @@ export default function DetailTransaction() {
                                 <Text style={styles.modalYesButtonText}>Yes</Text>
                             </TouchableOpacity>
                         </View>
+                    </View>
+                </View>
+            </Modal>
+
+            {/* Success Modal */}
+            <Modal
+                transparent={true}
+                animationType="fade"
+                visible={successModalVisible}
+                onRequestClose={() => {}}
+            >
+                <View style={styles.successModalOverlay}>
+                    <View style={styles.successModalContainer}>
+                        <View style={styles.successIconContainer}>
+                            <MaterialIcons name="check" size={40} color="white" />
+                        </View>
+                        <Text style={styles.successModalText}>{successMessage}</Text>
                     </View>
                 </View>
             </Modal>

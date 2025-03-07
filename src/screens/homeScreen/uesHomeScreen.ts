@@ -8,17 +8,17 @@ import { setUserProfile } from '../../store/slices/userSlice';
 const uesHomeScreen = () => {
 
     const dispatch = useDispatch<AppDispatch>();
-    const userProfile = useAppSelector((state: RootState) => state.user);
+    const userProfile = useAppSelector((state: RootState) => state?.user);
 
     useEffect(() => {
         const fetchUserData = () => {
             const auth = getAuth();
-            const user = auth.currentUser;
+            const user = auth?.currentUser;
             if (user) {
                 dispatch(
                     setUserProfile({
-                        profilePicture: user.photoURL || "",
-                        name: user.displayName || "",
+                        profilePicture: user?.photoURL || "",
+                        name: user?.displayName || "",
                     })
                 );
             }

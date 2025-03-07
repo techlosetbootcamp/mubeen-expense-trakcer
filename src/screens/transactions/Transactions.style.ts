@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     backgroundColor: "#fcfcfc",
     flexDirection: "row",
-    alignItems: "center", // Changed from flex-start to center for vertical alignment
+    alignItems: "center",
     borderRadius: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
@@ -21,13 +21,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "90%",
     overflow: "hidden",
-    padding: 10, // Added padding to the container
+    padding: 10,
   },
   CategoryContainer: {
     flexDirection: "row",
     alignItems: "center",
     flex: 1,
-    gap: 10, // Adjusted gap for better spacing
+    gap: 10,
   },
   TextContainer: {
     flex: 1,
@@ -38,19 +38,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginVertical: 2, // Added some vertical spacing between rows
+    marginVertical: 2,
   },
   IncomeText: {
     color: "black",
     fontSize: 16,
     fontWeight: "bold",
-    flexShrink: 1, // Prevents text overflow
+    flexShrink: 1,
   },
   BuyText: {
     color: "gray",
     fontSize: 16,
     fontWeight: "semibold",
-    flexShrink: 1, // Prevents text overflow
+    flexShrink: 1,
   },
   PriceText: {
     fontSize: 18,
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   dropdownContainer: {
-    position: "relative", // Needed for dropdown menu positioning
+    position: "relative",
   },
   monthSelection: {
     flexDirection: "row",
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   },
   dropdownMenu: {
     position: "absolute",
-    top: 50, // Adjust based on the height of `monthSelection`
+    top: 50,
     left: 0,
     right: 0,
     backgroundColor: "#FFF",
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 5,
-    zIndex: 3, // Ensure dropdown is above everything
+    zIndex: 3,
   },
   dropdownItem: {
     paddingVertical: 10,
@@ -154,8 +154,15 @@ const styles = StyleSheet.create({
     paddingVertical: 50,
     marginBottom: 80,
   },
-  transactionCard: { padding: 10, borderBottomWidth: 1, borderColor: "#ddd" },
-  resetButtonText: { color: "white", fontWeight: "bold" },
+  transactionCard: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderColor: "#ddd"
+  },
+  resetButtonText: {
+    color: "white",
+    fontWeight: "bold"
+  },
   resetButton: {
     backgroundColor: "#7f3dff",
     padding: 10,
@@ -163,7 +170,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 10,
   },
-
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.5)",
@@ -284,6 +290,11 @@ const styles = StyleSheet.create({
   },
   categoryText: {
     fontSize: 20
+  },
+  categoryItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10,
   }
 });
 

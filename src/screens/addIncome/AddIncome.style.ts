@@ -228,6 +228,44 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     paddingTop: 20,
   },
+  successModalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  successModalContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 20,
+    marginHorizontal: 10,
+    alignItems: 'center',
+  },
+  successIconContainer: {
+    backgroundColor: '#7f3dff', // Blue-like color
+    borderRadius: 50,
+    width: 60,
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  successModalText: {
+    fontSize: 16,
+    color: '#333',
+    textAlign: 'center',
+  },
+  loaderOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Optional: semi-transparent background
+    zIndex: 1000, // Ensure it’s above other content
+  },
 });
 
 export default styles;

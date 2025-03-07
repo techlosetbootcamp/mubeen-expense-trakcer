@@ -11,8 +11,8 @@ const styles = StyleSheet.create({
       position: "absolute",
       width: 80,
       height: 80,
-      backgroundColor: "#e54eff", // Semi-transparent white for glow effect
-      borderRadius: 100, // Makes it a perfect circle
+      backgroundColor: "#e54eff",
+      borderRadius: 100,
       justifyContent: "flex-start",
     },
     text: {

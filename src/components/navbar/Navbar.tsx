@@ -11,22 +11,19 @@ import useNavbar from "./useNavbar";
 import styles from "./Navbar.style";
 import { useAppSelector } from "../../store/store";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { MonthNames } from "../../constants/MonthsNames";
 
 const Navbar: React.FC = () => {
   const {
     navigation,
     isDropdownVisible,
     selectedMonth,
-    dropdownItems,
     toggleDropdown,
     handleSelect,
+    profilePicture,
+    name,
+    unseenNotificationsCount,
   } = useNavbar();
-
-  const profilePicture = useAppSelector((state) => state.user.profilePicture);
-  const name = useAppSelector((state) => state.user.name);
-  const unseenNotificationsCount = useAppSelector((state) =>
-    state.budget.notifications.filter((n) => !n.isSeen).length
-  ); // Count unseen notifications
 
   const renderAvatar = () => {
     if (profilePicture) {
@@ -64,7 +61,7 @@ const Navbar: React.FC = () => {
         {isDropdownVisible && (
           <View style={styles.dropdownMenu}>
             <FlatList
-              data={dropdownItems}
+              data={MonthNames}
               keyExtractor={(item) => item}
               renderItem={({ item }) => (
                 <TouchableOpacity style={styles.dropdownItem} onPress={() => handleSelect(item)}>

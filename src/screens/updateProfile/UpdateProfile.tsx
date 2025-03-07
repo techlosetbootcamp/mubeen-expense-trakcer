@@ -19,10 +19,9 @@ const UpdateProfile = () => {
 
   const renderAvatar = () => {
     if (profilePicture) {
-      // Assume JPEG since most photos are JPEG; adjust if needed
       return <Image source={{ uri: `data:image/jpeg;base64,${profilePicture}` }} style={styles.profileImage} />;
     }
-    const firstLetter = username?.charAt(0).toUpperCase() || "?";
+    const firstLetter = username?.charAt(0)?.toUpperCase() || "?";
     return (
       <View style={styles.placeholder}>
         <Text style={styles.placeholderText}>{firstLetter}</Text>

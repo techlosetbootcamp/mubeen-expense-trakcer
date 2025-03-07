@@ -13,21 +13,19 @@ const Profile: React.FC = () => {
     setUsername,
     isLogoutModalVisible,
     setLogoutModalVisible,
-    isImageModalVisible, // Add new state
+    isImageModalVisible,
     setImageModalVisible,
-    useEffect,
     openLogoutModal,
     closeLogoutModal,
     handleLogout,
-    openImageModal, // Add new function
-    closeImageModal, // Add new function
+    openImageModal,
+    closeImageModal,
   } = useProfile();
 
   const profilePicture = useAppSelector((state) => state.user.profilePicture);
 
   return (
     <View style={styles.container}>
-      {/* Profile Section */}
       <View style={styles.profileSection}>
         <TouchableOpacity style={styles.avatarContainer} onPress={profilePicture ? openImageModal : undefined}>
           {profilePicture ? (
@@ -48,24 +46,23 @@ const Profile: React.FC = () => {
           style={styles.editIcon}
           onPress={() => navigation.navigate("UpdateProfile", { username, profilePicture })}
         >
-          <SimpleLineIcons name="pencil" size={18} color="black" />
+          <SimpleLineIcons name="pencil" size={24} color="black" />
         </TouchableOpacity>
       </View>
 
-      {/* Menu Options */}
       <View style={styles.menu}>
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate("Setting")}>
-          <MaterialIcons name="settings" size={36} color="#8A2BE2" style={{backgroundColor: "#eee5ff", padding:5, borderRadius: 15}}/>
+          <MaterialIcons name="settings" size={36} color="#8A2BE2" style={{ backgroundColor: "#eee5ff", padding: 5, borderRadius: 15 }} />
           <Text style={styles.menuText}>Settings</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate("ResetPassword")}>
-          <MaterialIcons name="lock-reset" size={36} color="#8A2BE2" style={{backgroundColor: "#eee5ff", padding:5, borderRadius: 15}}/>
+          <MaterialIcons name="lock-reset" size={36} color="#8A2BE2" style={{ backgroundColor: "#eee5ff", padding: 5, borderRadius: 15 }} />
           <Text style={styles.menuText}>Reset Password</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.logoutmenuItem} onPress={openLogoutModal}>
-          <MaterialIcons name="logout" size={36} color="#FF6347" style={{backgroundColor: "#ffe2e4", padding:5, borderRadius: 15}}/>
+          <MaterialIcons name="logout" size={36} color="#FF6347" style={{ backgroundColor: "#ffe2e4", padding: 5, borderRadius: 15 }} />
           <Text style={[styles.menuText, styles.logoutText]}>Logout</Text>
         </TouchableOpacity>
 
@@ -100,7 +97,6 @@ const Profile: React.FC = () => {
           </View>
         </Modal>
 
-        {/* Full-Screen Image Modal */}
         <Modal
           transparent={false}
           visible={isImageModalVisible}
