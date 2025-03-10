@@ -4,7 +4,7 @@ import {
   import React from "react";
   import { BarChart } from "react-native-chart-kit";
   import useBudget from "./useBudget";
-  import { useAppSelector } from "../../store/store";
+  import { RootState, useAppSelector } from "../../store/store";
   import styles from "./budget.style";
   import { currencySymbols } from "../../constants/currencySymbols";
   
@@ -31,7 +31,7 @@ import {
       formatAmount,
     } = useBudget();
   
-    const selectedCurrency = useAppSelector((state: any) => state.user.selectedCurrency);
+    const selectedCurrency = useAppSelector((state: RootState) => state.user.selectedCurrency);
     const currencySymbol = currencySymbols[selectedCurrency] || selectedCurrency;
   
     return (

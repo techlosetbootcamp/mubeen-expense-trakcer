@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Animated } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { StackNavigationParamList } from "../../constants/types/navigationTypes";
 
 export const useTabBar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const rotation = new Animated.Value(0);
-  const navigation: any = useNavigation();
+  const navigation = useNavigation<NavigationProp<StackNavigationParamList>>();
 
   const togglePlusButton = () => {
     setIsExpanded((prev) => !prev);

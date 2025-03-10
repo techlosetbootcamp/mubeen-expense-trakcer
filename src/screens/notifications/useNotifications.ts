@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import { markNotificationsAsSeen, updateNotificationsSeen } from '../../store/slices/BudgetSlice';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { StackNavigationParamList } from '../../constants/types/navigationTypes';
 
 const useNotifications = () => {
 
@@ -10,10 +11,10 @@ const useNotifications = () => {
 
     useEffect(() => {
         dispatch(markNotificationsAsSeen());
-        dispatch(updateNotificationsSeen() as any);
+        dispatch(updateNotificationsSeen());
     }, [dispatch]);
 
-    const navigation: any = useNavigation()
+    const navigation = useNavigation<NavigationProp<StackNavigationParamList>>();
 
     return {
         dispatch,

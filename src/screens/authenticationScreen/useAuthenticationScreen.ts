@@ -6,10 +6,12 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   updateProfile,
+  UserCredential,
 } from "firebase/auth";
 import { ref, set, get } from "firebase/database";
 import { useAppDispatch } from "../../store/store";
-import { useNavigation } from "@react-navigation/native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { StackNavigationParamList } from '../../constants/types/navigationTypes';
 
 const useAuthenticationScreen = () => {
 
@@ -19,7 +21,7 @@ const useAuthenticationScreen = () => {
   const [username, setUsername] = useState("");
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const dispatch = useAppDispatch();
-  const navigation: any = useNavigation();
+  const navigation = useNavigation<NavigationProp<StackNavigationParamList>>();
   const [showPassword, setShowPassword] = useState(false);
 
   const handleAuthentication = async () => {
@@ -31,35 +33,27 @@ const useAuthenticationScreen = () => {
     setIsAuthenticating(true);
 
     try {
-      let userCredential;
+      let userCredential: UserCredential;
       if (isLogin) {
-        userCredential = await signInWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
+        userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential?.user;
         const userRef = ref(database, `users/${user?.uid}`);
         const snapshot = await get(userRef);
         const userData = snapshot?.exists()
           ? snapshot.val()
           : { displayName: "" };
-
+  
         dispatch(
           setUser({
-            uid: user?.uid,
-            email: user?.email,
+            uid: user?.uid ?? "",
+            email: user?.email ?? "",
             displayName: userData?.displayName || "",
             photoURL: user?.photoURL || "",
             income: [],
           })
         );
       } else {
-        userCredential = await createUserWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
+        userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         await updateProfile(user, { displayName: username });
         await set(ref(database, `users/${user?.uid}`), {
@@ -69,17 +63,19 @@ const useAuthenticationScreen = () => {
         });
         dispatch(
           setUser({
-            uid: user?.uid,
-            email: user?.email,
+            uid: user?.uid ?? "",
+            email: user?.email ?? "",
             displayName: username,
             photoURL: "",
             income: [],
           })
         );
       }
-      navigation.navigate("Main")
-    } catch (error: any) {
-      Alert.alert("Error", error.message);
+      navigation.navigate("Main");
+    } catch (error: unknown) { // Use unknown
+      // Assert or type-guard the error as having Firebase error properties
+      const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
+      Alert.alert("Error", errorMessage);
     } finally {
       setIsAuthenticating(false);
     }

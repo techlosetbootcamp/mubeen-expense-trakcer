@@ -5,15 +5,17 @@ import { fetchExpenses } from '../store/slices/expenseSlice';
 import { useEffect, useRef, useState } from 'react';
 import SplashScreen from '../screens/splashScree/SplashScreen';
 import { authScreens, mainScreens } from '../constants/ScreenNames';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { StackNavigationParamList } from '../constants/types/navigationTypes';
+import { User } from '@firebase/auth';
 
 interface StackNavigationProps {
-  initialUser: any;
+  initialUser: User | null ;
 }
 
 const StackNavigation: React.FC<StackNavigationProps> = ({ initialUser }) => {
   const Stack = createStackNavigator();
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<NavigationProp<StackNavigationParamList>>();
   const hasNavigated = useRef(false);
   const [isSplashVisible, setIsSplashVisible] = useState(true);
   const dispatch = useAppDispatch();

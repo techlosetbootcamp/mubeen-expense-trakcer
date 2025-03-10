@@ -21,13 +21,13 @@ const useResetPassword = (navigation: any) => {
       return;
     }
 
-    if (newPassword.length < 6) {
+    if (newPassword?.length < 6) {
       setError("Password must be at least 6 characters");
       return;
     }
 
     try {
-      const user = auth.currentUser;
+      const user = auth?.currentUser;
       if (!user) {
         setError("No user is currently signed in");
         return;

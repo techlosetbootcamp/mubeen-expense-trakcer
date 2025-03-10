@@ -1,14 +1,13 @@
 import { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootState, useAppSelector } from "../../store/store";
-import { View } from "react-native";
-import styles from "./Navbar.style";
+import { StackNavigationParamList } from "../../constants/types/navigationTypes";
 
 const useNavbar = () => {
   const user = useAppSelector((state: RootState) => state?.user?.user);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState("Select Month");
-  const navigation: any = useNavigation();
+  const navigation = useNavigation<NavigationProp<StackNavigationParamList>>();
 
   const profilePicture = useAppSelector((state) => state?.user?.profilePicture);
   const name = useAppSelector((state) => state?.user?.name);

@@ -2,7 +2,7 @@ import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { database, auth } from "../../config/firebaseConfig";
 import { ref, get, set } from "firebase/database";
 
-interface Notification {
+export interface Notification {
   message: string;
   timestamp: string;
   isSeen: boolean;

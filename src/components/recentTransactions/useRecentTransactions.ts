@@ -2,17 +2,19 @@ import React, { useState } from "react";
 import { ref, onValue } from "firebase/database";
 import { database } from "../../config/firebaseConfig";
 import { useAppSelector } from "../../store/store";
-import { useNavigation } from "@react-navigation/native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { exchangeRateApiUrl } from "../../constants/exchangeRateApi";
 import { currencySymbols } from "../../constants/currencySymbols";
+import { StackNavigationParamList } from "../../constants/types/navigationTypes";
+import { Transaction } from "../../constants/types/stateTypes";
 
 
 export const useRecentTransactions = () => {
-  const [transactions, setTransactions] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [showAll, setShowAll] = useState(false);
   const user = useAppSelector((state) => state?.user?.user);
-  const navigation: any = useNavigation();
+  const navigation = useNavigation<NavigationProp<StackNavigationParamList>>();
 
   const [exchangeRates, setExchangeRates] = React.useState({});
   const [convertedTransactions, setConvertedTransactions] = React.useState(transactions);

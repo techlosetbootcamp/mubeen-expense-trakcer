@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigation } from "@react-navigation/native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { Dimensions } from "react-native";
 import { database } from "../../config/firebaseConfig";
 import { ref, onValue } from "firebase/database";
@@ -9,11 +9,12 @@ import { exchangeRateApiUrl } from "../../constants/exchangeRateApi";
 import { categories } from '../../constants/Categories';
 import { incomeCategories } from '../../constants/Categories';
 import { getCategoryColors } from '../../constants/Categories';
+import { StackNavigationParamList } from '../../constants/types/navigationTypes';
 
 const screenWidth = Dimensions?.get("window")?.width;
 
 const useFinancialReport = () => {
-  const navigation: any = useNavigation();
+  const navigation = useNavigation<NavigationProp<StackNavigationParamList>>();
   const user = useAppSelector((state) => state?.user?.user);
   const selectedCurrency = useAppSelector((state) => state?.user?.selectedCurrency);
 

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useAppSelector } from "../../store/store";
+import { RootState, useAppSelector } from "../../store/store";
 import axios from "axios";
 import { exchangeRateApiUrl } from "../../constants/exchangeRateApi";
 
@@ -7,8 +7,7 @@ import { exchangeRateApiUrl } from "../../constants/exchangeRateApi";
 const useLineGraph = () => {
   const [selectedFilter, setSelectedFilter] = useState("Today");
   const expenses = useAppSelector((state) => state?.expense?.expenses || []);
-  const selectedCurrency = useAppSelector((state: any) => state?.user?.selectedCurrency);
-
+  const selectedCurrency = useAppSelector((state: RootState) => state.user.selectedCurrency);
   const [exchangeRates, setExchangeRates] = React.useState({});
   const [convertedExpenses, setConvertedExpenses] = React.useState(expenses);
 

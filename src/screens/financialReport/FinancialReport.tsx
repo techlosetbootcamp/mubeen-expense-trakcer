@@ -10,21 +10,12 @@ import {
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { PieChart } from "react-native-gifted-charts";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import styles from "./FinancialReport.style";
 import useFinancialReport from "./useFinancialReport";
 import { useAppSelector } from "../../store/store";
 import { Image } from "react-native";
 import { MonthNames } from "../../constants/MonthsNames";
-
-const currencySymbols = {
-  USD: "$",
-  EUR: "€",
-  GBP: "£",
-  INR: "₹",
-  PKR: "PKR ",
-  JPY: "¥",
-};
+import { currencySymbols } from "../../constants/currencySymbols";
 
 const FinancialReport = () => {
   const {

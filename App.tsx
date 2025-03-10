@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { Provider, useDispatch } from "react-redux";
-import store from "./src/store/store";
+import store, { AppDispatch } from "./src/store/store"; // Import AppDispatch
 import StackNavigation from "./src/navigation/StackNavigation";
 import { loadCurrency, loadUserFromFirebase } from "./src/store/slices/userSlice";
 import { fetchNotifications } from "./src/store/slices/BudgetSlice";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "./src/config/firebaseConfig";
 import * as Notifications from "expo-notifications";
 
+// Set notification handler
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -18,9 +19,9 @@ Notifications.setNotificationHandler({
 });
 
 const AppWrapper = () => {
-  const dispatch = useDispatch();
-  const [initializing, setInitializing] = useState(true);
-  const [initialUser, setInitialUser] = useState<any>(null);
+  const dispatch = useDispatch<AppDispatch>();
+  const [initializing, setInitializing] = useState<boolean>(true);
+  const [initialUser, setInitialUser] = useState<User | null>(null);
 
   useEffect(() => {
     const requestPermissions = async () => {
@@ -30,23 +31,24 @@ const AppWrapper = () => {
     };
     requestPermissions();
 
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: User | null) => {
       setInitialUser(firebaseUser);
       if (firebaseUser) {
         try {
-          await dispatch(loadUserFromFirebase() as any).unwrap(); // Wait for completion
-          await dispatch(fetchNotifications() as any).unwrap();
+          await dispatch(loadUserFromFirebase()).unwrap();
+          await dispatch(fetchNotifications()).unwrap();
         } catch (error) {
+          console.error("Error loading user or notifications:", error);
         }
       } else {
-        dispatch({ type: "user/clearUser" });
+        dispatch({ type: "user/clearUser" }); // Action to clear user
       }
       if (initializing) {
         setInitializing(false);
       }
     });
 
-    dispatch(loadCurrency() as any);
+    dispatch(loadCurrency());
 
     return () => {
       unsubscribe();
