@@ -2,10 +2,12 @@ import { useState } from "react";
 import { Alert } from "react-native";
 import { auth } from "../../config/firebaseConfig";
 import { sendPasswordResetEmail } from "firebase/auth";
+import { useNavigation } from "@react-navigation/native";
 
-const useForgotPassword = (navigation: any) => {
+const useForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
+  const navigation = useNavigation()
 
   const handlePasswordReset = async () => {
     if (!email) {
@@ -35,6 +37,7 @@ const useForgotPassword = (navigation: any) => {
     error,
     setError,
     handlePasswordReset,
+    navigation
   };
 };
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { Provider, useDispatch } from "react-redux";
-import store, { AppDispatch } from "./src/store/store"; // Import AppDispatch
+import { Provider } from "react-redux";
+import store, { AppDispatch, useAppDispatch } from "./src/store/store"; // Import AppDispatch
 import StackNavigation from "./src/navigation/StackNavigation";
 import { loadCurrency, loadUserFromFirebase } from "./src/store/slices/userSlice";
 import { fetchNotifications } from "./src/store/slices/BudgetSlice";
@@ -19,7 +19,7 @@ Notifications.setNotificationHandler({
 });
 
 const AppWrapper = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const [initializing, setInitializing] = useState<boolean>(true);
   const [initialUser, setInitialUser] = useState<User | null>(null);
 

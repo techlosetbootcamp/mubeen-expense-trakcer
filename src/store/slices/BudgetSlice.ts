@@ -60,7 +60,7 @@ export const updateNotificationsSeen = createAsyncThunk(
           isSeen: true,
         };
         return acc;
-      }, {} as any);
+      }, {});
       await set(notificationsRef, updatedData);
     }
   }
