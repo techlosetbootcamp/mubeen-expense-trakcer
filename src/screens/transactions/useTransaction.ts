@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useAppSelector } from '../../store/store';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { onValue, ref } from 'firebase/database';
 import { database } from '../../config/firebaseConfig';
 import axios from 'axios';
 import { exchangeRateApiUrl } from "../../constants/exchangeRateApi";
 import { baseStyles } from '../../constants/baseStyles';
 import { currencySymbols } from '../../constants/currencySymbols';
+import { Transaction } from '../../constants/types/stateTypes';
+import { StackNavigationParamList } from '../../constants/types/navigationTypes';
 
 const useTransaction = () => {
   const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
@@ -14,7 +16,7 @@ const useTransaction = () => {
   const [selectedSort, setSelectedSort] = useState<string | null>(null);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
-  const [filteredTransactionsData, setFilteredTransactionsData] = useState<any[]>([]);
+  const [filteredTransactionsData, setFilteredTransactionsData] = useState<Transaction[]>([]);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState("Month");
   const [transactions, setTransactions] = useState<any[]>([]);

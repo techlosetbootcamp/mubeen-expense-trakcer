@@ -10,6 +10,7 @@ import { categories } from '../../constants/Categories';
 import { incomeCategories } from '../../constants/Categories';
 import { getCategoryColors } from '../../constants/Categories';
 import { StackNavigationParamList } from '../../constants/types/navigationTypes';
+import { Transaction } from '../../constants/types/stateTypes';
 
 const screenWidth = Dimensions?.get("window")?.width;
 
@@ -19,13 +20,13 @@ const useFinancialReport = () => {
   const selectedCurrency = useAppSelector((state) => state?.user?.selectedCurrency);
 
   const [selectedMonth, setSelectedMonth] = useState("Month");
-  const [transactions, setTransactions] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isMonthDropdownVisible, setIsMonthDropdownVisible] = useState(false);
   const [selectedType, setSelectedType] = useState<"expense" | "income">("expense");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
   const [exchangeRates, setExchangeRates] = useState({});
-  const [filteredTransactions, setFilteredTransactions] = useState<any[]>([]);
+  const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
 
   useEffect(() => {
     const fetchExchangeRates = async () => {
@@ -66,13 +67,11 @@ const useFinancialReport = () => {
 
         setTransactions((prev) => {
           const updatedTransactions = [
-            ...prev.filter((t) => t.type !== type), // Remove old transactions of this type
-            ...transactionList, // Add new ones
+            ...prev.filter((t) => t.type !== type),
+            ...transactionList,
           ];
           return updatedTransactions;
         });
-
-        // Apply filters immediately after updating transactions
         applyFilters();
       });
     };

@@ -16,7 +16,7 @@ const useAddIncome = () => {
     const [category, setCategory] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [attachmentModalVisible, setAttachmentModalVisible] = useState<boolean>(false);
-    const [attachment, setAttachment] = useState<string | null>(null); // Remove any
+    const [attachment, setAttachment] = useState<string | null>(null);
     const [dropdownVisible, setDropdownVisible] = useState<boolean>(false);
     const [whiteSectionHeight, setWhiteSectionHeight] = useState<number>(1.5);
     const [successModalVisible, setSuccessModalVisible] = useState<boolean>(false);
@@ -28,11 +28,11 @@ const useAddIncome = () => {
     );
 
     const handleAttachmentOption = async (option: string) => {
-        let result: AttachmentResult = { canceled: true, assets: null }; // Remove any
+        let result: AttachmentResult = { canceled: true, assets: null };
 
         try {
             if (option === "Camera") {
-                await ImagePicker.requestCameraPermissionsAsync(); // Fixed permission method
+                await ImagePicker.requestCameraPermissionsAsync();
                 result = await ImagePicker.launchCameraAsync({
                     mediaTypes: ImagePicker.MediaTypeOptions.Images,
                     allowsEditing: true,

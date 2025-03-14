@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { auth, database } from '../../config/firebaseConfig';
 import { get, ref } from 'firebase/database';
 import { signOut } from 'firebase/auth';
@@ -7,9 +7,10 @@ import { useAppDispatch } from '../../store/store';
 import { clearUser } from '../../store/slices/userSlice';
 import { setIncome } from '../../store/slices/incomeSlice'; // Added import
 import { setExpenses } from '../../store/slices/expenseSlice'; // Added import
+import { StackNavigationParamList } from '../../constants/types/navigationTypes';
 
 const useProfile = () => {
-  const navigation: any = useNavigation();
+  const navigation = useNavigation<NavigationProp<StackNavigationParamList>>();
   const dispatch = useAppDispatch();
   const [username, setUsername] = useState('');
   const [profilePicture, setProfilePicture] = useState('');

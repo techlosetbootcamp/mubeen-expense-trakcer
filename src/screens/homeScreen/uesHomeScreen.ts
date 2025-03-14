@@ -1,13 +1,11 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React, { useEffect } from 'react'
-import { useDispatch } from 'react-redux';
-import { AppDispatch, RootState, useAppSelector } from '../../store/store';
+import { useEffect } from 'react'
+import {RootState, useAppDispatch, useAppSelector } from '../../store/store';
 import { getAuth } from 'firebase/auth';
 import { setUserProfile } from '../../store/slices/userSlice';
 
 const uesHomeScreen = () => {
 
-    const dispatch = useDispatch<AppDispatch>();
+    const dispatch = useAppDispatch();
     const userProfile = useAppSelector((state: RootState) => state?.user);
 
     useEffect(() => {

@@ -1,17 +1,19 @@
 import { Alert } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
 import { get, ref, set } from 'firebase/database';
 import { auth, database } from '../../config/firebaseConfig';
 import * as ImagePicker from 'expo-image-picker';
 import { EmailAuthProvider, reauthenticateWithCredential, updateEmail } from 'firebase/auth';
-import { useDispatch } from 'react-redux';
 import { setUserProfile, setUser } from '../../store/slices/userSlice';
+import { StackNavigationParamList } from '../../constants/types/navigationTypes';
+import { AttachmentResult } from '../../constants/types/stateTypes';
+import { useAppDispatch } from '../../store/store';
 
 const useUpdateProfile = () => {
-    const navigation: any = useNavigation();
+    const navigation = useNavigation<NavigationProp<StackNavigationParamList>>();
     const route = useRoute();
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const { username: initialUsername, profilePicture: initialProfilePicture } = route?.params as {
         username: string;
         profilePicture: string;
@@ -54,7 +56,7 @@ const useUpdateProfile = () => {
     }, [user, dispatch]);
 
     const handleImagePick = async (fromCamera: boolean) => {
-        let result: any = null;
+        let result: AttachmentResult = { canceled: true, assets: null };
 
         try {
             if (fromCamera) {

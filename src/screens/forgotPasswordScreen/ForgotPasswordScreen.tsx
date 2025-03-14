@@ -6,10 +6,10 @@ import useForgotPassword from "./useForgotPassword";
 
 
 
-const ForgotPasswordScreen = ({ navigation }: any) => {
+const ForgotPasswordScreen = () => {
   
-  const { email, setEmail, error, handlePasswordReset } =
-    useForgotPassword(navigation);
+  const { email, setEmail, error, handlePasswordReset,navigation } =
+    useForgotPassword();
 
   return (
     <View style={styles.container}>
